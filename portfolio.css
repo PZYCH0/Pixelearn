@@ -182,14 +182,20 @@ section {
 #games {
   height: 90vh;
   overflow-y: auto;
-  padding-right: 1rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .games-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-  padding: 1rem;
+  width: 100%;
+  max-width: 1200px;
+  justify-content: center;
+  padding: 2rem;
 }
 
 .game-card {
@@ -198,6 +204,12 @@ section {
   overflow: hidden;
   transition: all 0.3s ease;
   border: 1px solid var(--glass);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .game-card:hover {
@@ -214,19 +226,26 @@ section {
 
 .game-card h3 {
   color: var(--accent);
-  padding: 1.5rem 1rem;
+  padding: 1.5rem 1rem 0.5rem;
   font-size: 1.2em;
+  text-align: center;
 }
 
 .game-card p {
-  padding: 0 1rem 1.5rem;
+  padding: 0 1.5rem 1.5rem;
   color: var(--light);
   font-size: 0.9em;
+  text-align: center;
+  flex-grow: 1;
 }
 
 .game-links {
   padding: 1rem;
   text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
 }
 
 /* Custom Scrollbar */
@@ -268,6 +287,7 @@ section {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
+
 
 /* Titles */
 h2 {
@@ -366,6 +386,12 @@ footer {
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .lesson-icon {
@@ -393,6 +419,7 @@ footer {
   color: var(--light);
   margin-bottom: 1rem;
   font-size: 0.9em;
+  flex-grow: 1;
 }
 
 .lesson-features {
@@ -443,7 +470,7 @@ footer {
 .lesson-btn {
   width: 100%;
   text-align: center;
-  margin-top: 1rem;
+  margin-top: auto;
   background: linear-gradient(45deg, var(--primary), var(--accent));
   border: none;
   padding: 1rem;
@@ -500,6 +527,7 @@ footer {
     font-size: 1.1em;
   }
 }
+
 
 /* Articles Section */
 .articles-grid {
