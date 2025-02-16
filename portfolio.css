@@ -918,3 +918,125 @@ nav .btn:active {
   height: 50px; /* Adjust the height as needed */
   width: 100%;
 }
+/* Xo game */
+h1 {
+  text-align: center;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 3em;
+  margin-bottom: 20px;
+  color: #9728d6; /* Neon Purple */
+}
+
+.question-box {
+  text-align: center;
+  font-family: 'Press Start 2P', cursive;
+  margin-bottom: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  margin: 0 auto;
+  color: #fff;
+}
+
+.question-box.hidden {
+  display: none;
+}
+
+input[type="text"] {
+  font-family: 'Press Start 2P', cursive;
+  width: 80%;
+  padding: 10px;
+  font-size: 0.5em;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #9728d6; /* Neon Purple */
+}
+
+button {
+  font-family: 'Press Start 2P', cursive;
+  background-color: #9728d6; /* Neon Purple */
+  color: #40205e;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+button:hover {
+  background-color: #7a1ab5; /* Darker Neon Purple */
+}
+
+#feedback {
+  font-family: 'Press Start 2P', cursive;
+  margin-top: 10px;
+  color: red;
+  font-size: 1.2em;
+}
+
+#board {
+  display: grid;
+  font-family: 'Press Start 2P', cursive;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #811f79;
+  height: 100px;
+  width: 100px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  background-size: contain; /* Make sure the image fits inside the cell */
+  background-repeat: no-repeat;
+  transition: background-color 0.3s;
+}
+
+.cell:hover {
+  background-color: #290627;
+}
+
+#message {
+  font-family: 'Press Start 2P', cursive;
+  text-align: center;
+  font-size: 1.5em;
+  margin-top: 20px;
+  color: #9728d6; /* Neon Purple */
+}
+
+.game-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.scoreboard {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.board {
+  flex: 2;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.cell {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #000;
+  font-size: 24px;
+  cursor: pointer;
+}
