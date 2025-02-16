@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>English Teacher Portfolio</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="portfolio.css" />
+    <script src="script.js" defer></script>
+    <style>
+      .win {
+        animation: crossAnimation 1s ease-in-out infinite alternate;
+      }
+      @keyframes crossAnimation {
+        0% {
+          background-color: yellow;
+        }
+        100% {
+          background-color: lightgreen;
+        }
+      }
+      
+        body {
+            background: url('10.gif') no-repeat center center/cover;
+           
+        }
+    </style>
+    
+  </head>
+  <body>
+ 
+    <h1>Gap-Fill Tic-Tac-Toe</h1>
+    <div id="nameEntry">
+      <form action="javascript:void(0)">
+        <label for="playerX">Player X Name:</label>
+        <input type="text" id="playerX" placeholder="Enter name" />
+        <label for="playerO">Player O Name:</label>
+        <input type="text" id="playerO" placeholder="Enter name" />
+        <button type="submit" onclick="startGame()">Start Game</button>
+      </form>
+    </div>
+    <div class="game-container">
+      <div class="scoreboard hidden">
+        <p><span id="nameX">Player X</span>: <span id="scoreX">0</span></p>
+        <p><span id="nameO">Player O</span>: <span id="scoreO">0</span></p>
+      </div>
+      <div class="board hidden" id="board"></div>
+    </div>
+    <div class="question-box hidden">
+      <form>
+        <p id="question"></p>
+        <p><strong>Verb:</strong> <span id="verb"></span></p>
+        <p><strong>Tense:</strong> <span id="tense"></span></p>
+        <input type="text" id="answer" placeholder="Enter the missing word" />
+        <button type="submit" onclick="checkAnswer()">Submit</button>
+        <p id="feedback" style="color: red"></p>
+      </form>
+    </div>
+    <p id="message"></p>
+    <script>
+      let board = Array(9).fill(null);
+      let currentPlayer = "X";
+      let selectedCell = null;
+      let roundsWon = { X: 0, O: 0 };
+      const boardDiv = document.getElementById("board");
+      const scoreX = document.getElementById("scoreX");
+      const scoreO = document.getElementById("scoreO");
+      const nameX = document.getElementById("nameX");
+      const nameO = document.getElementById("nameO");
+      // Array of question objects//
+      const questions = [
+        {
+          sentence: "She _____ to the gym every morning.",
+          verb: "go",
+          tense: "present simple",
+          answer: "goes",
+        },
+        {
+          sentence: "They _____ their homework yesterday.",
+          verb: "finish",
+          tense: "past simple",
+          answer: "finished",
+        },
+        {
+          sentence: "He is _____ a letter right now.",
+          verb: "write",
+          tense: "present continuous",
+          answer: "writing",
+        },
+        {
+          sentence: "We _____ to the beach next weekend.",
+          verb: "travel",
+          tense: "future simple",
+          answer: "will travel",
+        },
+        {
+          sentence: "I _____ the dishes before you arrived.",
+          verb: "wash",
+          tense: "past perfect",
+          answer: "had washed",
+        },
+        {
+          sentence: "She _____ coffee every morning.",
+          verb: "drink",
+          tense: "present simple",
+          answer: "drinks",
+        },
+        {
+          sentence: "They _____ the house last week.",
+          verb: "clean",
+          tense: "past simple",
+          answer: "cleaned",
+        },
+        {
+          sentence: "He is _____ a song at the moment.",
+          verb: "sing",
+          tense: "present continuous",
+          answer: "singing",
+        },
+        {
+          sentence: "We _____ the project by tomorrow.",
+          verb: "complete",
+          tense: "future simple",
+          answer: "will complete",
+        },
+        {
+          sentence: "I _____ the book before the movie started.",
+          verb: "read",
+          tense: "past perfect",
+          answer: "had read",
+        },
+        {
+          sentence: "She _____ her keys every day.",
+          verb: "lose",
+          tense: "present simple",
+          answer: "loses",
+        },
+        {
+          sentence: "They _____ the game last night.",
+          verb: "win",
+          tense: "past simple",
+          answer: "won",
+        },
+        {
+          sentence: "He is _____ a picture right now.",
+          verb: "draw",
+          tense: "present continuous",
+          answer: "drawing",
+        },
+        {
+          sentence: "We _____ the meeting by 5 PM.",
+          verb: "finish",
+          tense: "future simple",
+          answer: "will finish",
+        },
+        {
+          sentence: "I _____ the groceries before the guests arrived.",
+          verb: "buy",
+          tense: "past perfect",
+          answer: "had bought",
+        },
+        {
+          sentence: "She _____ her hair every weekend.",
+          verb: "wash",
+          tense: "present simple",
+          answer: "washes",
+        },
+        {
+          sentence: "They _____ the car last month.",
+          verb: "sell",
+          tense: "past simple",
+          answer: "sold",
+        },
+        {
+          sentence: "He is _____ a story at the moment.",
+          verb: "tell",
+          tense: "present continuous",
+          answer: "telling",
+        },
+        {
+          sentence: "We _____ the tickets by tomorrow.",
+          verb: "book",
+          tense: "future simple",
+          answer: "will book",
+        },
+        {
+          sentence: "I _____ the report before the deadline.",
+          verb: "submit",
+          tense: "past perfect",
+          answer: "had submitted",
+        },
+        {
+          sentence: "She _____ to music every evening.",
+          verb: "listen",
+          tense: "present simple",
+          answer: "listens",
+        },
+        {
+          sentence: "They _____ the cake yesterday.",
+          verb: "bake",
+          tense: "past simple",
+          answer: "baked",
+        },
+        {
+          sentence: "He is _____ a bike right now.",
+          verb: "ride",
+          tense: "present continuous",
+          answer: "riding",
+        },
+        {
+          sentence: "We _____ the party by next Friday.",
+          verb: "plan",
+          tense: "future simple",
+          answer: "will plan",
+        },
+        {
+          sentence: "I _____ the email before the meeting started.",
+          verb: "send",
+          tense: "past perfect",
+          answer: "had sent",
+        },
+        {
+          sentence: "She _____ her room every Saturday.",
+          verb: "tidy",
+          tense: "present simple",
+          answer: "tidies",
+        },
+        {
+          sentence: "They _____ the movie last weekend.",
+          verb: "watch",
+          tense: "past simple",
+          answer: "watched",
+        },
+        {
+          sentence: "He is _____ a picture right now.",
+          verb: "paint",
+          tense: "present continuous",
+          answer: "painting",
+        },
+        {
+          sentence: "We _____ the project by next month.",
+          verb: "complete",
+          tense: "future simple",
+          answer: "will complete",
+        },
+        {
+          sentence: "I _____ the dishes before the guests arrived.",
+          verb: "wash",
+          tense: "past perfect",
+          answer: "had washed",
+        },
+        {
+          sentence: "She _____ her dog every day.",
+          verb: "walk",
+          tense: "present simple",
+          answer: "walks",
+        },
+        {
+          sentence: "They _____ the house last year.",
+          verb: "buy",
+          tense: "past simple",
+          answer: "bought",
+        },
+        {
+          sentence: "He is _____ a letter at the moment.",
+          verb: "write",
+          tense: "present continuous",
+          answer: "writing",
+        },
+        {
+          sentence: "We _____ the tickets by tomorrow.",
+          verb: "book",
+          tense: "future simple",
+          answer: "will book",
+        },
+        {
+          sentence: "I _____ the report before the deadline.",
+          verb: "submit",
+          tense: "past perfect",
+          answer: "had submitted",
+        },
+        {
+          sentence: "She _____ to music every evening.",
+          verb: "listen",
+          tense: "present simple",
+          answer: "listens",
+        },
+        {
+          sentence: "They _____ the cake yesterday.",
+          verb: "bake",
+          tense: "past simple",
+          answer: "baked",
+        },
+        {
+          sentence: "He is _____ a bike right now.",
+          verb: "ride",
+          tense: "present continuous",
+          answer: "riding",
+        },
+        {
+          sentence: "We _____ the party by next Friday.",
+          verb: "plan",
+          tense: "future simple",
+          answer: "will plan",
+        },
+        {
+          sentence: "I _____ the email before the meeting started.",
+          verb: "send",
+          tense: "past perfect",
+          answer: "had sent",
+        },
+        {
+          sentence: "She _____ her room every Saturday.",
+          verb: "tidy",
+          tense: "present simple",
+          answer: "tidies",
+        },
+        {
+          sentence: "They _____ the movie last weekend.",
+          verb: "watch",
+          tense: "past simple",
+          answer: "watched",
+        },
+        {
+          sentence: "He is _____ a picture right now.",
+          verb: "paint",
+          tense: "present continuous",
+          answer: "painting",
+        },
+        {
+          sentence: "We _____ the project by next month.",
+          verb: "complete",
+          tense: "future simple",
+          answer: "will complete",
+        },
+        {
+          sentence: "I _____ the dishes before the guests arrived.",
+          verb: "wash",
+          tense: "past perfect",
+          answer: "had washed",
+        },
+        {
+          sentence: "She _____ her dog every day.",
+          verb: "walk",
+          tense: "present simple",
+          answer: "walks",
+        },
+        {
+          sentence: "They _____ the house last year.",
+          verb: "buy",
+          tense: "past simple",
+          answer: "bought",
+        },
+        {
+          sentence: "He is _____ a letter at the moment.",
+          verb: "write",
+          tense: "present continuous",
+          answer: "writing",
+        },
+        {
+          sentence: "We _____ the tickets by tomorrow.",
+          verb: "book",
+          tense: "future simple",
+          answer: "will book",
+        },
+        {
+          sentence: "I _____ the report before the deadline.",
+          verb: "submit",
+          tense: "past perfect",
+          answer: "had submitted",
+        },
+        {
+          sentence: "She _____ to music every evening.",
+          verb: "listen",
+          tense: "present simple",
+          answer: "listens",
+        },
+        {
+          sentence: "They _____ the cake yesterday.",
+          verb: "bake",
+          tense: "past simple",
+          answer: "baked",
+        },
+        {
+          sentence: "He is _____ a bike right now.",
+          verb: "ride",
+          tense: "present continuous",
+          answer: "riding",
+        },
+        {
+          sentence: "We _____ the party by next Friday.",
+          verb: "plan",
+          tense: "future simple",
+          answer: "will plan",
+        },
+        {
+          sentence: "I _____ the email before the meeting started.",
+          verb: "send",
+          tense: "past perfect",
+          answer: "had sent",
+        },
+        {
+          sentence: "She _____ her room every Saturday.",
+          verb: "tidy",
+          tense: "present simple",
+          answer: "tidies",
+        },
+        {
+          sentence: "They _____ the movie last weekend.",
+          verb: "watch",
+          tense: "past simple",
+          answer: "watched",
+        },
+        {
+          sentence: "He is _____ a picture right now.",
+          verb: "paint",
+          tense: "present continuous",
+          answer: "painting",
+        },
+        {
+          sentence: "We _____ the project by next month.",
+          verb: "complete",
+          tense: "future simple",
+          answer: "will complete",
+        },
+        {
+          sentence: "I _____ the dishes before the guests arrived.",
+          verb: "wash",
+          tense: "past perfect",
+          answer: "had washed",
+        },
+        {
+          sentence: "She _____ her dog every day.",
+          verb: "walk",
+          tense: "present simple",
+          answer: "walks",
+        },
+        {
+          sentence: "They _____ the house last year.",
+          verb: "buy",
+          tense: "past simple",
+          answer: "bought",
+        },
+        {
+          sentence: "He is _____ a letter at the moment.",
+          verb: "write",
+          tense: "present continuous",
+          answer: "writing",
+        },
+        {
+          sentence: "We _____ the tickets by tomorrow.",
+          verb: "book",
+          tense: "future simple",
+          answer: "will book",
+        },
+        {
+          sentence: "I _____ the report before the deadline.",
+          verb: "submit",
+          tense: "past perfect",
+          answer: "had submitted",
+        },
+        {
+          sentence: "She _____ to music every evening.",
+          verb: "listen",
+          tense: "present simple",
+          answer: "listens",
+        },
+        {
+          sentence: "They _____ the cake yesterday.",
+          verb: "bake",
+          tense: "past simple",
+          answer: "baked",
+        },
+        {
+          sentence: "He is _____ a bike right now.",
+          verb: "ride",
+          tense: "present continuous",
+          answer: "riding",
+        },
+        {
+          sentence: "We _____ the party by next Friday.",
+          verb: "plan",
+          tense: "future simple",
+          answer: "will plan",
+        },
+        {
+          sentence: "I _____ the email before the meeting started.",
+          verb: "send",
+          tense: "past perfect",
+          answer: "had sent",
+        },
+        {
+          sentence: "She _____ her room every Saturday.",
+          verb: "tidy",
+          tense: "present simple",
+          answer: "tidies",
+        },
+        {
+          sentence: "They _____ the movie last weekend.",
+          verb: "watch",
+          tense: "past simple",
+          answer: "watched",
+        },
+        {
+          sentence: "He is _____ a picture right now.",
+          verb: "paint",
+          tense: "present continuous",
+          answer: "painting",
+        },
+        {
+          sentence: "We _____ the project by next month.",
+          verb: "complete",
+          tense: "future simple",
+          answer: "will complete",
+        },
+        {
+          sentence: "I _____ the dishes before the guests arrived.",
+          verb: "wash",
+          tense: "past perfect",
+          answer: "had washed",
+        },
+        {
+          sentence: "She _____ her dog every day.",
+          verb: "walk",
+          tense: "present simple",
+          answer: "walks",
+        },
+        {
+          sentence: "They _____ the house last year.",
+          verb: "buy",
+          tense: "past simple",
+          answer: "bought",
+        },
+        {
+          sentence: "He is _____ a letter at the moment.",
+          verb: "write",
+          tense: "present continuous",
+          answer: "writing",
+        },
+        {
+          sentence: "We _____ the tickets by tomorrow.",
+          verb: "book",
+          tense: "future simple",
+          answer: "will book",
+        },
+        {
+          sentence: "I _____ the report before the deadline.",
+          verb: "submit",
+          tense: "past perfect",
+          answer: "had submitted",
+        },
+        {
+          sentence: "She _____ to music every evening.",
+          verb: "listen",
+          tense: "present simple",
+          answer: "listens",
+        },
+        {
+          sentence: "They _____ the cake yesterday.",
+          verb: "bake",
+          tense: "past simple",
+          answer: "baked",
+        },
+        {
+          sentence: "He is _____ a bike right now.",
+          verb: "ride",
+          tense: "present continuous",
+          answer: "riding",
+        },
+        {
+          sentence: "We _____ the party by next Friday.",
+          verb: "plan",
+          tense: "future simple",
+          answer: "will plan",
+        },
+        {
+          sentence: "I _____ the email before the meeting started.",
+          verb: "send",
+          tense: "past perfect",
+          answer: "had sent",
+        },
+        {
+          sentence: "She _____ her room every Saturday.",
+          verb: "tidy",
+          tense: "present simple",
+          answer: "tidies",
+        },
+        {
+          sentence: "They _____ the movie last weekend.",
+          verb: "watch",
+          tense: "past simple",
+          answer: "watched",
+        },
+        {
+          sentence: "He is _____ a picture right now.",
+          verb: "paint",
+          tense: "present continuous",
+          answer: "painting",
+        },
+        {
+          sentence: "We _____ the project by next month.",
+          verb: "complete",
+          tense: "future simple",
+          answer: "will complete",
+        },
+        {
+          sentence: "I _____ the dishes before the guests arrived.",
+          verb: "wash",
+          tense: "past perfect",
+          answer: "had washed",
+        },
+        {
+          sentence: "She _____ her dog every day.",
+          verb: "walk",
+          tense: "present simple",
+          answer: "walks",
+        },
+        {
+          sentence: "They _____ the house last year.",
+          verb: "buy",
+          tense: "past simple",
+          answer: "bought",
+        },
+        {
+          sentence: "He is _____ a letter at the moment.",
+          verb: "write",
+          tense: "present continuous",
+          answer: "writing",
+        },
+        {
+          sentence: "We _____ the tickets by tomorrow.",
+          verb: "book",
+          tense: "future simple",
+          answer: "will book",
+        },
+        {
+          sentence: "I _____ the report before the deadline.",
+          verb: "submit",
+          tense: "past perfect",
+          answer: "had submitted",
+        },
+        {
+          sentence: "She _____ to music every evening.",
+          verb: "listen",
+          tense: "present simple",
+          answer: "listens",
+        },
+        {
+          sentence: "They _____ the cake yesterday.",
+          verb: "bake",
+          tense: "past simple",
+          answer: "baked",
+        },
+        {
+          sentence: "He is _____ a bike right now.",
+          verb: "ride",
+          tense: "present continuous",
+          answer: "riding",
+        },
+        {
+          sentence: "We _____ the party by next Friday.",
+          verb: "plan",
+          tense: "future simple",
+          answer: "will plan",
+        },
+        {
+          sentence: "I _____ the email before the meeting started.",
+          verb: "send",
+          tense: "past perfect",
+          answer: "had sent",
+        },
+      ];
+      // Initialize the game//
+      function startGame() {
+        const playerXName =
+          document.getElementById("playerX").value || "Player X";
+        const playerOName =
+          document.getElementById("playerO").value || "Player O";
+        nameX.textContent = playerXName;
+        nameO.textContent = playerOName;
+        document.getElementById("nameEntry").classList.add("hidden");
+        document.querySelector(".scoreboard").classList.remove("hidden");
+        boardDiv.classList.remove("hidden");
+        renderBoard();
+      }
+
+      function renderBoard() {
+        boardDiv.innerHTML = "";
+        board.forEach((cell, index) => {
+          const cellDiv = document.createElement("div");
+          cellDiv.classList.add("cell");
+          cellDiv.textContent = cell || "";
+          cellDiv.onclick = () => selectCell(index);
+          boardDiv.appendChild(cellDiv);
+        });
+      }
+
+      function selectCell(index) {
+        if (board[index] !== null) return;
+        selectedCell = index;
+        askQuestion();
+      }
+
+      function askQuestion() {
+        const randomIndex = Math.floor(Math.random() * questions.length);
+        const question = questions[randomIndex];
+        document.getElementById("question").textContent = question.sentence;
+        document.getElementById("verb").textContent = question.verb;
+        document.getElementById("tense").textContent = question.tense;
+        document.getElementById("answer").value = "";
+        document.getElementById("feedback").textContent = "";
+        document.querySelector(".question-box").classList.remove("hidden");
+        document.getElementById("answer").dataset.correct = question.answer;
+      }
+
+      function checkAnswer() {
+        const userAnswer = document.getElementById("answer").value.trim();
+        const correctAnswer = document.getElementById("answer").dataset.correct;
+        if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+          board[selectedCell] = currentPlayer;
+          checkWin();
+        } else {
+          document.getElementById("feedback").textContent =
+            "Incorrect! You lose your turn.";
+        }
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        renderBoard();
+        document.querySelector(".question-box").classList.add("hidden");
+      }
+
+      function checkWin() {
+        const winningCombinations = [
+          [0, 1, 2],
+          [3, 4, 5],
+          [6, 7, 8],
+          [0, 3, 6],
+          [1, 4, 7],
+          [2, 5, 8],
+          [0, 4, 8],
+          [2, 4, 6],
+        ];
+
+        for (const combination of winningCombinations) {
+          const [a, b, c] = combination;
+          if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+            document.getElementById("message").textContent = `${
+              nameX.textContent === "Player X" ? "Player X" : nameX.textContent
+            } wins this round!`;
+            roundsWon[currentPlayer]++;
+            updateScoreboard();
+            document.querySelectorAll(".cell")[a].classList.add("win");
+            document.querySelectorAll(".cell")[b].classList.add("win");
+            document.querySelectorAll(".cell")[c].classList.add("win");
+            resetBoard();
+            return;
+          }
+        }
+      }
+
+      function updateScoreboard() {
+        scoreX.textContent = roundsWon.X;
+        scoreO.textContent = roundsWon.O;
+      }
+
+      function resetBoard() {
+        board.fill(null);
+        renderBoard();
+      }
+    </script>
+  </body>
+</html>
