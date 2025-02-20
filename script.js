@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // Scroll to top functionality
 const scrollToTopButton = document.getElementById('scroll-to-top');
 
@@ -52,58 +51,3 @@ checkScroll();
 
 // Check on scroll
 window.addEventListener('scroll', checkScroll);
-=======
-// Scroll to top functionality
-const scrollToTopButton = document.getElementById('scroll-to-top');
-
-window.addEventListener('scroll', () => {
-    if (window.pageYOffset > 300) {
-        scrollToTopButton.classList.add('visible');
-    } else {
-        scrollToTopButton.classList.remove('visible');
-    }
-});
-
-scrollToTopButton.addEventListener('click', (e) => {
-    e.preventDefault();
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-});
-
-// Smooth scroll for navigation links
-document.querySelectorAll('nav a').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href');
-        const targetSection = document.querySelector(targetId);
-        
-        if (targetSection) {
-            targetSection.scrollIntoView({
-                behavior: 'smooth'
-            });
-        }
-    });
-});
-
-// Scroll animations
-const scrollAnimationElements = document.querySelectorAll('.scroll-animation');
-
-const checkScroll = () => {
-    scrollAnimationElements.forEach(element => {
-        const elementTop = element.getBoundingClientRect().top;
-        const windowHeight = window.innerHeight;
-        
-        if (elementTop < windowHeight * 0.8) {
-            element.classList.add('active');
-        }
-    });
-};
-
-// Initial check
-checkScroll();
-
-// Check on scroll
-window.addEventListener('scroll', checkScroll);
->>>>>>> c69c442 (Premier commit)
