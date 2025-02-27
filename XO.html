@@ -16,16 +16,16 @@
     <script src="script.js" defer></script>
     <style>
       :root {
-        --primary-color: #f953c763;
-        --secondary-color: #7a1ab5;
+        --primary-color: #f953c7;
+        --secondary-color: #9a1ae0;
         --text-color: #ffffff;
-        --bg-color: rgba(0, 0, 0, 0.8);
+        --bg-color: rgba(0, 0, 0, 0.6);
         --border-radius: 0px;
         --pixel-border: 4px solid var(--primary-color);
       }
 
       body {
-        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('10.gif') no-repeat center center/cover;
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('10.gif') no-repeat center center/cover;
         font-family: 'Press Start 2P', cursive;
         margin: 0;
         padding: 20px;
@@ -181,7 +181,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(0, 0, 0, 0.5);
         z-index: -1;
       }
 
@@ -600,157 +600,607 @@
 
       // Array of question objects//
       const questions = [
-        {
-          sentence: "She _____ to the gym every morning.",
-          verb: "go",
-          tense: "present simple",
-          answer: "goes",
-        },
-        {
-          sentence: "They _____ their homework yesterday.",
-          verb: "finish",
-          tense: "past simple",
-          answer: "finished",
-        },
-        {
-          sentence: "He is _____ a letter right now.",
-          verb: "write",
-          tense: "present continuous",
-          answer: "writing",
-        },
-        {
-          sentence: "We _____ to the beach next weekend.",
-          verb: "travel",
-          tense: "future simple",
-          answer: "will travel",
-        },
-        {
-          sentence: "I _____ the dishes before you arrived.",
-          verb: "wash",
-          tense: "past perfect",
-          answer: "had washed",
-        },
-        {
-          sentence: "She _____ coffee every morning.",
-          verb: "drink",
-          tense: "present simple",
-          answer: "drinks",
-        },
-        {
-          sentence: "They _____ the house last week.",
-          verb: "clean",
-          tense: "past simple",
-          answer: "cleaned",
-        },
-        {
-          sentence: "He is _____ a song at the moment.",
-          verb: "sing",
-          tense: "present continuous",
-          answer: "singing",
-        },
-        {
-          sentence: "We _____ the project by tomorrow.",
-          verb: "complete",
-          tense: "future simple",
-          answer: "will complete",
-        },
-        {
-          sentence: "I _____ the book before the movie started.",
-          verb: "read",
-          tense: "past perfect",
-          answer: "had read",
-        },
-        {
-          sentence: "She _____ her keys every day.",
-          verb: "lose",
-          tense: "present simple",
-          answer: "loses",
-        },
-        {
-          sentence: "They _____ the game last night.",
-          verb: "win",
-          tense: "past simple",
-          answer: "won",
-        },
-        {
-          sentence: "He is _____ a picture right now.",
-          verb: "draw",
-          tense: "present continuous",
-          answer: "drawing",
-        },
-        {
-          sentence: "We _____ the meeting by 5 PM.",
-          verb: "finish",
-          tense: "future simple",
-          answer: "will finish",
-        },
-        {
-          sentence: "I _____ the groceries before the guests arrived.",
-          verb: "buy",
-          tense: "past perfect",
-          answer: "had bought",
-        },
-        {
-          sentence: "She _____ her hair every weekend.",
-          verb: "wash",
-          tense: "present simple",
-          answer: "washes",
-        },
-        {
-          sentence: "They _____ the car last month.",
-          verb: "sell",
-          tense: "past simple",
-          answer: "sold",
-        },
-        {
-          sentence: "He is _____ a story at the moment.",
-          verb: "tell",
-          tense: "present continuous",
-          answer: "telling",
-        },
-        {
-          sentence: "We _____ the tickets by tomorrow.",
-          verb: "book",
-          tense: "future simple",
-          answer: "will book",
-        },
-        {
-          sentence: "I _____ the report before the deadline.",
-          verb: "submit",
-          tense: "past perfect",
-          answer: "had submitted",
-        },
-        {
-          sentence: "She _____ to music every evening.",
-          verb: "listen",
-          tense: "present simple",
-          answer: "listens",
-        },
-        {
-          sentence: "They _____ the cake yesterday.",
-          verb: "bake",
-          tense: "past simple",
-          answer: "baked",
-        },
-        {
-          sentence: "He is _____ a bike right now.",
-          verb: "ride",
-          tense: "present continuous",
-          answer: "riding",
-        },
-        {
-          sentence: "We _____ the party by next Friday.",
-          verb: "plan",
-          tense: "future simple",
-          answer: "will plan",
-        },
-        {
-          sentence: "I _____ the email before the meeting started.",
-          verb: "send",
-          tense: "past perfect",
-          answer: "had sent",
-        },
-      ];
+          // Verb: Eat (1-4)
+  {
+    sentence: "She _____ breakfast every morning.",
+    verb: "eat",
+    tense: "present simple",
+    answer: "eats",
+  },
+  {
+    sentence: "They _____ dinner last night.",
+    verb: "eat",
+    tense: "past simple",
+    answer: "ate",
+  },
+  {
+    sentence: "He is _____ lunch right now.",
+    verb: "eat",
+    tense: "present continuous",
+    answer: "eating",
+  },
+  {
+    sentence: "I _____ the snack before the movie started.",
+    verb: "eat",
+    tense: "past perfect",
+    answer: "had eaten",
+  },
+  // Verb: Run (5-8)
+  {
+    sentence: "She _____ five miles every day.",
+    verb: "run",
+    tense: "present simple",
+    answer: "runs",
+  },
+  {
+    sentence: "They _____ the marathon last year.",
+    verb: "run",
+    tense: "past simple",
+    answer: "ran",
+  },
+  {
+    sentence: "He is _____ to catch the bus right now.",
+    verb: "run",
+    tense: "present continuous",
+    answer: "running",
+  },
+  {
+    sentence: "I _____ out of energy before the race ended.",
+    verb: "run",
+    tense: "past perfect",
+    answer: "had run",
+  },
+  // Verb: Swim (9-12)
+  {
+    sentence: "She _____ laps every weekend.",
+    verb: "swim",
+    tense: "present simple",
+    answer: "swims",
+  },
+  {
+    sentence: "They _____ in the lake yesterday.",
+    verb: "swim",
+    tense: "past simple",
+    answer: "swam",
+  },
+  {
+    sentence: "He is _____ in the pool right now.",
+    verb: "swim",
+    tense: "present continuous",
+    answer: "swimming",
+  },
+  {
+    sentence: "I _____ across the bay before the storm hit.",
+    verb: "swim",
+    tense: "past perfect",
+    answer: "had swum",
+  },
+  // Verb: Speak (13-16)
+  {
+    sentence: "She _____ French fluently.",
+    verb: "speak",
+    tense: "present simple",
+    answer: "speaks",
+  },
+  {
+    sentence: "They _____ to the manager last week.",
+    verb: "speak",
+    tense: "past simple",
+    answer: "spoke",
+  },
+  {
+    sentence: "He is _____ at the conference right now.",
+    verb: "speak",
+    tense: "present continuous",
+    answer: "speaking",
+  },
+  {
+    sentence: "I _____ to her before she left.",
+    verb: "speak",
+    tense: "past perfect",
+    answer: "had spoken",
+  },
+  // Verb: Take (17-20)
+  {
+    sentence: "She _____ the bus to work every day.",
+    verb: "take",
+    tense: "present simple",
+    answer: "takes",
+  },
+  {
+    sentence: "They _____ a photo yesterday.",
+    verb: "take",
+    tense: "past simple",
+    answer: "took",
+  },
+  {
+    sentence: "He is _____ notes during the lecture.",
+    verb: "take",
+    tense: "present continuous",
+    answer: "taking",
+  },
+  {
+    sentence: "I _____ the medicine before the fever dropped.",
+    verb: "take",
+    tense: "past perfect",
+    answer: "had taken",
+  },
+  // Verb: Give (21-24)
+  {
+    sentence: "She _____ a gift to her friend every birthday.",
+    verb: "give",
+    tense: "present simple",
+    answer: "gives",
+  },
+  {
+    sentence: "They _____ a surprise party for him last weekend.",
+    verb: "give",
+    tense: "past simple",
+    answer: "gave",
+  },
+  {
+    sentence: "He is _____ a presentation right now.",
+    verb: "give",
+    tense: "present continuous",
+    answer: "giving",
+  },
+  {
+    sentence: "I _____ all my time to volunteer work before I moved.",
+    verb: "give",
+    tense: "past perfect",
+    answer: "had given",
+  },
+  // Verb: See (25-28)
+  {
+    sentence: "She _____ the sunrise every morning.",
+    verb: "see",
+    tense: "present simple",
+    answer: "sees",
+  },
+  {
+    sentence: "They _____ a shooting star last night.",
+    verb: "see",
+    tense: "past simple",
+    answer: "saw",
+  },
+  {
+    sentence: "He is _____ the doctor right now.",
+    verb: "see",
+    tense: "present continuous",
+    answer: "seeing",
+  },
+  {
+    sentence: "I _____ that movie before it became popular.",
+    verb: "see",
+    tense: "past perfect",
+    answer: "had seen",
+  },
+  // Verb: Come (29-32)
+  {
+    sentence: "She _____ to the office by bus every day.",
+    verb: "come",
+    tense: "present simple",
+    answer: "comes",
+  },
+  {
+    sentence: "They _____ to the party late last night.",
+    verb: "come",
+    tense: "past simple",
+    answer: "came",
+  },
+  {
+    sentence: "He is _____ over to our place right now.",
+    verb: "come",
+    tense: "present continuous",
+    answer: "coming",
+  },
+  {
+    sentence: "I _____ to the conclusion after much thought.",
+    verb: "come",
+    tense: "past perfect",
+    answer: "had come",
+  },
+  // Verb: Know (33-36)
+  {
+    sentence: "She _____ the answer to every question.",
+    verb: "know",
+    tense: "present simple",
+    answer: "knows",
+  },
+  {
+    sentence: "They _____ about the event yesterday.",
+    verb: "know",
+    tense: "past simple",
+    answer: "knew",
+  },
+  {
+    sentence: "He is _____ more details as the discussion progresses.",
+    verb: "know",
+    tense: "present continuous",
+    answer: "knowing",
+  },
+  {
+    sentence: "I _____ that fact before you mentioned it.",
+    verb: "know",
+    tense: "past perfect",
+    answer: "had known",
+  },
+  // Verb: Get (37-40)
+  {
+    sentence: "She _____ a new book every month.",
+    verb: "get",
+    tense: "present simple",
+    answer: "gets",
+  },
+  {
+    sentence: "They _____ lost in the city last night.",
+    verb: "get",
+    tense: "past simple",
+    answer: "got",
+  },
+  {
+    sentence: "He is _____ ready for the exam right now.",
+    verb: "get",
+    tense: "present continuous",
+    answer: "getting",
+  },
+  {
+    sentence: "I _____ the chance to meet her before the event started.",
+    verb: "get",
+    tense: "past perfect",
+    answer: "had gotten",
+  },
+  // Verb: Think (41-44)
+  {
+    sentence: "She _____ about the solution all day.",
+    verb: "think",
+    tense: "present simple",
+    answer: "thinks",
+  },
+  {
+    sentence: "They _____ the idea was brilliant.",
+    verb: "think",
+    tense: "past simple",
+    answer: "thought",
+  },
+  {
+    sentence: "He is _____ about the problem right now.",
+    verb: "think",
+    tense: "present continuous",
+    answer: "thinking",
+  },
+  {
+    sentence: "I _____ it would work out before I tried.",
+    verb: "think",
+    tense: "past perfect",
+    answer: "had thought",
+  },
+  // Verb: Find (45-48)
+  {
+    sentence: "She _____ new opportunities every day.",
+    verb: "find",
+    tense: "present simple",
+    answer: "finds",
+  },
+  {
+    sentence: "They _____ the lost keys yesterday.",
+    verb: "find",
+    tense: "past simple",
+    answer: "found",
+  },
+  {
+    sentence: "He is _____ the answer at this moment.",
+    verb: "find",
+    tense: "present continuous",
+    answer: "finding",
+  },
+  {
+    sentence: "I _____ the solution before the deadline.",
+    verb: "find",
+    tense: "past perfect",
+    answer: "had found",
+  },
+  // Verb: Say (49-52)
+  {
+    sentence: "She _____ hello to everyone.",
+    verb: "say",
+    tense: "present simple",
+    answer: "says",
+  },
+  {
+    sentence: "They _____ goodbye at the party.",
+    verb: "say",
+    tense: "past simple",
+    answer: "said",
+  },
+  {
+    sentence: "He is _____ something important right now.",
+    verb: "say",
+    tense: "present continuous",
+    answer: "saying",
+  },
+  {
+    sentence: "I _____ the truth before it was too late.",
+    verb: "say",
+    tense: "past perfect",
+    answer: "had said",
+  },
+  // Verb: Become (53-56)
+  {
+    sentence: "She _____ a doctor after many years of study.",
+    verb: "become",
+    tense: "present simple",
+    answer: "becomes",
+  },
+  {
+    sentence: "They _____ famous overnight.",
+    verb: "become",
+    tense: "past simple",
+    answer: "became",
+  },
+  {
+    sentence: "He is _____ more confident every day.",
+    verb: "become",
+    tense: "present continuous",
+    answer: "becoming",
+  },
+  {
+    sentence: "I _____ interested in art long before you did.",
+    verb: "become",
+    tense: "past perfect",
+    answer: "had become",
+  },
+  // Verb: Leave (57-60)
+  {
+    sentence: "She _____ for work at 8 AM every day.",
+    verb: "leave",
+    tense: "present simple",
+    answer: "leaves",
+  },
+  {
+    sentence: "They _____ the building early this morning.",
+    verb: "leave",
+    tense: "past simple",
+    answer: "left",
+  },
+  {
+    sentence: "He is _____ the office right now.",
+    verb: "leave",
+    tense: "present continuous",
+    answer: "leaving",
+  },
+  {
+    sentence: "I _____ the party before it got crowded.",
+    verb: "leave",
+    tense: "past perfect",
+    answer: "had left",
+  },
+  // Verb: Keep (61-64)
+  {
+    sentence: "She _____ her promises no matter what.",
+    verb: "keep",
+    tense: "present simple",
+    answer: "keeps",
+  },
+  {
+    sentence: "They _____ the secret until the right moment.",
+    verb: "keep",
+    tense: "past simple",
+    answer: "kept",
+  },
+  {
+    sentence: "He is _____ a diary to record his thoughts.",
+    verb: "keep",
+    tense: "present continuous",
+    answer: "keeping",
+  },
+  {
+    sentence: "I _____ all the documents before the meeting.",
+    verb: "keep",
+    tense: "past perfect",
+    answer: "had kept",
+  },
+  // Verb: Let (65-68)
+  {
+    sentence: "She _____ her children play outside.",
+    verb: "let",
+    tense: "present simple",
+    answer: "lets",
+  },
+  {
+    sentence: "They _____ him go to the concert last night.",
+    verb: "let",
+    tense: "past simple",
+    answer: "let",
+  },
+  {
+    sentence: "He is _____ his friend borrow his car right now.",
+    verb: "let",
+    tense: "present continuous",
+    answer: "letting",
+  },
+  {
+    sentence: "I _____ them choose their seats before the show began.",
+    verb: "let",
+    tense: "past perfect",
+    answer: "had let",
+  },
+  // Verb: Begin (69-72)
+  {
+    sentence: "She _____ her work at dawn every day.",
+    verb: "begin",
+    tense: "present simple",
+    answer: "begins",
+  },
+  {
+    sentence: "They _____ the meeting on time yesterday.",
+    verb: "begin",
+    tense: "past simple",
+    answer: "began",
+  },
+  {
+    sentence: "He is _____ a new project at the moment.",
+    verb: "begin",
+    tense: "present continuous",
+    answer: "beginning",
+  },
+  {
+    sentence: "I _____ the journey long before the rain started.",
+    verb: "begin",
+    tense: "past perfect",
+    answer: "had begun",
+  },
+  // Verb: Bring (73-76)
+  {
+    sentence: "She _____ her lunch to work daily.",
+    verb: "bring",
+    tense: "present simple",
+    answer: "brings",
+  },
+  {
+    sentence: "They _____ the snacks to the party last night.",
+    verb: "bring",
+    tense: "past simple",
+    answer: "brought",
+  },
+  {
+    sentence: "He is _____ the documents to the meeting right now.",
+    verb: "bring",
+    tense: "present continuous",
+    answer: "bringing",
+  },
+  {
+    sentence: "I _____ the gift before you mentioned the occasion.",
+    verb: "bring",
+    tense: "past perfect",
+    answer: "had brought",
+  },
+  // Verb: Hear (77-80)
+  {
+    sentence: "She _____ the news every morning.",
+    verb: "hear",
+    tense: "present simple",
+    answer: "hears",
+  },
+  {
+    sentence: "They _____ a strange sound last night.",
+    verb: "hear",
+    tense: "past simple",
+    answer: "heard",
+  },
+  {
+    sentence: "He is _____ the announcement at this moment.",
+    verb: "hear",
+    tense: "present continuous",
+    answer: "hearing",
+  },
+  {
+    sentence: "I _____ the rumor before it spread widely.",
+    verb: "hear",
+    tense: "past perfect",
+    answer: "had heard",
+  },
+  // Verb: Put (81-84)
+  {
+    sentence: "She _____ the keys on the table every day.",
+    verb: "put",
+    tense: "present simple",
+    answer: "puts",
+  },
+  {
+    sentence: "They _____ the chairs in the room yesterday.",
+    verb: "put",
+    tense: "past simple",
+    answer: "put",
+  },
+  {
+    sentence: "He is _____ the books back on the shelf right now.",
+    verb: "put",
+    tense: "present continuous",
+    answer: "putting",
+  },
+  {
+    sentence: "I _____ everything in order before the guests arrived.",
+    verb: "put",
+    tense: "past perfect",
+    answer: "had put",
+  },
+  // Verb: Meet (85-88)
+  {
+    sentence: "She _____ her colleagues at the café every week.",
+    verb: "meet",
+    tense: "present simple",
+    answer: "meets",
+  },
+  {
+    sentence: "They _____ an old friend at the reunion last month.",
+    verb: "meet",
+    tense: "past simple",
+    answer: "met",
+  },
+  {
+    sentence: "He is _____ new people at the event right now.",
+    verb: "meet",
+    tense: "present continuous",
+    answer: "meeting",
+  },
+  {
+    sentence: "I _____ him before the conference started.",
+    verb: "meet",
+    tense: "past perfect",
+    answer: "had met",
+  },
+  // Verb: Stand (89-92)
+  {
+    sentence: "She _____ by the window waiting for the bus.",
+    verb: "stand",
+    tense: "present simple",
+    answer: "stands",
+  },
+  {
+    sentence: "They _____ in line for hours yesterday.",
+    verb: "stand",
+    tense: "past simple",
+    answer: "stood",
+  },
+  {
+    sentence: "He is _____ near the door right now.",
+    verb: "stand",
+    tense: "present continuous",
+    answer: "standing",
+  },
+  {
+    sentence: "I _____ in front of the store before it closed.",
+    verb: "stand",
+    tense: "past perfect",
+    answer: "had stood",
+  },
+  // Verb: Understand (93-96)
+  {
+    sentence: "She _____ the concept quickly.",
+    verb: "understand",
+    tense: "present simple",
+    answer: "understands",
+  },
+  {
+    sentence: "They _____ the instructions clearly yesterday.",
+    verb: "understand",
+    tense: "past simple",
+    answer: "understood",
+  },
+  {
+    sentence: "He is _____ the problem as we speak.",
+    verb: "understand",
+    tense: "present continuous",
+    answer: "understanding",
+  },
+  {
+    sentence: "I _____ the idea long before it was explained.",
+    verb: "understand",
+    tense: "past perfect",
+    answer: "had understood",
+  },
+];
     </script>
   </body>
 </html>
