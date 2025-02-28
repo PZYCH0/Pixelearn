@@ -45,6 +45,33 @@
         color: var(--text-color);
       }
 
+      /* Global scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: var(--border-radius);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        border-radius: var(--border-radius);
+        border: 2px solid var(--bg-color);
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+        box-shadow: 0 0 10px var(--accent-color);
+      }
+
+      /* Firefox scrollbar */
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.3);
+      }
+
       h1 {
         color: var(--primary-color);
         text-align: center;
@@ -446,10 +473,125 @@
           font-size: 0.7em;
         }
       }
+
+      .sound-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--bg-color);
+        border: 2px solid var(--primary-color);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 1000;
+      }
+
+      .sound-toggle i {
+        color: var(--primary-color);
+        font-size: 1.2em;
+      }
+
+      .sound-toggle:hover {
+        transform: scale(1.1);
+        border-color: var(--accent-color);
+      }
+
+      .sound-toggle.muted {
+        background: rgba(255, 71, 71, 0.2);
+        border-color: #ff4747;
+      }
+
+      .sound-toggle.muted i {
+        color: #ff4747;
+      }
+
+      .review-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1100;
+      }
+
+      .review-content {
+        background: var(--bg-color);
+        padding: var(--spacing-lg);
+        border: var(--pixel-border);
+        border-radius: var(--border-radius);
+        text-align: center;
+      }
+
+      .review-header {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      #mistakesList {
+        margin-bottom: var(--spacing-lg);
+        max-height: 60vh;
+        overflow-y: auto;
+        padding-right: var(--spacing-sm);
+      }
+
+      .mistake-item {
+        background: rgba(0, 0, 0, 0.3);
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
+        border-radius: var(--border-radius);
+        text-align: left;
+      }
+
+      .mistake-item .wrong-answer {
+        color: #ff4747;
+        text-decoration: line-through;
+      }
+
+      .mistake-item .correct-answer {
+        color: #05ffa1;
+      }
+
+      /* Webkit (Chrome, Safari, newer versions of Opera) */
+      #mistakesList::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      #mistakesList::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: var(--border-radius);
+      }
+
+      #mistakesList::-webkit-scrollbar-thumb {
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        border-radius: var(--border-radius);
+        border: 2px solid var(--bg-color);
+      }
+
+      #mistakesList::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+        box-shadow: 0 0 10px var(--accent-color);
+      }
+
+      /* Firefox */
+      #mistakesList {
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.3);
+      }
     </style>
   </head>
   <body>
- 
+    <button class="sound-toggle" onclick="toggleSound()">
+      <i class="fas fa-volume-up"></i>
+    </button>
+
     <h1>Tic-Tac-Tense</h1>
     <div id="nameEntry">
       <form action="javascript:void(0)">
@@ -504,6 +646,17 @@
         <div class="firework"></div>
         <div class="firework"></div>
         <button onclick="closeWinScreen()" class="continue-btn">Continue</button>
+      </div>
+    </div>
+
+    <div id="reviewScreen" class="review-screen hidden">
+      <div class="review-content">
+        <div class="review-header">
+          <h3>Learning Review</h3>
+          <p>Let's review what we learned!</p>
+        </div>
+        <div id="mistakesList"></div>
+        <button onclick="closeReviewScreen()" class="continue-btn">Close Review</button>
       </div>
     </div>
     <p id="message"></p>
@@ -608,6 +761,12 @@
         O: { streak: 0, correct: 0, total: 0 }
       };
 
+      // Track mistakes
+      let playerMistakes = {
+        X: [],
+        O: []
+      };
+
       function updatePlayerStats(player, isCorrect) {
         const stats = playerStats[player];
         stats.total++;
@@ -646,6 +805,43 @@
         }
         
         return score;
+      }
+
+      function trackMistake(player, question, wrongAnswer, correctAnswer) {
+        playerMistakes[player].push({
+          question: question,
+          wrongAnswer: wrongAnswer,
+          correctAnswer: correctAnswer
+        });
+      }
+
+      function showMistakesReview() {
+        const reviewScreen = document.getElementById('reviewScreen');
+        const mistakesList = document.getElementById('mistakesList');
+        mistakesList.innerHTML = '';
+
+        // Combine mistakes from both players
+        const allMistakes = [...playerMistakes.X, ...playerMistakes.O];
+
+        if (allMistakes.length > 0) {
+          allMistakes.forEach(mistake => {
+            const mistakeItem = document.createElement('div');
+            mistakeItem.className = 'mistake-item';
+            mistakeItem.innerHTML = `
+              <p>Question: ${mistake.question}</p>
+              <p class="wrong-answer">Your answer: ${mistake.wrongAnswer}</p>
+              <p class="correct-answer">Correct answer: ${mistake.correctAnswer}</p>
+            `;
+            mistakesList.appendChild(mistakeItem);
+          });
+          reviewScreen.classList.remove('hidden');
+        }
+      }
+
+      function closeReviewScreen() {
+        document.getElementById('reviewScreen').classList.add('hidden');
+        // Reset mistakes for next game
+        playerMistakes = { X: [], O: [] };
       }
 
       function startTimer() {
@@ -728,6 +924,7 @@
         cleanupTimer();
         const userAnswer = document.getElementById("answer").value.trim();
         const correctAnswer = document.getElementById("answer").dataset.correct;
+        const questionText = document.getElementById("question").textContent;
         const isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
         
         if (isCorrect) {
@@ -739,6 +936,8 @@
         } else {
           playSound('incorrect');
           document.getElementById("feedback").textContent = "Incorrect! You lose your turn.";
+          // Track the mistake for review
+          trackMistake(currentPlayer, questionText, userAnswer, correctAnswer);
         }
         
         updatePlayerStats(currentPlayer, isCorrect);
@@ -807,6 +1006,42 @@
 
       function closeWinScreen() {
         document.getElementById('winScreen').classList.add('hidden');
+        // Show review screen after win screen is closed
+        setTimeout(() => {
+          showMistakesReview();
+        }, 300);
+      }
+
+      // Add sound control
+      let isSoundMuted = false;
+      
+      function toggleSound() {
+        isSoundMuted = !isSoundMuted;
+        const soundToggle = document.querySelector('.sound-toggle');
+        const icon = soundToggle.querySelector('i');
+        
+        if (isSoundMuted) {
+          icon.className = 'fas fa-volume-mute';
+          soundToggle.classList.add('muted');
+        } else {
+          icon.className = 'fas fa-volume-up';
+          soundToggle.classList.remove('muted');
+        }
+      }
+
+      function playSound(soundName) {
+        if (!isSoundMuted) {
+          if (soundName === 'correct') {
+            const audio = new Audio('sounds/correct.mp3');
+            audio.play();
+          } else if (soundName === 'incorrect') {
+            const audio = new Audio('sounds/wrong.mp3');
+            audio.play();
+          } else if (soundName === 'win') {
+            const audio = new Audio('sounds/round.mp3');
+            audio.play();
+          }
+        }
       }
 
       // Array of question objects//
