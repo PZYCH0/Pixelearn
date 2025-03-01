@@ -4,9 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>English Teacher Portfolio</title>
+    <link rel="icon"  href="14.png">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="portfolio.css">
+    <style>
+      :root {
+        --primary-color: #ff00ff;
+        --secondary-color: #800080;
+        --accent-color: #00ffff;
+        --text-color: #ffffff;
+        --bg-color: #1a1a1a;
+        --border-radius: 8px;
+        --spacing-sm: 8px;
+        --spacing-md: 16px;
+        --spacing-lg: 24px;
+      }
+
+      /* Global scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: var(--border-radius);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        border-radius: var(--border-radius);
+        border: 2px solid var(--bg-color);
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+        box-shadow: 0 0 10px var(--accent-color);
+      }
+
+      /* Firefox scrollbar */
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.3);
+      }
+    </style>
     <script src="script.js" defer></script>
 </head>
 <body>
