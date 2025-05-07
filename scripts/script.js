@@ -36,15 +36,27 @@ scrollToTopButton.addEventListener('click', (e) => {
 // Smooth scroll for navigation links
 document.querySelectorAll('nav a').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href');
-        const targetSection = document.querySelector(targetId);
-        
-        if (targetSection) {
-            targetSection.scrollIntoView({
-                behavior: 'smooth'
-            });
+        const href = this.getAttribute('href');
+
+        // Check if the link is to a section on the current page (starts with #)
+        // Or if it contains the current page's filename followed by a hash
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const isCurrentPageSection = href.startsWith('#') || href.includes(currentPage + '#');
+
+        if (isCurrentPageSection) {
+            e.preventDefault();
+
+            // Extract the section ID
+            const sectionId = href.includes('#') ? '#' + href.split('#')[1] : href;
+            const targetSection = document.querySelector(sectionId);
+
+            if (targetSection) {
+                targetSection.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
         }
+        // If it's a link to another page with a section, let the default behavior happen
     });
 });
 
