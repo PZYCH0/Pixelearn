@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>The Four Types of Texts - Pixelearn</title>
+        <link rel="icon" href="../assets/15.png">
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link rel="stylesheet" href="../styles/portfolio.css">
+        <link rel="stylesheet" href="styles/video-styles.css">
+        <style>
+          :root {
+            --primary-color: #ff00ff;
+            --secondary-color: #800080;
+            --accent-color: #00ffff;
+            --text-color: #ffffff;
+            --bg-color: #1a1a1a;
+            --border-radius: 8px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+          }
+    
+          /* Global scrollbar styling */
+          ::-webkit-scrollbar {
+            width: 12px;
+          }
+    
+          ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+          }
+    
+          ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border-radius: var(--border-radius);
+            border: 2px solid var(--bg-color);
+          }
+    
+          ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+            box-shadow: 0 0 10px var(--accent-color);
+          }
+    
+          /* Firefox scrollbar */
+          * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.3);
+          }
+
+          .article-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(249, 83, 198, 0.2);
+          }
+
+          .table-of-contents {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary-color);
+          }
+
+          .table-of-contents h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+          }
+
+          .table-of-contents ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+          }
+
+          .table-of-contents li {
+            margin-bottom: 0.5rem;
+          }
+
+          .table-of-contents a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s;
+          }
+
+          .table-of-contents a:hover {
+            color: var(--accent-color);
+          }
+
+          .table-of-contents a::before {
+            content: "→";
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+          }
+
+          .back-to-articles-bottom {
+            display: inline-block;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--border-radius);
+            color: var(--text-color);
+            text-decoration: none;
+            margin: 2rem 0.5rem;
+            transition: all 0.3s;
+            border: 1px solid var(--primary-color);
+            font-size: 0.9rem;
+          }
+
+          .back-to-articles-bottom:hover {
+            background: rgba(0, 0, 0, 0.5);
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+          }
+
+          .bottom-buttons-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+          }
+
+          .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            z-index: 1000;
+            transition: width 0.1s;
+          }
+
+          .share-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            justify-content: center;
+            align-items: center;
+          }
+
+          .share-button, .print-button, .back-to-articles-bottom {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.4rem;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--border-radius);
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            border: 1px solid var(--primary-color);
+            cursor: pointer;
+          }
+
+          .share-button:hover, .print-button:hover, .back-to-articles-bottom:hover {
+            background: rgba(0, 0, 0, 0.5);
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+          }
+
+          .share-button i, .print-button i, .back-to-articles-bottom i {
+            font-size: 1rem;
+            margin: 0;
+          }
+
+          .section-icon {
+            margin-right: 0.5rem;
+            color: var(--accent-color);
+          }
+
+          .article-container h1 {
+            color: var(--accent-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            text-shadow: 0 0 10px var(--accent-color);
+          }
+
+          .article-container h2 {
+            color: var(--primary-color);
+            margin-top: 1.5rem;
+            font-size: 1.5rem;
+          }
+
+          .article-container p {
+            color: var(--text-color);
+            line-height: 1.4;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+          }
+
+          .article-container ul {
+            color: var(--text-color);
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+          }
+
+          .article-container li {
+            margin-bottom: 0.3rem;
+          }
+
+          .tip {
+            background: rgba(0, 255, 255, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 0.8rem;
+            margin: 1.5rem 0;
+            border-radius: var(--border-radius);
+          }
+
+          .tip strong {
+            color: var(--accent-color);
+          }
+
+          @media (max-width: 768px) {
+            .article-container {
+              padding: 1rem;
+            }
+
+            .article-container h1 {
+              font-size: 1.8rem;
+            }
+
+            .article-container h2 {
+              font-size: 1.3rem;
+            }
+          }
+
+          @media print {
+            body {
+              background: var(--bg-color) !important;
+              margin: 0 !important;
+              padding: 0 !important;
+            }
+
+            .article-container {
+              background: rgba(0, 0, 0, 0.5) !important;
+              box-shadow: 0 0 20px rgba(249, 83, 198, 0.2) !important;
+              max-width: 100% !important;
+              padding: 0.5cm !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              margin: 0 !important;
+            }
+
+            .article-container h1 {
+              color: var(--accent-color) !important;
+              text-shadow: 0 0 10px var(--accent-color) !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              font-size: 1.8rem !important;
+              margin: 0.5rem 0 !important;
+              padding: 0 !important;
+            }
+
+            .article-container h2 {
+              color: var(--primary-color) !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              font-size: 1.3rem !important;
+              margin: 0.3rem 0 !important;
+              padding: 0 !important;
+            }
+
+            .article-container p {
+              color: var(--text-color) !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              margin: 0.2rem 0 !important;
+              padding: 0 !important;
+              font-size: 0.9rem !important;
+              line-height: 1.2 !important;
+            }
+
+            .article-container ul {
+              margin: 0.2rem 0 !important;
+              padding: 0 !important;
+            }
+
+            .article-container li {
+              margin: 0.1rem 0 !important;
+              padding: 0 !important;
+              font-size: 0.9rem !important;
+            }
+
+            .table-of-contents, .bottom-buttons-container, .navbar, 
+            .pixel-cloud, #background-video, .scroll-to-top, 
+            footer, #contact {
+              display: none !important;
+            }
+
+            .tip {
+              background: rgba(0, 255, 255, 0.1) !important;
+              border-left: 4px solid var(--accent-color) !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              margin: 0.3rem 0 !important;
+              padding: 0.3rem !important;
+            }
+
+            .tip strong {
+              color: var(--accent-color) !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+
+            @page {
+              margin: 0.5cm !important;
+              size: A4 !important;
+            }
+
+            /* Game-like elements */
+            .article-container::before {
+              content: "PIXELEARN QUEST" !important;
+              display: block !important;
+              text-align: center !important;
+              color: var(--accent-color) !important;
+              font-family: 'Press Start 2P', cursive !important;                                                                          
+              font-size: 1rem !important;
+              margin-bottom: 0.5rem !important;
+              border-bottom: 2px solid var(--primary-color) !important;
+              padding-bottom: 0.3rem !important;
+            }
+
+            .section-icon {
+              display: inline-block !important;
+              margin-right: 0.3rem !important;
+            }
+
+            /* Compact layout for lists */
+            ul {
+              columns: 2 !important;
+              column-gap: 1rem !important;
+            }
+
+            /* Add pixel art border */
+            .article-container {
+              border: 4px solid var(--primary-color) !important;
+              border-image: repeating-linear-gradient(45deg, var(--primary-color), var(--primary-color) 10px, var(--accent-color) 10px, var(--accent-color) 20px) 4 !important;
+            }
+          }
+        </style>
+        <script defer="" src="../scripts/script.js"></script>
+        <script defer="" src="../scripts/scroll.js"></script>
+        <script>
+            // Reading progress indicator
+            window.addEventListener('scroll', function() {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                document.querySelector('.reading-progress').style.width = scrolled + '%';
+            });
+
+            // Smooth scroll for table of contents
+            document.querySelectorAll('.table-of-contents a').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <video autoplay="" id="background-video" loop="" muted="">
+            <source src="../assets/9.mp4" type="video/mp4"/>
+            Your browser does not support the video tag.
+        </video>
+        <div class="pixel-cloud"></div>
+        <div class="container">
+            <div class="navbar">
+                <a class="logo" href="../index.html">Pixelearn</a>
+                <nav>
+                    <a class="btn ripple" href="../index.html#games">Learning Games</a>
+                    <a class="btn ripple" href="../index.html#lessons">Interactive Lessons</a>
+                    <a class="btn ripple" href="../index.html#articles">Articles</a>
+                    <a class="btn ripple" href="../index.html#contact">Contact</a>
+                    <a class="btn ripple" href="../index.html#about">About Me</a>
+                </nav>
+            </div>
+            <div class="reading-progress"></div>
+            <div class="article-container glass-card slide-up">
+                <h1>Presentation: The Four Types of Texts<br/><small>By Zakaria Ghazali</small></h1>
+                <div class="table-of-contents">
+                    <h3>Table of Contents</h3>
+                    <ul>
+                        <li><a href="#intro">Introduction</a></li>
+                        <li><a href="#narrative">1. Narrative Texts</a></li>
+                        <li><a href="#expository">2. Expository Texts</a></li>
+                        <li><a href="#persuasive">3. Persuasive Texts</a></li>
+                        <li><a href="#descriptive">4. Descriptive Texts</a></li>
+                        <li><a href="#procedural">5. Procedural Texts</a></li>
+                        <li><a href="#technical">6. Technical Texts</a></li>
+                        <li><a href="#implications">Educational Implications</a></li>
+                        <li><a href="#conclusion">Conclusion</a></li>
+                    </ul>
+                </div>
+                <h2 id="intro">📘 Introduction</h2>
+                <p>Understanding text types is fundamental in both teaching and learning, as it enables educators to design effective lessons and helps students navigate various forms of writing. Texts serve different purposes, from storytelling and persuasion to providing instructions and conveying technical information. This article explores common text types used in education, analyzing their characteristics, purposes, and implications for learning.</p>
+                <h2 id="narrative">1. 🧚 Narrative Texts</h2>
+                <p><strong>Definition:</strong> Narrative texts are constructed to tell a story, either real or imagined, and follow a structured sequence of events.</p>
+                <ul>
+                    <li><strong>Plot Structure:</strong> Clear progression—beginning, climax, and resolution.</li>
+                    <li><strong>Character Development:</strong> Features protagonists, antagonists, and evolving characters.</li>
+                    <li><strong>Setting:</strong> Provides context in time and space.</li>
+                </ul>
+                <p><strong>Purpose:</strong> To engage, entertain, and convey moral or cultural messages.</p>
+                <p><strong>Examples:</strong> Novels, folktales, myths, and biographies.</p>
+                <h2 id="expository">2. 📖 Expository Texts</h2>
+                <p><strong>Definition:</strong> These texts explain, describe, or inform using structured, factual content.</p>
+                <ul>
+                    <li><strong>Logical Organization:</strong> Often uses headings, bullet points, or charts.</li>
+                    <li><strong>Objective Tone:</strong> Prioritizes clarity and neutrality.</li>
+                    <li><strong>Use of Evidence:</strong> Includes data, examples, and references.</li>
+                </ul>
+                <p><strong>Purpose:</strong> To educate and develop comprehension skills.</p>
+                <p><strong>Examples:</strong> Textbooks, articles, research papers.</p>
+                <h2 id="persuasive">3. 🗣️ Persuasive Texts</h2>
+                <p><strong>Definition:</strong> Persuasive texts aim to influence opinions or encourage actions.</p>
+                <ul>
+                    <li><strong>Thesis Statement:</strong> Clearly expresses a position.</li>
+                    <li><strong>Rhetorical Appeals:</strong> Employs ethos, pathos, and logos.</li>
+                    <li><strong>Counterarguments:</strong> Acknowledges and refutes opposing views.</li>
+                </ul>
+                <p><strong>Purpose:</strong> To advocate for a viewpoint or inspire change.</p>
+                <p><strong>Examples:</strong> Editorials, opinion essays, campaign speeches.</p>
+                <h2 id="descriptive">4. 🎨 Descriptive Texts</h2>
+                <p><strong>Definition:</strong> Descriptive writing aims to paint vivid pictures using rich sensory language.</p>
+                <ul>
+                    <li><strong>Sensory Details:</strong> Touches all five senses.</li>
+                    <li><strong>Figurative Language:</strong> Uses metaphors, similes, and imagery.</li>
+                </ul>
+                <p><strong>Purpose:</strong> To evoke emotions and provide immersive experiences.</p>
+                <p><strong>Examples:</strong> Poetry, nature writing, travel diaries.</p>
+                <h2 id="procedural">5. 🛠️ Procedural Texts</h2>
+                <p><strong>Definition:</strong> Procedural writing provides instructions on how to complete a task.</p>
+                <ul>
+                    <li><strong>Step-by-Step Format:</strong> Ordered logically and sequentially.</li>
+                    <li><strong>Imperative Language:</strong> Direct commands like "mix," "press," or "assemble."</li>
+                </ul>
+                <p><strong>Purpose:</strong> To guide actions effectively.</p>
+                <p><strong>Examples:</strong> Recipes, manuals, how-to guides.</p>
+                <h2 id="technical">6. 🔬 Technical Texts</h2>
+                <p><strong>Definition:</strong> These convey specialized knowledge for academic or professional fields.</p>
+                <ul>
+                    <li><strong>Field-Specific Language:</strong> Rich in jargon and technical terms.</li>
+                    <li><strong>Visual Aids:</strong> Charts, diagrams, and data tables.</li>
+                </ul>
+                <p><strong>Purpose:</strong> To communicate with precision in scientific or technical contexts.</p>
+                <p><strong>Examples:</strong> Scientific reports, engineering specs, legal texts.</p>
+                <h2 id="implications">🎓 Educational Implications</h2>
+                <p>Each text type supports different learning goals. Narratives promote imagination, exposition enhances analytical thinking, and persuasive texts develop argumentation skills. Integrating various types ensures students become versatile readers and writers across subjects and disciplines.</p>
+                <h2 id="conclusion">✅ Conclusion</h2>
+                <p>Recognizing the unique features and goals of each text type empowers teachers to scaffold instruction effectively and helps learners tackle diverse genres with confidence. It's not just about reading and writing—it's about unlocking the power of communication across all areas of learning.</p>
+                
+                <div class="bottom-buttons-container">
+                    <a href="javascript:void(0)" class="share-button" onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(document.title + ' ' + window.location.href))" title="Share on Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="javascript:void(0)" class="share-button" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=' + encodeURIComponent(window.location.href))" title="Share on LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <button class="print-button" onclick="window.print()" title="Print Article">
+                        <i class="fas fa-print"></i>
+                    </button>
+                    <a href="../index.html#articles" class="back-to-articles-bottom" title="Back to Articles">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                </div>
+            </div>
+            <section class="glass-card fade-in" id="contact">
+                <h2>Contact Me</h2>
+                <div class="contact-info">
+                    <span class="contact-item"><a class="social-btn" href="mailto:zakariaghazali135@gmail.com"><img alt="Gmail" src="../assets/Gmail.png"/></a> zakariaghazali135@gmail.com</span>
+                    <span class="contact-item"><a class="social-btn" href="#"><img alt="WhatsApp" src="../assets/Whatsapp.png"/></a> +212 639 241 651</span>
+                    <p>Feel free to reach out to me anytime.</p>
+                </div>
+                <div class="social-links">
+                    <a class="social-btn" href="https://www.linkedin.com/in/ghazali1/" target="_blank"><img alt="LinkedIn" src="../assets/LinkedIn.png"/></a>
+                    <a class="social-btn" href="https://www.youtube.com/channel/your-channel-id" target="_blank"><img alt="YouTube Channel" src="../assets/Youtube.png"/></a>
+                </div>
+            </section>
+        </div>
+        <a class="scroll-to-top" href="#" id="scroll-to-top">
+            <img alt="Back to top" height="50" src="../assets/uparrow.png" width="50"/>
+        </a>
+        <footer>
+            <p>© 2024 English Teacher Portfolio. All rights reserved.</p>
+        </footer>
+    </body>
+</html> 

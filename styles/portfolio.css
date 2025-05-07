@@ -1,0 +1,1729 @@
+/* ==========================================
+   COLOR VARIABLES & THEME SETTINGS
+   These are the main colors and measurements used throughout the website.
+   Changing these values will affect the entire site's appearance.
+   ========================================== */
+:root {
+  --primary: #4a00e0;        /* Main purple color */
+  --secondary: #8e2de2;      /* Secondary purple shade */
+  --accent: #f953c6;         /* Pink accent color for highlights */
+  --dark: #1a1a2e;           /* Dark background color */
+  --light: #ffffff;          /* Light text color */
+  --glass: rgba(255, 255, 255, 0);  /* Transparent glass effect */
+  --glass-dark: rgba(0, 0, 0, 0.3);  /* Semi-transparent dark background */
+  --border-radius: 15px;     /* Rounded corners for elements */
+  --pixel-size: 2px;         /* Size for pixel effects */
+}
+
+/* ==========================================
+   BASE STYLING & PIXELATED EFFECT
+   This section applies the pixelated retro game look to all elements
+   and prevents unwanted interactions like text selection.
+   ========================================== */
+* {
+  -webkit-user-select: none;  /* Chrome/Safari - Prevents text selection */
+     -moz-user-select: none;  /* Firefox */
+      -ms-user-select: none;  /* IE10+/Edge */
+          user-select: none;  /* Standard syntax */
+  -webkit-touch-callout: none; /* Disable long press callout on iOS */
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* Remove tap highlight color on mobile */
+  image-rendering: pixelated;       /* Creates crisp pixel edges for images */
+  image-rendering: crisp-edges;
+  font-family: 'Press Start 2P', cursive;  /* Retro gaming font */
+  letter-spacing: 1px;
+}
+
+/* Prevent dragging for images and other interactive elements */
+img, a, button, input, textarea {
+  -webkit-user-drag: none;
+  user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  drag: none;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Reset default margins and paddings */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ==========================================
+   BODY & BACKGROUND STYLING
+   This creates the animated starry background with pixel grid and mountains.
+   The complex background has multiple layers for a retro game aesthetic.
+   ========================================== */
+body {
+  font-family: "Press Start 2P", cursive;
+  background-color: #1a1a2e;
+  background-image: 
+    /* Pixel Grid - creates a subtle grid pattern */ 
+    linear-gradient(
+      to right,
+      rgba(74, 0, 224, 0.1) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(74, 0, 224, 0.1) 1px, transparent 1px),
+    
+    /* Stars - small dots scattered across the background */
+    radial-gradient(
+      circle at 10% 20%,
+      rgba(255, 255, 255, 0.3) 1px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 80% 40%,
+      rgba(255, 255, 255, 0.3) 1px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 30% 70%,
+      rgba(255, 255, 255, 0.3) 1px,
+      transparent 2px
+    ),
+    
+    /* Mountains - triangle shapes at the bottom of the page */
+    linear-gradient(225deg, transparent 50%, #2a2a4e 50%),
+    linear-gradient(135deg, #1a1a2e 50%, transparent 50%);
+    
+  /* Size settings for all background elements */
+  background-size: 20px 20px, 20px 20px, 100px 100px, 120px 120px, 80px 80px,
+    100% 50%, 100% 50%;
+  background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 100%, 0 100%;
+  background-repeat: repeat;
+  color: var(--light);
+  line-height: 1.6;
+  overflow-x: hidden;
+  position: relative;
+  user-select: none;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Background video element */
+#background-video {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  z-index: -1000;  /* Places video behind all content */
+  background-size: cover;
+  overflow: hidden;
+  opacity: 0.5;    /* Makes video semi-transparent */
+}
+
+/* ==========================================
+   ANIMATED BACKGROUND EFFECTS
+   These pseudo-elements add color gradients that slowly animate
+   to create a dynamic, flowing background effect.
+   ========================================== */
+/* First gradient layer */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, var(--primary), var(--secondary));
+  opacity: 0.1;
+  z-index: -2;
+}
+
+/* Second animated gradient layer */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+      circle at 20% 20%,
+      var(--accent) 0%,
+      transparent 50%
+    ),
+    radial-gradient(circle at 80% 80%, var(--primary) 0%, transparent 50%);
+  opacity: 0.1;
+  z-index: -1;
+  animation: backgroundFlow 20s ease-in-out infinite alternate;
+}
+
+/* Animation for the flowing background effect */
+@keyframes backgroundFlow {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(5deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* ==========================================
+   MAIN CONTAINER
+   Centers the main content and sets maximum width
+   ========================================== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+}
+
+/* ==========================================
+   NAVIGATION BUTTONS
+   These are the left and right arrow buttons that appear in 
+   scrollable sections like games, lessons, and articles.
+   They have a pixelated border created using box-shadow.
+   ========================================== */
+#games .nav-button,
+#lessons .nav-button,
+#articles .nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);  /* Centers button vertically */
+    background: rgba(74, 0, 224, 0.2);
+    border: 4px solid var(--accent);
+    border-radius: 0;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10;  /* Makes buttons appear above content */
+    box-shadow: 0 0 10px rgba(249, 83, 198, 0.3);
+    backdrop-filter: blur(5px);
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    
+    /* Create pixelated border using box-shadow - each shadow creates a single pixel */
+    box-shadow: 
+        /* Top border - each line adds a "pixel" to create a pixelated border */
+        0 -4px 0 var(--accent),
+        4px -4px 0 var(--accent),
+        8px -4px 0 var(--accent),
+        12px -4px 0 var(--accent),
+        16px -4px 0 var(--accent),
+        20px -4px 0 var(--accent),
+        24px -4px 0 var(--accent),
+        28px -4px 0 var(--accent),
+        32px -4px 0 var(--accent),
+        36px -4px 0 var(--accent),
+        40px -4px 0 var(--accent),
+        44px -4px 0 var(--accent),
+        /* Right border */
+        48px 0 0 var(--accent),
+        48px 4px 0 var(--accent),
+        48px 8px 0 var(--accent),
+        48px 12px 0 var(--accent),
+        48px 16px 0 var(--accent),
+        48px 20px 0 var(--accent),
+        48px 24px 0 var(--accent),
+        48px 28px 0 var(--accent),
+        48px 32px 0 var(--accent),
+        48px 36px 0 var(--accent),
+        48px 40px 0 var(--accent),
+        48px 44px 0 var(--accent),
+        48px 48px 0 var(--accent),
+        /* Bottom border */
+        44px 48px 0 var(--accent),
+        40px 48px 0 var(--accent),
+        36px 48px 0 var(--accent),
+        32px 48px 0 var(--accent),
+        28px 48px 0 var(--accent),
+        24px 48px 0 var(--accent),
+        20px 48px 0 var(--accent),
+        16px 48px 0 var(--accent),
+        12px 48px 0 var(--accent),
+        8px 48px 0 var(--accent),
+        4px 48px 0 var(--accent),
+        0 48px 0 var(--accent),
+        /* Left border */
+        0 44px 0 var(--accent),
+        0 40px 0 var(--accent),
+        0 36px 0 var(--accent),
+        0 32px 0 var(--accent),
+        0 28px 0 var(--accent),
+        0 24px 0 var(--accent),
+        0 20px 0 var(--accent),
+        0 16px 0 var(--accent),
+        0 12px 0 var(--accent),
+        0 8px 0 var(--accent),
+        0 4px 0 var(--accent);
+}
+
+/* Hover effect for navigation buttons */
+#games .nav-button:hover,
+#lessons .nav-button:hover,
+#articles .nav-button:hover {
+    background: linear-gradient(45deg, var(--primary), var(--accent));
+    transform: translateY(-50%) scale(1.1);  /* Grows slightly larger */
+    box-shadow: 
+        /* Same pixelated border pattern but with light color for contrast */
+        /* Top border */
+        0 -4px 0 var(--light),
+        4px -4px 0 var(--light),
+        8px -4px 0 var(--light),
+        12px -4px 0 var(--light),
+        16px -4px 0 var(--light),
+        20px -4px 0 var(--light),
+        24px -4px 0 var(--light),
+        28px -4px 0 var(--light),
+        32px -4px 0 var(--light),
+        36px -4px 0 var(--light),
+        40px -4px 0 var(--light),
+        44px -4px 0 var(--light),
+        48px -4px 0 var(--light),
+        /* Right border */
+        48px 0 0 var(--light),
+        48px 4px 0 var(--light),
+        48px 8px 0 var(--light),
+        48px 12px 0 var(--light),
+        48px 16px 0 var(--light),
+        48px 20px 0 var(--light),
+        48px 24px 0 var(--light),
+        48px 28px 0 var(--light),
+        48px 32px 0 var(--light),
+        48px 36px 0 var(--light),
+        48px 40px 0 var(--light),
+        48px 44px 0 var(--light),
+        48px 48px 0 var(--light),
+        /* Bottom border */
+        44px 48px 0 var(--light),
+        40px 48px 0 var(--light),
+        36px 48px 0 var(--light),
+        32px 48px 0 var(--light),
+        28px 48px 0 var(--light),
+        24px 48px 0 var(--light),
+        20px 48px 0 var(--light),
+        16px 48px 0 var(--light),
+        12px 48px 0 var(--light),
+        8px 48px 0 var(--light),
+        4px 48px 0 var(--light),
+        0 48px 0 var(--light),
+        /* Left border */
+        0 44px 0 var(--light),
+        0 40px 0 var(--light),
+        0 36px 0 var(--light),
+        0 32px 0 var(--light),
+        0 28px 0 var(--light),
+        0 24px 0 var(--light),
+        0 20px 0 var(--light),
+        0 16px 0 var(--light),
+        0 12px 0 var(--light),
+        0 8px 0 var(--light),
+        0 4px 0 var(--light),
+        0 0 20px rgba(249, 83, 198, 0.5);
+}
+
+/* Position the previous (left) navigation button */
+#games .nav-button.prev,
+#lessons .nav-button.prev,
+#articles .nav-button.prev {
+    left: 20px;
+}
+
+/* Position the next (right) navigation button */
+#games .nav-button.next,
+#lessons .nav-button.next,
+#articles .nav-button.next {
+    right: 20px;
+}
+
+/* Hide navigation buttons in sections that don't need them */
+#contact .nav-button,
+#about .nav-button {
+    display: none;
+}
+
+/* Styling for the arrow icon inside navigation buttons */
+.nav-button i {
+    color: var(--light);
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+    text-shadow: 2px 2px 0 var(--accent);
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    /* Add pixelated effect to the icon */
+    filter: contrast(1.5) brightness(1.2);
+}
+
+/* Hover effect for the arrow icon */
+.nav-button:hover i {
+    transform: scale(1.2);  /* Makes icon slightly larger */
+    text-shadow: 3px 3px 0 var(--accent);
+    filter: contrast(1.8) brightness(1.4);
+}
+
+/* Adds a pulsing animation to all navigation buttons */
+.nav-button {
+    animation: buttonPulse 2s infinite;
+}
+
+/* Animation that creates a pulsing effect for buttons */
+@keyframes buttonPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(249, 83, 198, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(249, 83, 198, 0.2);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(249, 83, 198, 0.4);
+    }
+}
+
+/* Active state when button is being clicked */
+.nav-button:active {
+    transform: translateY(-50%) scale(0.95);  /* Slightly shrinks the button */
+    background: var(--accent);
+}
+
+/* ==========================================
+   SCROLL INDICATORS
+   These are visual indicators that show the current scroll position
+   within a scrollable section.
+   ========================================== */
+/* Container for scroll indicator dots */
+.scroll-indicator {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);  /* Centers horizontally */
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+/* Individual scroll indicator dot */
+.scroll-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 0;
+    background: rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    /* Creates a pixelated square shape */
+    clip-path: polygon(
+        0% 0%,     /* top left */
+        50% 0%,    /* top middle */
+        100% 0%,   /* top right */
+        100% 50%,  /* right middle */
+        100% 100%, /* bottom right */
+        50% 100%,  /* bottom middle */
+        0% 100%,   /* bottom left */
+        0% 50%     /* left middle */
+    );
+}
+
+/* Active state for the current scroll position dot */
+.scroll-dot.active {
+    background: var(--accent);
+    transform: scale(1.2);  /* Makes the active dot slightly larger */
+    box-shadow: 0 0 10px rgba(249, 83, 198, 0.5);
+    /* Creates a more detailed pixelated shape for the active dot */
+    clip-path: polygon(
+        0% 0%,     /* top left */
+        25% 0%,    /* top left quarter */
+        50% 0%,    /* top middle */
+        75% 0%,    /* top right quarter */
+        100% 0%,   /* top right */
+        100% 25%,  /* right top quarter */
+        100% 50%,  /* right middle */
+        100% 75%,  /* right bottom quarter */
+        100% 100%, /* bottom right */
+        75% 100%,  /* bottom right quarter */
+        50% 100%,  /* bottom middle */
+        25% 100%,  /* bottom left quarter */
+        0% 100%,   /* bottom left */
+        0% 75%,    /* left bottom quarter */
+        0% 50%,    /* left middle */
+        0% 25%     /* left top quarter */
+    );
+}
+
+/* Horizontal scroll progress bar */
+.scroll-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+    z-index: 10;
+    /* Simple pixelated rectangle shape */
+    clip-path: polygon(
+        0% 0%,     /* top left */
+        100% 0%,   /* top right */
+        100% 100%, /* bottom right */
+        0% 100%    /* bottom left */
+    );
+}
+
+/* ==========================================
+   SCROLLABLE CONTAINERS
+   These settings apply to the horizontally scrollable sections
+   that contain cards (games, lessons, articles).
+   ========================================== */
+/* Make containers scrollable horizontally with smooth behavior */
+.games-grid,
+.lessons-grid,
+.articles-grid,
+.contact-info {
+    overflow-x: auto;
+    padding: 0 60px;
+    scroll-behavior: smooth;  /* Makes scrolling smooth when using navigation */
+    -ms-overflow-style: none;  /* Hides scrollbar in IE/Edge */
+    scrollbar-width: none;     /* Hides scrollbar in Firefox */
+    scroll-snap-type: x mandatory;  /* Makes scrolling snap to card boundaries */
+}
+
+/* Hide scrollbar in Chrome, Safari, and newer browsers */
+.games-grid::-webkit-scrollbar,
+.lessons-grid::-webkit-scrollbar,
+.articles-grid::-webkit-scrollbar,
+.contact-info::-webkit-scrollbar {
+    display: none;
+}
+
+/* Makes cards snap to grid when scrolling */
+.game-card,
+.lesson-card,
+.article-card {
+    scroll-snap-align: start;
+}
+
+/* Scroll progress indicator bar at bottom of scrollable containers */
+.scroll-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+    z-index: 10;
+}
+
+/* ==========================================
+   HEADER STYLES
+   Styling for the main page header with title and introduction.
+   ========================================== */
+header {
+  background: var(--glass);
+  border: 1px solid var(--glass);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+header h1 {
+  font-size: 2.5em;
+  color: var(--light);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 1rem;
+}
+
+/* ==========================================
+   NAVIGATION BAR
+   The fixed navigation bar at the top of the page.
+   ========================================== */
+.navbar {
+  position: fixed;  /* Stays at the top of the screen when scrolling */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;    /* Ensures navbar appears above other content */
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(10px);  /* Creates frosted glass effect */
+  padding: 0.3rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+  transform: translateY(0);
+  height: 40px;
+  font-size: 0.8em;
+}
+
+/* Hidden state for navbar (used when scrolling down) */
+.navbar.hide {
+  transform: translateY(-100%);  /* Slides navbar up out of view */
+}
+
+/* Logo styling */
+.navbar .logo {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1.5rem;
+  color: #ff00ff;  /* Bright pink color */
+  text-shadow: 2px 2px 6px rgba(255, 0, 255, 0.6);
+  letter-spacing: 2px;
+  margin-right: 2rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Logo hover effect */
+.logo:hover {
+  color: #ff00ff;
+  text-decoration: none;
+  transform: translateY(-2px);  /* Slight upward movement */
+  transition: transform 0.3s ease;
+}
+
+/* Navigation links container */
+.navbar nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+/* Individual navigation links */
+.navbar nav a {
+  color: var(--light);
+  text-decoration: none;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--border-radius);
+  transition: all 0.3s ease;
+  font-size: 0.8em;
+  text-transform: uppercase;  /* Makes text ALL CAPS */
+  letter-spacing: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 80px;
+  text-align: center;
+}
+
+/* Hover effect for navigation links */
+.navbar nav a:hover {
+  background: var(--accent);
+  color: var(--dark);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* General navigation links (used elsewhere) */
+nav a {
+  color: var(--light);
+  text-decoration: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--border-radius);
+  transition: all 0.3s ease;
+  background: var(--glass);
+  border: 1px solid var(--glass);
+}
+
+/* Hover effect for general navigation links */
+nav a:hover {
+  background: var(--accent);
+  transform: translateY(-3px);  /* Slightly more lift than navbar links */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* ==========================================
+   SECTION CONTAINERS
+   General styling for all main content sections
+   ========================================== */
+section {
+  background: var(--glass);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--glass);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  animation: revealSection 0.8s ease forwards;  /* Animation when section appears */
+}
+
+/* ==========================================
+   GAMES SECTION
+   Styling for the section containing game cards
+   ========================================== */
+#games {
+  height: 90vh;  /* Takes up 90% of the viewport height */
+  overflow-y: auto;  /* Allows vertical scrolling if content is too tall */
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Container for game cards */
+.games-grid {
+  display: flex;
+  overflow-x: auto;  /* Allows horizontal scrolling */
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  gap: 20px;  /* Space between cards */
+  padding: 20px 0;
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Hides scrollbar in WebKit browsers (Chrome, Safari) */
+.games-grid::-webkit-scrollbar {
+  display: none;
+}
+
+/* ==========================================
+   GAME CARDS
+   Individual game cards within the games section
+   ========================================== */
+.game-card {
+  background: var(--glass-dark);  /* Semi-transparent dark background */
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid var(--glass);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--spacing-md);
+  gap: var(--spacing-sm);
+}
+
+/* Game card image */
+.game-card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;  /* Ensures image covers area without distortion */
+  border-radius: var(--border-radius);
+}
+
+/* Game card title */
+.game-card h3 {
+  font-size: 1.2rem;
+  margin: 0;
+  color: var(--text-color);
+  font-size: 1.2em;
+  text-align: center;
+}
+
+/* Game card description */
+.game-card p {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  margin: 0;
+  color: var(--text-color);
+  opacity: 0.8;
+  text-align: center;
+  flex-grow: 1;  /* Takes up available space to push button to bottom */
+}
+
+/* Container for buttons/links at bottom of game card */
+.game-links {
+  padding: 0.8rem;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+/* ==========================================
+   CUSTOM SCROLLBAR
+   Styling for scrollbars in the games section
+   ========================================== */
+#games::-webkit-scrollbar {
+  width: 10px;
+}
+
+#games::-webkit-scrollbar-track {
+  background: var(--glass);
+  border-radius: 5px;
+}
+
+#games::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--primary), var(--secondary));
+  border-radius: 5px;
+  border: 2px solid var(--glass);
+}
+
+#games::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(var(--accent), var(--primary));
+}
+
+/* ==========================================
+   BUTTONS
+   General button styling used throughout the site
+   ========================================== */
+.btn {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background: linear-gradient(45deg, var(--primary), var(--secondary));
+  color: var(--light);
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;  /* Shows hand cursor on hover */
+  font-size: 0.9em;
+}
+
+.btn:hover {
+  background: linear-gradient(45deg, var(--secondary), var(--accent));
+  transform: translateY(-2px);  /* Slight lift effect */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* ==========================================
+   HEADINGS
+   Styling for section titles (h2 elements)
+   ========================================== */
+h2 {
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+  font-size: 1.8em;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ==========================================
+   FOOTER
+   Styling for the page footer
+   ========================================== */
+footer {
+  text-align: center;
+  padding: 2rem;
+  background: var(--glass-dark);
+  margin-top: 2rem;
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN
+   Adjustments for smaller screens (mobile devices)
+   ========================================== */
+@media (max-width: 768px) {
+  /* Stack navigation links vertically */
+  nav {
+    flex-direction: column;
+  }
+
+  /* Full width navigation links */
+  nav a {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Single column grid for games */
+  .games-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Smaller heading */
+  header h1 {
+    font-size: 1.8em;
+  }
+}
+
+/* ==========================================
+   ANIMATION CLASSES
+   Reusable animation effects for elements
+   ========================================== */
+/* Fade-in animation */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+/* Slide-up animation */
+.slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+/* Fade in from invisible to visible */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Slide up from below into position */
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ==========================================
+   HOVER EFFECTS
+   Special effects applied when hovering over elements
+   ========================================== */
+/* Glow effect on hover */
+.hover-glow:hover {
+  box-shadow: 0 0 20px var(--accent);  /* Creates colorful glow around element */
+  transform: translateY(-5px);  /* Lifts element slightly */
+  transition: all 0.3s ease;
+}
+
+/* Specific hover effect for game cards */
+.game-card:hover {
+  transform: translateY(-5px);  /* Lifts card slightly */
+  box-shadow: 0 0 20px var(--accent);  /* Adds colorful glow */
+  border: 1px solid var(--accent);  /* Highlights border */
+  transition: all 0.3s ease;
+}
+
+/* ==========================================
+   GLASS CARDS
+   Styling for cards with a glass-like appearance
+   ========================================== */
+.glass-card {
+  background: var(--glass);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--glass);
+  padding: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* ==========================================
+   LESSONS SECTION
+   Styling for the interactive lessons grid and cards
+   ========================================== */
+.lessons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));  /* Responsive grid */
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.lesson-card {
+  background: var(--glass-dark);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.lesson-icon {
+  font-size: 2.5rem;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Gradient text effect for lesson icons */
+.lesson-icon i {
+  background: linear-gradient(45deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;  /* Clips background to text shape */
+  background-clip: text; /* Standard property for compatibility */
+  -webkit-text-fill-color: transparent;  /* Makes text transparent to show background */
+}
+
+.lesson-content h3 {
+  color: var(--light);
+  margin-bottom: 1rem;
+  font-size: 1.3em;
+  text-align: center;
+}
+
+.lesson-details p {
+  color: var(--light);
+  margin-bottom: 1rem;
+  font-size: 0.9em;
+  flex-grow: 1;
+}
+
+.lesson-features {
+  list-style: none;
+  margin: 1rem 0;
+}
+
+.lesson-features li {
+  color: var(--light);
+  margin: 0.5rem 0;
+  font-size: 0.85em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lesson-features i {
+  color: var(--accent);
+  font-size: 0.8em;
+}
+
+.lesson-progress {
+  margin: 1.5rem 0;
+}
+
+/* Progress bar background */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--glass);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+/* Progress bar filled part */
+.progress {
+  height: 100%;
+  background: linear-gradient(45deg, var(--primary), var(--accent));
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.lesson-progress span {
+  color: var(--light);
+  font-size: 0.8em;
+  opacity: 0.8;
+}
+
+/* Button in lesson cards */
+.lesson-btn {
+  width: 100%;
+  text-align: center;
+  margin-top: auto;  /* Pushes button to bottom */
+  background: linear-gradient(45deg, var(--primary), var(--accent));
+  border: none;
+  padding: 1rem;
+  color: var(--light);
+  border-radius: var(--border-radius);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.lesson-btn:hover {
+  transform: translateY(-2px);  /* Slight lift effect */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(45deg, var(--accent), var(--primary));  /* Reversed gradient */
+}
+
+/* Hover effect for lesson cards */
+.lesson-card:hover {
+  transform: translateY(-5px);  /* Lifts card up slightly */
+  box-shadow: 0 0 20px var(--accent);  /* Adds glow */
+  border: 1px solid var(--accent);  /* Highlights border */
+  transition: all 0.3s ease;
+}
+
+/* Animated icon effect on hover */
+.lesson-card:hover .lesson-icon i {
+  animation: pulse 1s infinite;  /* Continuous pulse animation */
+}
+
+/* Pulse animation definition */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);  /* Grows slightly */
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Responsive adjustments for lessons */
+@media (max-width: 768px) {
+  .lessons-grid {
+    grid-template-columns: 1fr;  /* Single column on mobile */
+  }
+
+  .lesson-card {
+    padding: 1.5rem;  /* Less padding on mobile */
+  }
+
+  .lesson-icon {
+    font-size: 2rem;  /* Smaller icon on mobile */
+  }
+
+  .lesson-content h3 {
+    font-size: 1.1em;  /* Smaller heading on mobile */
+  }
+}
+
+/* ==========================================
+   ARTICLES SECTION
+   Styling for the horizontal scrollable articles grid
+   ========================================== */
+.articles-grid {
+  display: flex;
+  overflow-x: auto;  /* Allows horizontal scrolling */
+  scroll-snap-type: x mandatory;  /* Makes scrolling snap to card boundaries */
+  scroll-behavior: smooth;  /* Smooth scrolling animation */
+  gap: 20px;  /* Space between cards */
+  padding: 20px 0;
+  -ms-overflow-style: none;  /* Hides scrollbar in IE/Edge */
+  scrollbar-width: none;  /* Hides scrollbar in Firefox */
+  width: calc(100% - 40px);  /* Leaves space for navigation buttons */
+  margin: 0 auto;
+}
+
+/* Hides scrollbar in WebKit browsers */
+.articles-grid::-webkit-scrollbar {
+  display: none;
+}
+
+/* ==========================================
+   ARTICLE CARDS
+   Styling for individual article cards
+   ========================================== */
+.article-card {
+  /* Fixed width calculation based on 3 cards per row with spacing */
+  flex: 0 0 calc(33.333% - 14px);
+  min-width: calc(33.333% - 14px);
+  max-width: calc(33.333% - 14px);
+  scroll-snap-align: start;  /* Where to snap when scrolling */
+  background: var(--glass-dark);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid var(--glass);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--spacing-md);
+  gap: var(--spacing-sm);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Article card image styling */
+.article-card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;  /* Makes images cover their container without distortion */
+  border-radius: var(--border-radius);
+  transition: transform 0.3s ease;
+}
+
+/* Article card title styling */
+.article-card h3 {
+  color: var(--text-color);
+  font-size: 1.2rem;
+  margin: 0;
+  text-align: center;
+}
+
+/* Article card description styling */
+.article-card p {
+  color: var(--text-color);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  margin: 0;
+  opacity: 0.8;
+  text-align: center;
+  flex-grow: 1;  /* Takes up available space to push button to bottom */
+}
+
+/* Article card button styling */
+.article-card .card-links {
+  padding: 0.8rem;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.article-card .btn {
+  display: inline-block;
+  width: 80%;
+  padding: 0.8rem;
+  text-align: center;
+}
+
+/* Category tag that appears on top of article cards */
+.article-category {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--accent);
+  color: var(--light);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  font-size: 0.8em;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Article content container (for full articles) */
+.article-content {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.article-content h3 {
+  color: var(--light);
+  font-size: 1.2em;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.article-content p {
+  color: var(--light);
+  opacity: 0.8;
+  font-size: 0.9em;
+  margin-bottom: 1.5rem;
+}
+
+/* Container for card links/buttons */
+.card-links {
+  width: 100%;
+  text-align: center;
+  margin-top: var(--spacing-md);
+  padding: 0 1rem;
+}
+
+/* Button styling inside cards */
+.card-links .btn {
+  width: 100%;
+  max-width: 200px;
+  padding: 0.8rem 1.5rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Container for article tags */
+.article-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Individual tag styling */
+.tag {
+  background: var(--glass);
+  color: var(--accent);
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--border-radius);
+  font-size: 0.8em;
+  transition: all 0.3s ease;
+}
+
+/* Tag hover effect */
+.tag:hover {
+  background: var(--accent);
+  color: var(--light);
+}
+
+/* Article button styling */
+.article-btn {
+  margin-top: auto;  /* Pushes button to bottom */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1.5rem;
+  background: linear-gradient(45deg, var(--primary), var(--accent));
+  color: var(--light);
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  font-size: 0.9em;
+  transition: all 0.3s ease;
+}
+
+/* Icon inside article button */
+.article-btn i {
+  transition: transform 0.3s ease;
+}
+
+/* Article button hover effect */
+.article-btn:hover {
+  background: linear-gradient(45deg, var(--accent), var(--primary));  /* Reversed gradient */
+}
+
+/* Icon animation on button hover */
+.article-btn:hover i {
+  transform: translateX(5px);  /* Moves icon to the right */
+}
+
+/* Article card hover effects */
+.article-card:hover {
+  transform: translateY(-5px);  /* Lifts card up slightly */
+  box-shadow: 0 0 20px var(--accent);  /* Adds glow effect */
+  border: 1px solid var(--accent);  /* Highlights border */
+  transition: all 0.3s ease;
+}
+
+/* Image transition effect on hover (disabled) */
+.article-card:hover img {
+  /* transform: scale(1.1); removed */
+  transition: transform 0.3s ease;
+}
+
+/* Responsive adjustments for articles on mobile */
+@media (max-width: 768px) {
+  .articles-grid {
+    grid-template-columns: 1fr;  /* Single column on mobile */
+  }
+
+  .article-image {
+    height: 180px;  /* Taller images on mobile */
+  }
+
+  .article-content h3 {
+    font-size: 1.1em;  /* Smaller headings on mobile */
+  }
+
+  .article-content p {
+    font-size: 0.85em;  /* Smaller text on mobile */
+  }
+}
+
+/* ==========================================
+   SCROLL TO TOP BUTTON
+   Floating button that appears to let users scroll back to top
+   ========================================== */
+.scroll-to-top {
+  position: fixed;  /* Stays in same position regardless of scrolling */
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background-color: rgba(73, 14, 75, 0.253);
+  color: white;
+  border-radius: 50%;  /* Makes it circular */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  opacity: 0;  /* Starts hidden */
+  visibility: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;  /* Ensures it appears above other content */
+}
+
+/* Visible state - appears when scrolled down */
+.scroll-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Hover effect */
+.scroll-to-top:hover {
+  transform: translateY(-3px);  /* Slight lift */
+  background-color: var(--accent-hover);
+}
+
+/* Arrow icon inside button */
+.scroll-to-top i {
+  font-size: 20px;
+}
+
+/* ==========================================
+   SCROLL ANIMATIONS
+   Effects that trigger when elements scroll into view
+   ========================================== */
+.scroll-animation {
+  opacity: 0;
+  transform: translateY(50px);  /* Starts below its final position */
+  transition: all 0.8s ease;
+}
+
+/* Active state - applied when element is in viewport */
+.scroll-animation.active {
+  opacity: 1;
+  transform: translateY(0);  /* Moves to normal position */
+}
+
+/* ==========================================
+   HEADER LINK ANIMATIONS
+   Decorative animations for navigation links
+   ========================================== */
+nav .btn {
+  position: relative;
+  overflow: hidden;  /* Hides overflow from animated line */
+}
+
+/* Animated underline effect */
+nav .btn::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--accent);
+  transform: scaleX(0);  /* Starts with zero width */
+  transform-origin: right;  /* Animation starts from right */
+  transition: transform 0.3s ease;
+}
+
+/* Expands underline on hover */
+nav .btn:hover::after {
+  transform: scaleX(1);  /* Expands to full width */
+  transform-origin: left;  /* Animation starts from left */
+}
+
+/* Active state (when clicked) */
+nav .btn:active {
+  transform: scale(0.95);  /* Slightly shrinks when clicked */
+}
+
+/* ==========================================
+   SECTION REVEAL ANIMATION
+   Animation that plays when sections appear in viewport
+   ========================================== */
+@keyframes revealSection {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);  /* Starts slightly below final position */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);  /* Moves to normal position */
+  }
+}
+
+/* ==========================================
+   CLICK RIPPLE EFFECT
+   Creates a ripple animation when elements are clicked
+   ========================================== */
+.ripple {
+  position: relative;
+  overflow: hidden;  /* Contains the ripple effect */
+}
+
+/* The actual ripple */
+.ripple::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);  /* Semi-transparent white */
+  top: 0;
+  left: 0;
+  pointer-events: none;  /* Prevents interference with clicks */
+  border-radius: inherit;
+  transform: scale(0);  /* Starts as a point */
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Active state when clicked */
+.ripple:active::after {
+  transform: scale(2);  /* Expands beyond the element */
+  opacity: 1;
+  transition: 0s;  /* Makes effect instant */
+}
+
+/* ==========================================
+   CONTACT SECTION
+   Styling for the contact information and social links
+   ========================================== */
+.contact-info {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--light);
+  font-size: 0.9rem;
+}
+
+.contact-item i {
+  color: var(--accent);
+  font-size: 1.2rem;
+}
+
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.social-btn {
+  color: var(--light);
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.social-btn:hover {
+  color: var(--accent);
+  transform: translateY(-2px);  /* Slight lift */
+}
+
+/* ==========================================
+   COMING SOON PAGE
+   Styling for the "coming soon" placeholder pages
+   ========================================== */
+.coming-soon-container {
+  text-align: center;
+  padding: 50px;
+  color: var(--light);
+}
+
+.coming-soon-container h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  font-family: "Press Start 2P", cursive;
+}
+
+.coming-soon-container p {
+  font-size: 1.5rem;
+  margin-bottom: 40px;
+  font-family: "Press Start 2P", cursive;
+}
+
+.project-previews {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.project-card {
+  background: var(--light);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  text-align: left;
+  color: var(--dark);  /* Dark text on light background */
+  transition: all 0.3s ease;
+}
+
+/* Hover effect for project cards */
+.project-card:hover {
+  transform: translateY(-5px);  /* Slight lift */
+  box-shadow: 0 0 20px var(--accent);  /* Glow effect */
+  border: 1px solid var(--accent);  /* Highlight border */
+  transition: all 0.3s ease;
+}
+
+.project-card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  font-family: "Press Start 2P", cursive;
+}
+
+.project-card p {
+  font-size: 1rem;
+  font-family: "Press Start 2P", cursive;
+}
+
+.construction-images {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.construction-images img {
+  width: 50px;
+  height: auto;
+}
+
+.background-repeat {
+  background-image: url("8.png");
+  background-repeat: repeat-x;
+  background-size: contain;  /* Ensures image fits properly */
+  height: 50px;
+  width: 100%;
+}
+
+/* ==========================================
+   XO GAME STYLING
+   Specific styling for the Tic-Tac-Toe game
+   ========================================== */
+h1 {
+  text-align: center;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 3em;
+  margin-bottom: 20px;
+  color: #9728d6;  /* Neon Purple */
+}
+
+.question-box {
+  text-align: center;
+  font-family: 'Press Start 2P', cursive;
+  margin-bottom: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  margin: 0 auto;
+  color: #fff;
+}
+
+.question-box.hidden {
+  display: none;  /* Hides the question box when not needed */
+}
+
+input[type="text"] {
+  font-family: 'Press Start 2P', cursive;
+  width: 80%;
+  padding: 10px;
+  font-size: 0.5em;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #9728d6;  /* Neon Purple */
+}
+
+button {
+  font-family: 'Press Start 2P', cursive;
+  background-color: #9728d6;  /* Neon Purple */
+  color: #40205e;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+button:hover {
+  background-color: #7a1ab5;  /* Darker Neon Purple */
+}
+
+#feedback {
+  font-family: 'Press Start 2P', cursive;
+  margin-top: 10px;
+  color: red;
+  font-size: 1.2em;
+}
+
+#board {
+  display: grid;
+  font-family: 'Press Start 2P', cursive;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #811f79;
+  height: 100px;
+  width: 100px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  background-size: contain;  /* Makes background image fit properly */
+  background-repeat: no-repeat;
+  transition: background-color 0.3s;
+}
+
+.cell:hover {
+  background-color: #290627;  /* Darker purple on hover */
+}
+
+#message {
+  font-family: 'Press Start 2P', cursive;
+  text-align: center;
+  font-size: 1.5em;
+  margin-top: 20px;
+  color: #9728d6;  /* Neon Purple */
+}
+
+.game-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.scoreboard {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.board {
+  flex: 2;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.cell {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #000;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* ==========================================
+   FULL ARTICLE PAGE STYLING
+   Styling for the detailed article pages
+   ========================================== */
+.article-full-page {
+  max-width: 800px;
+  margin: 5rem auto;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 20px var(--accent);  /* Glow effect */
+  font-family: 'Press Start 2P', cursive;
+}
+
+.article-full-page h1, .article-full-page h2 {
+  color: var(--accent);
+  text-shadow: 0 0 8px var(--accent);  /* Text glow */
+  margin-bottom: 1rem;
+}
+
+.article-full-page p, .article-full-page ul, .article-full-page li {
+  color: #ddd;
+  font-size: 10px;
+  line-height: 1.8;
+}
+
+.article-full-page ul {
+  padding-left: 1.5rem;
+}
+
+.article-full-page .tip {
+  background: rgba(0, 255, 255, 0.1);
+  border-left: 4px solid var(--accent);
+  padding: 1rem;
+  margin: 1.5rem 0;
+  font-size: 9px;
+  color: var(--light);
+  box-shadow: 0 0 6px var(--accent);  /* Subtle glow */
+}

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Task-Based Learning - Pixelearn</title>
+        <link rel="icon" href="../assets/15.png">
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link rel="stylesheet" href="../styles/portfolio.css">
+        <link rel="stylesheet" href="styles/video-styles.css">
+        <style>
+          :root {
+            --primary-color: #ff00ff;
+            --secondary-color: #800080;
+            --accent-color: #00ffff;
+            --text-color: #ffffff;
+            --bg-color: #1a1a1a;
+            --border-radius: 8px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+          }
+    
+          /* Global scrollbar styling */
+          ::-webkit-scrollbar {
+            width: 12px;
+          }
+    
+          ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+          }
+    
+          ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border-radius: var(--border-radius);
+            border: 2px solid var(--bg-color);
+          }
+    
+          ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+            box-shadow: 0 0 10px var(--accent-color);
+          }
+    
+          /* Firefox scrollbar */
+          * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.3);
+          }
+
+          .article-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(249, 83, 198, 0.2);
+          }
+
+          .table-of-contents {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary-color);
+          }
+
+          .table-of-contents h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+          }
+
+          .table-of-contents ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+          }
+
+          .table-of-contents li {
+            margin-bottom: 0.5rem;
+          }
+
+          .table-of-contents a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s;
+          }
+
+          .table-of-contents a:hover {
+            color: var(--accent-color);
+          }
+
+          .table-of-contents a::before {
+            content: "→";
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+          }
+
+          .back-to-articles-bottom {
+            display: inline-block;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--border-radius);
+            color: var(--text-color);
+            text-decoration: none;
+            margin: 2rem 0.5rem;
+            transition: all 0.3s;
+            border: 1px solid var(--primary-color);
+            font-size: 0.9rem;
+          }
+
+          .back-to-articles-bottom:hover {
+            background: rgba(0, 0, 0, 0.5);
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+          }
+
+          .bottom-buttons-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+          }
+
+          .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            z-index: 1000;
+            transition: width 0.1s;
+          }
+
+          .share-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            justify-content: center;
+            align-items: center;
+          }
+
+          .share-button, .print-button, .back-to-articles-bottom {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.4rem;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--border-radius);
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            border: 1px solid var(--primary-color);
+            cursor: pointer;
+          }
+
+          .share-button:hover, .print-button:hover, .back-to-articles-bottom:hover {
+            background: rgba(0, 0, 0, 0.5);
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+          }
+
+          .share-button i, .print-button i, .back-to-articles-bottom i {
+            font-size: 1rem;
+            margin: 0;
+          }
+
+          .section-icon {
+            margin-right: 0.5rem;
+            color: var(--accent-color);
+          }
+
+          .article-container h1 {
+            color: var(--accent-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            text-shadow: 0 0 10px var(--accent-color);
+          }
+
+          .article-container h2 {
+            color: var(--primary-color);
+            margin-top: 1.5rem;
+            font-size: 1.5rem;
+          }
+
+          .article-container p {
+            color: var(--text-color);
+            line-height: 1.4;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+          }
+
+          .article-container ul {
+            color: var(--text-color);
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+          }
+
+          .article-container li {
+            margin-bottom: 0.3rem;
+          }
+
+          .tip {
+            background: rgba(0, 255, 255, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 0.8rem;
+            margin: 1.5rem 0;
+            border-radius: var(--border-radius);
+          }
+
+          .tip strong {
+            color: var(--accent-color);
+          }
+
+          @media (max-width: 768px) {
+            .article-container {
+              padding: 1rem;
+            }
+
+            .article-container h1 {
+              font-size: 1.8rem;
+            }
+
+            .article-container h2 {
+              font-size: 1.3rem;
+            }
+          }
+
+          @media print {
+            body {
+              background: var(--bg-color) !important;
+              margin: 0 !important;
+              padding: 0 !important;
+            }
+
+            .article-container {
+              background: rgba(0, 0, 0, 0.5) !important;
+              box-shadow: 0 0 20px rgba(249, 83, 198, 0.2) !important;
+              max-width: 100% !important;
+              padding: 0.5cm !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              margin: 0 !important;
+            }
+
+            .article-container h1 {
+              color: var(--accent-color) !important;
+              text-shadow: 0 0 10px var(--accent-color) !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              font-size: 1.8rem !important;
+              margin: 0.5rem 0 !important;
+              padding: 0 !important;
+            }
+
+            .article-container h2 {
+              color: var(--primary-color) !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              font-size: 1.3rem !important;
+              margin: 0.3rem 0 !important;
+              padding: 0 !important;
+            }
+
+            .article-container p {
+              color: var(--text-color) !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              margin: 0.2rem 0 !important;
+              padding: 0 !important;
+              font-size: 0.9rem !important;
+              line-height: 1.2 !important;
+            }
+
+            .article-container ul {
+              margin: 0.2rem 0 !important;
+              padding: 0 !important;
+            }
+
+            .article-container li {
+              margin: 0.1rem 0 !important;
+              padding: 0 !important;
+              font-size: 0.9rem !important;
+            }
+
+            .table-of-contents, .bottom-buttons-container, .navbar, 
+            .pixel-cloud, #background-video, .scroll-to-top, 
+            footer, #contact {
+              display: none !important;
+            }
+
+            .tip {
+              background: rgba(0, 255, 255, 0.1) !important;
+              border-left: 4px solid var(--accent-color) !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              margin: 0.3rem 0 !important;
+              padding: 0.3rem !important;
+            }
+
+            .tip strong {
+              color: var(--accent-color) !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+
+            @page {
+              margin: 0.5cm !important;
+              size: A4 !important;
+            }
+
+            /* Game-like elements */
+            .article-container::before {
+              content: "PIXELEARN QUEST" !important;
+              display: block !important;
+              text-align: center !important;
+              color: var(--accent-color) !important;
+              font-family: 'Press Start 2P', cursive !important;                                                                          
+              font-size: 1rem !important;
+              margin-bottom: 0.5rem !important;
+              border-bottom: 2px solid var(--primary-color) !important;
+              padding-bottom: 0.3rem !important;
+            }
+
+            .section-icon {
+              display: inline-block !important;
+              margin-right: 0.3rem !important;
+            }
+
+            /* Compact layout for lists */
+            ul {
+              columns: 2 !important;
+              column-gap: 1rem !important;
+            }
+
+            /* Add pixel art border */
+            .article-container {
+              border: 4px solid var(--primary-color) !important;
+              border-image: repeating-linear-gradient(45deg, var(--primary-color), var(--primary-color) 10px, var(--accent-color) 10px, var(--accent-color) 20px) 4 !important;
+            }
+          }
+        </style>
+        <script src="../scripts/script.js" defer></script>
+        <script src="../scripts/scroll.js" defer></script>
+        <script>
+            // Reading progress indicator
+            window.addEventListener('scroll', function() {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                document.querySelector('.reading-progress').style.width = scrolled + '%';
+            });
+
+            // Smooth scroll for table of contents
+            document.querySelectorAll('.table-of-contents a').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        </script>
+    </head>
+<body>
+    <video id="background-video" autoplay muted loop>
+        <source src="../assets/9.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="pixel-cloud"></div>
+    <div class="container">
+        <div class="navbar">
+            <a href="../index.html" class="logo">Pixelearn</a>
+            <nav>
+                <a href="../index.html#games" class="btn ripple">Learning Games</a>
+                <a href="../index.html#lessons" class="btn ripple">Interactive Lessons</a>
+                <a href="../index.html#articles" class="btn ripple">Articles</a>
+                <a href="../index.html#contact" class="btn ripple">Contact</a>
+                <a href="../index.html#about" class="btn ripple">About Me</a>
+            </nav>
+        </div>
+
+        <div class="article-container glass-card slide-up">
+            <h1>Task-Based Language Learning: Real Tasks, Real Results</h1>
+
+            <div class="table-of-contents">
+                <h3>Table of Contents</h3>
+                <ul>
+                    <li><a href="#what-is-tbl">What Is Task-Based Learning?</a></li>
+                    <li><a href="#why-it-works">Why Does It Work?</a></li>
+                    <li><a href="#games-fit">Where Games Fit In</a></li>
+                    <li><a href="#tips">Tips for Teachers</a></li>
+                    <li><a href="#final">Final Thoughts</a></li>
+                </ul>
+            </div>
+
+            <p>In the modern language classroom, one teaching approach continues to stand out for its effectiveness and flexibility:
+                <strong>Task-Based Language Learning (TBL)</strong>. But what exactly is it, and why does it work so well?</p>
+
+            <h2 id="what-is-tbl"><span class="section-icon">🧠</span> What Is Task-Based Learning?</h2>
+            <p>Task-Based Learning is a teaching method where <strong>communication and problem-solving</strong> take center stage. Instead of
+                teaching grammar rules first and hoping students will use them, TBL gives learners <strong>a meaningful task</strong> to complete—and language emerges as a natural part of that process.</p>
+
+            <p>A task could be:</p>
+            <ul>
+                <li>Planning a trip</li>
+                <li>Solving a mystery</li>
+                <li>Creating a video</li>
+                <li>Playing a language-based game (like <em>TicTacTense</em>!)</li>
+            </ul>
+
+            <h2 id="why-it-works"><span class="section-icon">🚀</span> Why Does It Work?</h2>
+            <p>TBL mirrors how we use language in real life. When you ask for directions, order coffee, or negotiate a price, you're performing a task—not just practicing grammar.</p>
+
+            <p><strong>Benefits of TBL:</strong></p>
+            <ul>
+                <li>Encourages <strong>communication</strong></li>
+                <li>Supports <strong>natural language acquisition</strong></li>
+                <li>Promotes <strong>critical thinking and creativity</strong></li>
+                <li>Makes learning <strong>active</strong> and <strong>student-centered</strong></li>
+            </ul>
+
+            <h2 id="games-fit"><span class="section-icon">🎮</span> Where Games Fit In</h2>
+            <p>Games like <strong>TicTacTense</strong> are task-based by design. Players need to <strong>make correct grammatical choices</strong> to win. They're motivated not just by getting the right answer, but by completing the round or beating their opponent.</p>
+
+            <div class="tip">
+                <strong>In other words, games give grammar a purpose—and that's the heart of task-based learning.</strong>
+            </div>
+
+            <h2 id="tips"><span class="section-icon">💡</span> Tips for Teachers</h2>
+            <ul>
+                <li>Start simple: "Find someone who…" tasks work great for beginners.</li>
+                <li>Make tasks meaningful: Use real-world contexts (planning a party, sending an email, etc.).</li>
+                <li>Let learners work in pairs or small teams.</li>
+                <li>Use games to introduce or review language in an engaging way.</li>
+            </ul>
+
+            <h2 id="final"><span class="section-icon">🔚</span> Final Thoughts</h2>
+            <p>Task-Based Learning isn't a trend—it's a shift in mindset. It helps students <strong>learn by doing</strong>, which is often how they learn best. Whether you're using digital games or in-class projects, the goal is the same: <strong>meaningful communication through tasks</strong>.</p>
+
+            <div class="bottom-buttons-container">
+                <a href="#" class="share-button" onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(document.title + ' ' + window.location.href))" title="Share on Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="share-button" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=' + encodeURIComponent(window.location.href))" title="Share on LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <button class="print-button" onclick="window.print()" title="Print Article">
+                    <i class="fas fa-print"></i>
+                </button>
+                <a href="../index.html#articles" class="back-to-articles-bottom" title="Back to Articles">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+            </div>
+        </div>
+
+        <section id="contact" class="glass-card fade-in">
+            <h2>Contact Me</h2>
+            <div class="contact-info">
+                <span class="contact-item"><a href="mailto:zakariaghazali135@gmail.com" class="social-btn"><img src="../assets/Gmail.png" alt="Gmail"></a> zakariaghazali135@gmail.com</span>
+                <span class="contact-item"><a href="#" class="social-btn"><img src="../assets/Whatsapp.png" alt="WhatsApp"></a> +212 639 241 651</span>
+                <p>Feel free to reach out to me anytime.</p>
+            </div>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/ghazali1/" class="social-btn" target="_blank"><img src="../assets/LinkedIn.png" alt="LinkedIn"></a>
+                <a href="https://www.youtube.com/channel/your-channel-id" class="social-btn" target="_blank"><img src="../assets/Youtube.png" alt="YouTube Channel"></a>
+            </div>
+        </section>
+    </div>
+
+    <a href="#" id="scroll-to-top" class="scroll-to-top">
+        <img src="../assets/uparrow.png" alt="Back to top" width="50" height="50">
+    </a>
+
+    <footer>
+        <p>&copy; 2024 English Teacher Portfolio. All rights reserved.</p>
+    </footer>
+</body>
+</html>

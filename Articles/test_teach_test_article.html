@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Test-Teach-Test Within TBLT - Pixelearn</title>
+        <link rel="icon" href="../assets/15.png">
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link rel="stylesheet" href="../styles/portfolio.css">
+        <link rel="stylesheet" href="styles/video-styles.css">
+        <style>
+          :root {
+            --primary-color: #ff00ff;
+            --secondary-color: #800080;
+            --accent-color: #00ffff;
+            --text-color: #ffffff;
+            --bg-color: #1a1a1a;
+            --border-radius: 8px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+          }
+    
+          /* Global scrollbar styling */
+          ::-webkit-scrollbar {
+            width: 12px;
+          }
+    
+          ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+          }
+    
+          ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border-radius: var(--border-radius);
+            border: 2px solid var(--bg-color);
+          }
+    
+          ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+            box-shadow: 0 0 10px var(--accent-color);
+          }
+    
+          /* Firefox scrollbar */
+          * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.3);
+          }
+
+          .article-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(249, 83, 198, 0.2);
+          }
+
+          .table-of-contents {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary-color);
+          }
+
+          .table-of-contents h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+          }
+
+          .table-of-contents ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+          }
+
+          .table-of-contents li {
+            margin-bottom: 0.5rem;
+          }
+
+          .table-of-contents a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s;
+          }
+
+          .table-of-contents a:hover {
+            color: var(--accent-color);
+          }
+
+          .table-of-contents a::before {
+            content: "→";
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+          }
+
+          .back-to-articles-bottom {
+            display: inline-block;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--border-radius);
+            color: var(--text-color);
+            text-decoration: none;
+            margin: 2rem 0.5rem;
+            transition: all 0.3s;
+            border: 1px solid var(--primary-color);
+            font-size: 0.9rem;
+          }
+
+          .back-to-articles-bottom:hover {
+            background: rgba(0, 0, 0, 0.5);
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+          }
+
+          .bottom-buttons-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+          }
+
+          .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            z-index: 1000;
+            transition: width 0.1s;
+          }
+
+          .share-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            justify-content: center;
+            align-items: center;
+          }
+
+          .share-button, .print-button, .back-to-articles-bottom {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.4rem;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--border-radius);
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            border: 1px solid var(--primary-color);
+            cursor: pointer;
+          }
+
+          .share-button:hover, .print-button:hover, .back-to-articles-bottom:hover {
+            background: rgba(0, 0, 0, 0.5);
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+          }
+
+          .share-button i, .print-button i, .back-to-articles-bottom i {
+            font-size: 1rem;
+            margin: 0;
+          }
+
+          .section-icon {
+            margin-right: 0.5rem;
+            color: var(--accent-color);
+          }
+
+          .article-container h1 {
+            color: var(--accent-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            text-shadow: 0 0 10px var(--accent-color);
+          }
+
+          .article-container h2 {
+            color: var(--primary-color);
+            margin-top: 1.5rem;
+            font-size: 1.5rem;
+          }
+
+          .article-container p {
+            color: var(--text-color);
+            line-height: 1.4;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+          }
+
+          .article-container ul {
+            color: var(--text-color);
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+          }
+
+          .article-container li {
+            margin-bottom: 0.3rem;
+          }
+
+          .tip {
+            background: rgba(0, 255, 255, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 0.8rem;
+            margin: 1.5rem 0;
+            border-radius: var(--border-radius);
+          }
+
+          .tip strong {
+            color: var(--accent-color);
+          }
+
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            color: var(--text-color);
+          }
+
+          th, td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          }
+
+          th {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--accent-color);
+          }
+
+          tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+          }
+
+          @media (max-width: 768px) {
+            .article-container {
+              padding: 1rem;
+            }
+
+            .article-container h1 {
+              font-size: 1.8rem;
+            }
+
+            .article-container h2 {
+              font-size: 1.3rem;
+            }
+          }
+
+          @media print {
+            body {
+              background: var(--bg-color) !important;
+              margin: 0 !important;
+              padding: 0 !important;
+            }
+
+            .article-container {
+              background: rgba(0, 0, 0, 0.5) !important;
+              box-shadow: 0 0 20px rgba(249, 83, 198, 0.2) !important;
+              max-width: 100% !important;
+              padding: 0.5cm !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              margin: 0 !important;
+            }
+
+            .article-container h1 {
+              color: var(--accent-color) !important;
+              text-shadow: 0 0 10px var(--accent-color) !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              font-size: 1.8rem !important;
+              margin: 0.5rem 0 !important;
+              padding: 0 !important;
+            }
+
+            .article-container h2 {
+              color: var(--primary-color) !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              font-size: 1.3rem !important;
+              margin: 0.3rem 0 !important;
+              padding: 0 !important;
+            }
+
+            .article-container p {
+              color: var(--text-color) !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              margin: 0.2rem 0 !important;
+              padding: 0 !important;
+              font-size: 0.9rem !important;
+              line-height: 1.2 !important;
+            }
+
+            .article-container ul {
+              margin: 0.2rem 0 !important;
+              padding: 0 !important;
+            }
+
+            .article-container li {
+              margin: 0.1rem 0 !important;
+              padding: 0 !important;
+              font-size: 0.9rem !important;
+            }
+
+            .table-of-contents, .bottom-buttons-container, .navbar, 
+            .pixel-cloud, #background-video, .scroll-to-top, 
+            footer, #contact {
+              display: none !important;
+            }
+
+            .tip {
+              background: rgba(0, 255, 255, 0.1) !important;
+              border-left: 4px solid var(--accent-color) !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              margin: 0.3rem 0 !important;
+              padding: 0.3rem !important;
+            }
+
+            .tip strong {
+              color: var(--accent-color) !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+
+            @page {
+              margin: 0.5cm !important;
+              size: A4 !important;
+            }
+
+            /* Game-like elements */
+            .article-container::before {
+              content: "PIXELEARN QUEST" !important;
+              display: block !important;
+              text-align: center !important;
+              color: var(--accent-color) !important;
+              font-family: 'Press Start 2P', cursive !important;                                                                          
+              font-size: 1rem !important;
+              margin-bottom: 0.5rem !important;
+              border-bottom: 2px solid var(--primary-color) !important;
+              padding-bottom: 0.3rem !important;
+            }
+
+            .section-icon {
+              display: inline-block !important;
+              margin-right: 0.3rem !important;
+            }
+
+            /* Compact layout for lists */
+            ul {
+              columns: 2 !important;
+              column-gap: 1rem !important;
+            }
+
+            /* Add pixel art border */
+            .article-container {
+              border: 4px solid var(--primary-color) !important;
+              border-image: repeating-linear-gradient(45deg, var(--primary-color), var(--primary-color) 10px, var(--accent-color) 10px, var(--accent-color) 20px) 4 !important;
+            }
+          }
+        </style>
+        <script defer="" src="../scripts/script.js"></script>
+        <script defer="" src="../scripts/scroll.js"></script>
+        <script>
+            // Reading progress indicator
+            window.addEventListener('scroll', function() {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                document.querySelector('.reading-progress').style.width = scrolled + '%';
+            });
+
+            // Smooth scroll for table of contents
+            document.querySelectorAll('.table-of-contents a').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <video autoplay="" id="background-video" loop="" muted="">
+            <source src="../assets/9.mp4" type="video/mp4"/>
+            Your browser does not support the video tag.
+        </video>
+        <div class="pixel-cloud"></div>
+        <div class="container">
+            <div class="navbar">
+                <a class="logo" href="../index.html">Pixelearn</a>
+                <nav>
+                    <a class="btn ripple" href="../index.html#games">Learning Games</a>
+                    <a class="btn ripple" href="../index.html#lessons">Interactive Lessons</a>
+                    <a class="btn ripple" href="../index.html#articles">Articles</a>
+                    <a class="btn ripple" href="../index.html#contact">Contact</a>
+                    <a class="btn ripple" href="../index.html#about">About Me</a>
+                </nav>
+            </div>
+            <div class="reading-progress"></div>
+            <div class="article-container glass-card slide-up">
+                <h1>Why I Believe Test-Teach-Test Works Perfectly Within a Task-Based Teaching Approach</h1>
+                <div class="table-of-contents">
+                    <h3>Table of Contents</h3>
+                    <ul>
+                        <li><a href="#origins">Origins of TTT</a></li>
+                        <li><a href="#modern-interpretation">How It Has Evolved</a></li>
+                        <li><a href="#tblt-fit">How It Fits Within TBLT</a></li>
+                        <li><a href="#advantages">Why I Like This Approach</a></li>
+                        <li><a href="#lesson">A Sample Lesson</a></li>
+                        <li><a href="#conclusion">Conclusion</a></li>
+                    </ul>
+                </div>
+                <h2 id="origins">🧠 Origins of TTT</h2>
+                <p>I learned that Test-Teach-Test was originally introduced by Henry C. Morrison in the 1930s as part of a behaviorist learning model focused on mastery. The goal was simple but powerful: assess what students already know, teach what they need, then test again to ensure learning has taken place. While rooted in literacy and science instruction, it was also extended to language learning.</p>
+                <h2 id="modern-interpretation">🔄 How It Has Evolved</h2>
+                <p>Over time, educators like Scott Thornbury reinterpreted TTT as a more communicative, flexible approach. Instead of traditional tests, learners are now set meaningful communicative tasks. Based on performance, the teacher provides responsive instruction, then asks learners to perform a follow-up task that reflects what they've learned.</p>
+                <h2 id="tblt-fit">🔗 How It Fits Within TBLT</h2>
+                <p>To me, TTT is incredibly compatible with Task-Based Language Teaching. The initial task is used diagnostically (like a TBLT pre-task), followed by focused instruction (form-focused teaching), and then task repetition or extension. It's practically a synonym for what many would call Task-Teach-Task.</p>
+                <table>
+                    <tr><th>TTT Phase</th><th>TBLT Equivalent</th><th>Purpose</th></tr>
+                    <tr><td>Test 1</td><td>Pre-task</td><td>Observe learner needs</td></tr>
+                    <tr><td>Teach</td><td>Focus on form</td><td>Target emergent language</td></tr>
+                    <tr><td>Test 2</td><td>Post-task</td><td>Practice with feedback</td></tr>
+                </table>
+                <h2 id="advantages">💡 Why I Like This Approach</h2>
+                <ul>
+                    <li>It's reactive: You teach based on what learners actually need.</li>
+                    <li>It's engaging: Tasks are realistic and communicative.</li>
+                    <li>It helps students notice their own gaps and progress.</li>
+                </ul>
+                <h2 id="lesson">📚 A Sample Lesson</h2>
+                <p>For a class about making appointments, I might start with a roleplay where students try to book a doctor's visit. I'd observe and take notes. Then, I'd teach phrases like "I'd like to schedule an appointment" and how to talk about time. Finally, they'd do a more challenging roleplay with added complications.</p>
+                <h2 id="conclusion">🔚 Conclusion</h2>
+                <p>TTT has come a long way from its behaviorist roots. When interpreted through a task-based lens, it becomes a powerful, student-centered tool. For me, it's one of the most practical and flexible frameworks to use in any communicative classroom.</p>
+                
+                <div class="bottom-buttons-container">
+                    <a href="javascript:void(0)" class="share-button" onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(document.title + ' ' + window.location.href))" title="Share on Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="javascript:void(0)" class="share-button" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=' + encodeURIComponent(window.location.href))" title="Share on LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <button class="print-button" onclick="window.print()" title="Print Article">
+                        <i class="fas fa-print"></i>
+                    </button>
+                    <a href="../index.html#articles" class="back-to-articles-bottom" title="Back to Articles">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                </div>
+            </div>
+            <section class="glass-card fade-in" id="contact">
+                <h2>Contact Me</h2>
+                <div class="contact-info">
+                    <span class="contact-item"><a class="social-btn" href="mailto:zakariaghazali135@gmail.com"><img alt="Gmail" src="../assets/Gmail.png"/></a> zakariaghazali135@gmail.com</span>
+                    <span class="contact-item"><a class="social-btn" href="#"><img alt="WhatsApp" src="../assets/Whatsapp.png"/></a> +212 639 241 651</span>
+                    <p>Feel free to reach out to me anytime.</p>
+                </div>
+                <div class="social-links">
+                    <a class="social-btn" href="https://www.linkedin.com/in/ghazali1/" target="_blank"><img alt="LinkedIn" src="../assets/LinkedIn.png"/></a>
+                    <a class="social-btn" href="https://www.youtube.com/channel/your-channel-id" target="_blank"><img alt="YouTube Channel" src="../assets/Youtube.png"/></a>
+                </div>
+            </section>
+        </div>
+        <a class="scroll-to-top" href="#" id="scroll-to-top">
+            <img alt="Back to top" height="50" src="../assets/uparrow.png" width="50"/>
+        </a>
+        <footer>
+            <p>© 2024 English Teacher Portfolio. All rights reserved.</p>
+        </footer>
+    </body>
+</html> 

@@ -1,0 +1,2331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tic-Tac-Tense</title>
+    <link rel="icon" href="15.png">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Quicksand:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="portfolio.css" />
+    <script src="script.js" defer></script>
+    <style>
+      :root {
+        --primary-color: #ff71ce;
+        --secondary-color: #b967ff;
+        --accent-color: #01cdfe;
+        --text-color: #ffffff;
+        --bg-color: rgba(20, 10, 30, 0.8);
+        --border-radius: 8px;
+        --pixel-border: 4px solid var(--primary-color);
+        --spacing-sm: 10px;
+        --spacing-md: 20px;
+        --spacing-lg: 30px;
+        --glow: 0 0 10px var(--accent-color);
+      }
+
+      body {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../assets/10.gif') no-repeat center center/cover;
+        font-family: 'Press Start 2P', cursive;
+        margin: 0;
+        padding: var(--spacing-lg);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: var(--text-color);
+      }
+
+      /* Global scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: var(--border-radius);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        border-radius: var(--border-radius);
+        border: 2px solid var(--bg-color);
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+        box-shadow: 0 0 10px var(--accent-color);
+      }
+
+      /* Firefox scrollbar */
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.3);
+      }
+
+      h1 {
+        color: var(--primary-color);
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: var(--spacing-lg);
+        text-shadow: 3px 3px 0px #000;
+        letter-spacing: 2px;
+      }
+
+      #nameEntry {
+        background: var(--bg-color);
+        padding: var(--spacing-lg);
+        border: var(--pixel-border);
+        border-radius: var(--border-radius);
+        margin-bottom: var(--spacing-lg);
+        width: 100%;
+        max-width: 500px;
+      }
+
+      #nameEntry form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+      }
+
+      label {
+        color: var(--primary-color);
+        margin-bottom: var(--spacing-sm);
+        text-shadow: 2px 2px 0px #000;
+      }
+
+      input[type="text"] {
+        padding: var(--spacing-md);
+        background: rgba(0, 0, 0, 0.8);
+        border: 2px solid var(--primary-color);
+        border-radius: var(--border-radius);
+        color: var(--primary-color);
+        font-family: 'Press Start 2P', cursive;
+        font-size: 14px;
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 10px var(--primary-color);
+      }
+
+      button {
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        color: #fff;
+        border: none;
+        border-radius: var(--border-radius);
+        padding: var(--spacing-md) var(--spacing-lg);
+        cursor: pointer;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 14px;
+        position: relative;
+        transition: all 0.2s;
+        text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+      }
+
+      button:active {
+        transform: translateY(1px);
+      }
+
+      .game-container {
+        width: 100%;
+        max-width: 600px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-lg);
+      }
+
+      .scoreboard {
+        background: var(--bg-color);
+        padding: var(--spacing-lg);
+        border: var(--pixel-border);
+        border-radius: var(--border-radius);
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-lg);
+      }
+
+      .scoreboard > div {
+        padding: var(--spacing-md);
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: var(--border-radius);
+      }
+
+      .stats-display {
+        display: flex;
+        justify-content: space-between;
+        margin-top: var(--spacing-sm);
+        font-size: 0.8em;
+        color: #ccc;
+      }
+
+      .board {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        background: var(--primary-color);
+        padding: 8px;
+        border-radius: var(--border-radius);
+        margin: var(--spacing-lg) 0;
+      }
+
+      .cell {
+        background: var(--bg-color);
+        border: 2px solid var(--primary-color);
+        border-radius: var(--border-radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2em;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        aspect-ratio: 1;
+        color: var(--accent-color);
+        text-shadow: 0 0 5px var(--accent-color);
+      }
+
+      .cell:hover {
+        background: rgba(255, 113, 206, 0.1);
+        border-color: var(--accent-color);
+        box-shadow: var(--glow);
+      }
+
+      .cell.x {
+        color: var(--primary-color);
+        text-shadow: 0 0 5px var(--primary-color);
+      }
+
+      .cell.o {
+        color: var(--secondary-color);
+        text-shadow: 0 0 5px var(--secondary-color);
+      }
+
+      .question-box {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: black;
+        padding: var(--spacing-lg);
+        border: var(--pixel-border);
+        border-radius: var(--border-radius);
+        width: 90%;
+        max-width: 500px;
+        z-index: 1000;
+      }
+
+      .question-box form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+      }
+
+      .player-turn {
+        font-size: 1.2em;
+        color: var(--primary-color);
+        margin-bottom: var(--spacing-md);
+        text-align: center;
+      }
+
+      .timer-container {
+        text-align: center;
+        margin: var(--spacing-md) 0;
+      }
+
+      .timer {
+        display: inline-block;
+        padding: var(--spacing-sm) var(--spacing-md);
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: var(--border-radius);
+      }
+
+      .timer.warning {
+        background: rgba(255, 71, 71, 0.3);
+        border-color: #ff4747;
+        color: #ff4747;
+        animation: pulse 1s infinite;
+      }
+
+      #feedback {
+        text-align: center;
+        margin-top: var(--spacing-sm);
+        font-size: 0.9em;
+      }
+
+      #feedback.correct {
+        color: #05ffa1;
+        text-shadow: 0 0 5px #05ffa1;
+      }
+
+      #feedback.incorrect {
+        color: #ff4747;
+        text-shadow: 0 0 5px #ff4747;
+      }
+
+      #winScreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1100;
+      }
+
+      .win-content {
+        background: var(--bg-color);
+        padding: var(--spacing-lg);
+        border: var(--pixel-border);
+        border-radius: var(--border-radius);
+        text-align: center;
+        animation: scaleIn 0.5s ease-out;
+      }
+
+      @keyframes scaleIn {
+        from { transform: scale(0); }
+        to { transform: scale(1); }
+      }
+
+      .trophy {
+        font-size: 4em;
+        margin-bottom: var(--spacing-md);
+      }
+
+      .win-text {
+        color: var(--primary-color);
+        font-size: 2em;
+        margin: var(--spacing-md) 0;
+      }
+
+      .winner-name {
+        font-size: 1.5em;
+        margin: var(--spacing-md) 0;
+      }
+
+      .continue-btn {
+        margin-top: var(--spacing-lg);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* Add styles for difficulty selector and score display */
+      .game-settings {
+        display: none;
+      }
+
+      .stats-display {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        font-size: 0.8em;
+      }
+
+      .streak-bonus {
+        color: var(--primary-color);
+        animation: pulse 1s infinite;
+      }
+
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+      }
+
+      /* Responsive Design */
+      @media screen and (max-width: 768px) {
+        :root {
+          --spacing-sm: 8px;
+          --spacing-md: 15px;
+          --spacing-lg: 20px;
+        }
+
+        body {
+          padding: var(--spacing-md);
+        }
+
+        h1 {
+          font-size: 1.8rem;
+          margin: var(--spacing-md) 0;
+        }
+
+        .game-container {
+          width: 100%;
+          max-width: 400px;
+          padding: var(--spacing-md);
+        }
+
+        .board {
+          gap: var(--spacing-sm);
+          margin: var(--spacing-md) 0;
+        }
+
+        .cell {
+          font-size: 1.5em;
+        }
+
+        .scoreboard {
+          width: 100%;
+          grid-template-columns: 1fr;
+          gap: var(--spacing-md);
+          padding: var(--spacing-md);
+        }
+
+        .stats-display {
+          flex-direction: column;
+          align-items: center;
+          gap: var(--spacing-sm);
+        }
+
+        button {
+          padding: var(--spacing-sm) var(--spacing-md);
+          font-size: 12px;
+          width: 100%;
+          max-width: 300px;
+        }
+
+        input[type="text"] {
+          width: 100%;
+          max-width: 300px;
+          padding: var(--spacing-sm);
+          font-size: 12px;
+        }
+
+        .question-box {
+          width: 100%;
+          max-width: 400px;
+          padding: var(--spacing-md);
+        }
+
+        .question-details {
+          font-size: 0.9em;
+        }
+
+        .timer {
+          font-size: 0.9em;
+        }
+
+        #feedback {
+          font-size: 0.8em;
+        }
+
+        .win-content {
+          width: 90%;
+          max-width: 350px;
+          padding: var(--spacing-md);
+        }
+
+        .trophy {
+          font-size: 3em;
+        }
+
+        .win-text {
+          font-size: 1.5em;
+        }
+
+        .winner-name {
+          font-size: 1.2em;
+        }
+      }
+
+      /* Additional adjustments for very small screens */
+      @media screen and (max-width: 320px) {
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        .cell {
+          font-size: 1.2em;
+        }
+
+        .trophy {
+          font-size: 2.5em;
+        }
+
+        .win-text {
+          font-size: 1.2em;
+        }
+
+        .stats-display {
+          font-size: 0.7em;
+        }
+      }
+
+      .sound-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--bg-color);
+        border: 2px solid var(--primary-color);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 1000;
+      }
+
+      .sound-toggle i {
+        color: var(--primary-color);
+        font-size: 1.2em;
+      }
+
+      .sound-toggle:hover {
+        transform: scale(1.1);
+        border-color: var(--accent-color);
+      }
+
+      .sound-toggle.muted {
+        background: rgba(255, 71, 71, 0.2);
+        border-color: #ff4747;
+      }
+
+      .sound-toggle.muted i {
+        color: #ff4747;
+      }
+
+      .review-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1100;
+      }
+
+      .review-content {
+        background: var(--bg-color);
+        padding: var(--spacing-lg);
+        border: var(--pixel-border);
+        border-radius: var(--border-radius);
+        text-align: center;
+      }
+
+      .review-header {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      #mistakesList {
+        margin-bottom: var(--spacing-lg);
+        max-height: 60vh;
+        overflow-y: auto;
+        padding-right: var(--spacing-sm);
+      }
+
+      .mistake-item {
+        background: rgba(0, 0, 0, 0.3);
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
+        border-radius: var(--border-radius);
+        text-align: left;
+      }
+
+      .mistake-item .wrong-answer {
+        color: #ff4747;
+        text-decoration: line-through;
+      }
+
+      .mistake-item .correct-answer {
+        color: #05ffa1;
+      }
+
+      /* Webkit (Chrome, Safari, newer versions of Opera) */
+      #mistakesList::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      #mistakesList::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: var(--border-radius);
+      }
+
+      #mistakesList::-webkit-scrollbar-thumb {
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        border-radius: var(--border-radius);
+        border: 2px solid var(--bg-color);
+      }
+
+      #mistakesList::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+        box-shadow: 0 0 10px var(--accent-color);
+      }
+
+      /* Firefox */
+      #mistakesList {
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <button class="sound-toggle" onclick="toggleSound()">
+      <i class="fas fa-volume-up"></i>
+    </button>
+
+    <h1>Tic-Tac-Tense</h1>
+    <div id="nameEntry">
+      <form action="javascript:void(0)">
+        <label for="playerX">Player X Name:</label>
+        <input type="text" id="playerX" placeholder="Enter name for Player X" />
+        <label for="playerO">Player O Name:</label>
+        <input type="text" id="playerO" placeholder="Enter name for Player O" />
+        <button onclick="startGame()">Start Game</button>
+      </form>
+    </div>
+    <div class="game-container">
+      <div class="scoreboard hidden">
+        <div>
+          <p><span id="nameX">Player X</span>: <span id="scoreX">0</span> pts</p>
+          <p class="stats-display">
+            <span>Streak: <span id="streakX">0</span></span>
+            <span>Accuracy: <span id="accuracyX">0%</span></span>
+          </p>
+        </div>
+        <div>
+          <p><span id="nameO">Player O</span>: <span id="scoreO">0</span> pts</p>
+          <p class="stats-display">
+            <span>Streak: <span id="streakO">0</span></span>
+            <span>Accuracy: <span id="accuracyO">0%</span></span>
+          </p>
+        </div>
+      </div>
+      <div class="board hidden" id="board"></div>
+    </div>
+    <div class="question-box hidden">
+      <form action="javascript:void(0)">
+        <div class="player-turn">
+          <span id="currentPlayerName">Player X</span>'s Turn
+        </div>
+        <div class="timer-container">
+          <div class="timer">Time left: <span id="timer">30</span>s</div>
+        </div>
+        <p id="question"></p>
+        <p><strong>Verb:</strong> <span id="verb"></span></p>
+        <p><strong>Tense:</strong> <span id="tense"></span></p>
+        <input type="text" id="answer" placeholder="Enter the missing word" />
+        <button type="submit" onclick="checkAnswer()">Submit</button>
+        <p id="feedback" style="color: red"></p>
+      </form>
+    </div>
+    <div id="winScreen" class="hidden">
+      <div class="win-content">
+        <div class="trophy">🏆</div>
+        <h2 class="win-text">VICTORY!</h2>
+        <p class="winner-name">Player wins!</p>
+        <div class="firework"></div>
+        <div class="firework"></div>
+        <div class="firework"></div>
+        <button onclick="closeWinScreen()" class="continue-btn">Continue</button>
+      </div>
+    </div>
+
+    <div id="reviewScreen" class="review-screen hidden">
+      <div class="review-content">
+        <div class="review-header">
+          <h3>Learning Review</h3>
+          <p>Let's review what we learned!</p>
+        </div>
+        <div id="mistakesList"></div>
+        <button onclick="closeReviewScreen()" class="continue-btn">Close Review</button>
+      </div>
+    </div>
+    <p id="message"></p>
+    <script>
+      // Sound effects using available audio files
+      const sounds = {
+        click: new Audio('sounds/click.wav'),
+        correct: new Audio('sounds/correct.mp3'),
+        incorrect: new Audio('sounds/wrong.mp3'),
+        win: new Audio('sounds/round.mp3'), // Using correct.mp3 for win sound as well
+        timer: new Audio('sounds/timer.mp3')
+      };
+
+      let timerSoundInterval = null; // New variable to track timer sound interval
+
+      // Safe sound playing function
+      function playSound(soundName) {
+        try {
+          if (sounds[soundName]) {
+            // Reset the audio to start if it's already playing
+            sounds[soundName].currentTime = 0;
+            sounds[soundName].play().catch(e => console.log('Sound play failed:', e));
+          }
+        } catch (e) {
+          console.log('Sound system not available:', e);
+        }
+      }
+
+      // Function to stop a specific sound
+      function stopSound(soundName) {
+        try {
+          if (sounds[soundName]) {
+            sounds[soundName].pause();
+            sounds[soundName].currentTime = 0;
+          }
+        } catch (e) {
+          console.log('Could not stop sound:', e);
+        }
+      }
+
+      // Function to start timer sound
+      function startTimerSound() {
+        if (!timerSoundInterval) {
+          timerSoundInterval = setInterval(() => {
+            playSound('timer');
+          }, 1000);
+        }
+      }
+
+      // Function to stop timer sound
+      function stopTimerSound() {
+        if (timerSoundInterval) {
+          clearInterval(timerSoundInterval);
+          timerSoundInterval = null;
+          stopSound('timer');
+        }
+      }
+
+      // Function to cleanup timer
+      function cleanupTimer() {
+        clearInterval(timerInterval);
+        stopTimerSound();
+        timerInterval = null;
+      }
+
+      // Preload sounds and set appropriate volumes
+      Object.values(sounds).forEach(sound => {
+        sound.load();
+        // Set different volumes for different sounds
+        if (sound.src.includes('timer.mp3')) {
+          sound.volume = 0.3; // Lower volume for timer tick
+        } else if (sound.src.includes('correct.mp3')) {
+          sound.volume = 0.6; // Medium volume for correct/win sound
+        } else {
+          sound.volume = 0.5; // Default volume for other sounds
+        }
+      });
+
+      let board = Array(9).fill(null);
+      let currentPlayer = "X";
+      let selectedCell = null;
+      let roundsWon = { X: 0, O: 0 };
+      let timerInterval = null;
+      let timeLeft = 30;
+      const boardDiv = document.getElementById("board");
+      const scoreX = document.getElementById("scoreX");
+      const scoreO = document.getElementById("scoreO");
+      const nameX = document.getElementById("nameX");
+      const nameO = document.getElementById("nameO");
+      const timerElement = document.getElementById("timer");
+
+      // Game configuration with fixed settings
+      const GAME_SETTINGS = {
+        timeLimit: 30,
+        basePoints: 10,
+        streakBonus: 5
+      };
+
+      // Player statistics
+      const playerStats = {
+        X: { streak: 0, correct: 0, total: 0 },
+        O: { streak: 0, correct: 0, total: 0 }
+      };
+
+      // Track mistakes
+      let playerMistakes = {
+        X: [],
+        O: []
+      };
+
+      function updatePlayerStats(player, isCorrect) {
+        const stats = playerStats[player];
+        stats.total++;
+        if (isCorrect) {
+          stats.correct++;
+          stats.streak++;
+        } else {
+          stats.streak = 0;
+        }
+        
+        // Update display
+        document.getElementById(`streak${player}`).textContent = stats.streak;
+        document.getElementById(`accuracy${player}`).textContent = 
+          Math.round((stats.correct / stats.total) * 100) + '%';
+        
+        // Show streak bonus animation if applicable
+        if (stats.streak > 1) {
+          const streakSpan = document.getElementById(`streak${player}`);
+          streakSpan.classList.add('streak-bonus');
+          setTimeout(() => streakSpan.classList.remove('streak-bonus'), 1000);
+        }
+      }
+
+      function calculateScore(timeLeft, isCorrect) {
+        if (!isCorrect) return 0;
+        
+        let score = GAME_SETTINGS.basePoints;
+        
+        // Time bonus: more points for faster answers
+        score += Math.floor(timeLeft / 2);
+        
+        // Streak bonus
+        const streak = playerStats[currentPlayer].streak;
+        if (streak > 1) {
+          score += GAME_SETTINGS.streakBonus * (streak - 1);
+        }
+        
+        return score;
+      }
+
+      function trackMistake(player, question, wrongAnswer, correctAnswer) {
+        playerMistakes[player].push({
+          question: question,
+          wrongAnswer: wrongAnswer,
+          correctAnswer: correctAnswer
+        });
+      }
+
+      function showMistakesReview() {
+        const reviewScreen = document.getElementById('reviewScreen');
+        const mistakesList = document.getElementById('mistakesList');
+        mistakesList.innerHTML = '';
+
+        // Combine mistakes from both players
+        const allMistakes = [...playerMistakes.X, ...playerMistakes.O];
+
+        if (allMistakes.length > 0) {
+          allMistakes.forEach(mistake => {
+            const mistakeItem = document.createElement('div');
+            mistakeItem.className = 'mistake-item';
+            mistakeItem.innerHTML = `
+              <p>Question: ${mistake.question}</p>
+              <p class="wrong-answer">Your answer: ${mistake.wrongAnswer}</p>
+              <p class="correct-answer">Correct answer: ${mistake.correctAnswer}</p>
+            `;
+            mistakesList.appendChild(mistakeItem);
+          });
+          reviewScreen.classList.remove('hidden');
+        }
+      }
+
+      function closeReviewScreen() {
+        document.getElementById('reviewScreen').classList.add('hidden');
+        // Reset mistakes for next game
+        playerMistakes = { X: [], O: [] };
+      }
+
+      function startTimer() {
+        cleanupTimer();
+        timeLeft = GAME_SETTINGS.timeLimit;
+        timerElement.textContent = timeLeft;
+        timerElement.parentElement.classList.remove('warning');
+        
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          timerElement.textContent = timeLeft;
+          
+          if (timeLeft === 10) {
+            timerElement.parentElement.classList.add('warning');
+            startTimerSound();
+          }
+          
+          if (timeLeft <= 0) {
+            cleanupTimer();
+            playSound('incorrect');
+            document.getElementById("feedback").textContent = "Time's up! You lose your turn.";
+            updatePlayerStats(currentPlayer, false);
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            document.querySelector(".question-box").classList.add("hidden");
+            renderBoard();
+          }
+        }, 1000);
+      }
+
+      function startGame() {
+        const playerXName =
+          document.getElementById("playerX").value || "Player X";
+        const playerOName =
+          document.getElementById("playerO").value || "Player O";
+        nameX.textContent = playerXName;
+        nameO.textContent = playerOName;
+        document.getElementById("nameEntry").classList.add("hidden");
+        document.querySelector(".scoreboard").classList.remove("hidden");
+        boardDiv.classList.remove("hidden");
+        renderBoard();
+      }
+
+      function renderBoard() {
+        boardDiv.innerHTML = "";
+        board.forEach((cell, index) => {
+          const cellDiv = document.createElement("div");
+          cellDiv.classList.add("cell");
+          cellDiv.textContent = cell || "";
+          cellDiv.onclick = () => selectCell(index);
+          boardDiv.appendChild(cellDiv);
+        });
+      }
+
+      function selectCell(index) {
+        if (board[index] !== null) return;
+        selectedCell = index;
+        playSound('click');
+        askQuestion();
+      }
+
+      function askQuestion() {
+        const randomIndex = Math.floor(Math.random() * questions.length);
+        const question = questions[randomIndex];
+        const currentPlayerName = currentPlayer === "X" ? 
+          (document.getElementById("playerX").value || "Player X") : 
+          (document.getElementById("playerO").value || "Player O");
+        
+        document.getElementById("currentPlayerName").textContent = currentPlayerName;
+        document.getElementById("question").textContent = question.sentence;
+        document.getElementById("verb").textContent = question.verb;
+        document.getElementById("tense").textContent = question.tense;
+        document.getElementById("answer").value = "";
+        document.getElementById("feedback").textContent = "";
+        document.querySelector(".question-box").classList.remove("hidden");
+        document.getElementById("answer").dataset.correct = question.answer;
+        startTimer();
+      }
+
+      function checkAnswer() {
+        cleanupTimer();
+        const userAnswer = document.getElementById("answer").value.trim();
+        const correctAnswer = document.getElementById("answer").dataset.correct;
+        const questionText = document.getElementById("question").textContent;
+        const isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
+        
+        if (isCorrect) {
+          playSound('correct');
+          const score = calculateScore(timeLeft, true);
+          roundsWon[currentPlayer] += score;
+          board[selectedCell] = currentPlayer;
+          checkWin();
+        } else {
+          playSound('incorrect');
+          document.getElementById("feedback").textContent = "Incorrect! You lose your turn.";
+          // Track the mistake for review
+          trackMistake(currentPlayer, questionText, userAnswer, correctAnswer);
+        }
+        
+        updatePlayerStats(currentPlayer, isCorrect);
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        renderBoard();
+        document.querySelector(".question-box").classList.add("hidden");
+      }
+
+      function checkWin() {
+        const winningCombinations = [
+          [0, 1, 2],
+          [3, 4, 5],
+          [6, 7, 8],
+          [0, 3, 6],
+          [1, 4, 7],
+          [2, 5, 8],
+          [0, 4, 8],
+          [2, 4, 6],
+        ];
+
+        for (const combination of winningCombinations) {
+          const [a, b, c] = combination;
+          if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+            const winner = currentPlayer === "X" ? 
+              (document.getElementById("playerX").value || "Player X") : 
+              (document.getElementById("playerO").value || "Player O");
+            
+            document.getElementById("message").textContent = `${winner} wins this round!`;
+            updateScoreboard();
+            
+            document.querySelectorAll(".cell")[a].classList.add("win");
+            document.querySelectorAll(".cell")[b].classList.add("win");
+            document.querySelectorAll(".cell")[c].classList.add("win");
+            
+            // Montrer l'écran de victoire
+            setTimeout(() => {
+              showWinScreen(winner);
+            }, 1000);
+            
+            setTimeout(() => {
+              resetBoard();
+            }, 1500);
+            return;
+          }
+        }
+      }
+
+      function updateScoreboard() {
+        scoreX.textContent = roundsWon.X;
+        scoreO.textContent = roundsWon.O;
+      }
+
+      function resetBoard() {
+        clearInterval(timerInterval);
+        board.fill(null);
+        renderBoard();
+      }
+
+      function showWinScreen(winner) {
+        const winScreen = document.getElementById('winScreen');
+        const winnerName = winScreen.querySelector('.winner-name');
+        winnerName.textContent = `${winner} WINS!`;
+        winScreen.classList.remove('hidden');
+        playSound('win');
+      }
+
+      function closeWinScreen() {
+        document.getElementById('winScreen').classList.add('hidden');
+        // Show review screen after win screen is closed
+        setTimeout(() => {
+          showMistakesReview();
+        }, 300);
+      }
+
+      // Add sound control
+      let isSoundMuted = false;
+      
+      function toggleSound() {
+        isSoundMuted = !isSoundMuted;
+        const soundToggle = document.querySelector('.sound-toggle');
+        const icon = soundToggle.querySelector('i');
+        
+        if (isSoundMuted) {
+          icon.className = 'fas fa-volume-mute';
+          soundToggle.classList.add('muted');
+        } else {
+          icon.className = 'fas fa-volume-up';
+          soundToggle.classList.remove('muted');
+        }
+      }
+
+      function playSound(soundName) {
+        if (!isSoundMuted) {
+          if (soundName === 'correct') {
+            const audio = new Audio('sounds/correct.mp3');
+            audio.play();
+          } else if (soundName === 'incorrect') {
+            const audio = new Audio('sounds/wrong.mp3');
+            audio.play();
+          } else if (soundName === 'win') {
+            const audio = new Audio('sounds/round.mp3');
+            audio.play();
+          }
+        }
+      }
+
+      // Array of question objects//
+      const questions = [
+  // Verb: Eat (1-7)
+  {
+    sentence: "She _____ breakfast every morning.",
+    verb: "eat",
+    tense: "present simple",
+    answer: "eats",
+  },
+  {
+    sentence: "They _____ dinner last night.",
+    verb: "eat",
+    tense: "past simple",
+    answer: "ate",
+  },
+  {
+    sentence: "He is _____ lunch right now.",
+    verb: "eat",
+    tense: "present continuous",
+    answer: "eating",
+  },
+  {
+    sentence: "I _____ the snack before the movie started.",
+    verb: "eat",
+    tense: "past perfect",
+    answer: "had eaten",
+  },
+  {
+    sentence: "They _____ dinner when the phone rang.",
+    verb: "eat",
+    tense: "past continuous",
+    answer: "were eating",
+  },
+  {
+    sentence: "She _____ breakfast tomorrow morning.",
+    verb: "eat",
+    tense: "future simple",
+    answer: "will eat",
+  },
+  {
+    sentence: "By noon, she _____ breakfast.",
+    verb: "eat",
+    tense: "future perfect",
+    answer: "will have eaten",
+  },
+
+  // Verb: Run (8-14)
+  {
+    sentence: "She _____ five miles every day.",
+    verb: "run",
+    tense: "present simple",
+    answer: "runs",
+  },
+  {
+    sentence: "They _____ the marathon last year.",
+    verb: "run",
+    tense: "past simple",
+    answer: "ran",
+  },
+  {
+    sentence: "He is _____ to catch the bus right now.",
+    verb: "run",
+    tense: "present continuous",
+    answer: "running",
+  },
+  {
+    sentence: "I _____ out of energy before the race ended.",
+    verb: "run",
+    tense: "past perfect",
+    answer: "had run",
+  },
+  {
+    sentence: "They _____ the marathon when it started raining.",
+    verb: "run",
+    tense: "past continuous",
+    answer: "were running",
+  },
+  {
+    sentence: "He _____ a marathon next month.",
+    verb: "run",
+    tense: "future simple",
+    answer: "will run",
+  },
+  {
+    sentence: "By tomorrow, he _____ five miles this week.",
+    verb: "run",
+    tense: "future perfect",
+    answer: "will have run",
+  },
+
+  // Verb: Swim (15-21)
+  {
+    sentence: "She _____ laps every weekend.",
+    verb: "swim",
+    tense: "present simple",
+    answer: "swims",
+  },
+  {
+    sentence: "They _____ in the lake yesterday.",
+    verb: "swim",
+    tense: "past simple",
+    answer: "swam",
+  },
+  {
+    sentence: "He is _____ in the pool right now.",
+    verb: "swim",
+    tense: "present continuous",
+    answer: "swimming",
+  },
+  {
+    sentence: "I _____ across the bay before the storm hit.",
+    verb: "swim",
+    tense: "past perfect",
+    answer: "had swum",
+  },
+  {
+    sentence: "They _____ in the lake when the storm began.",
+    verb: "swim",
+    tense: "past continuous",
+    answer: "were swimming",
+  },
+  {
+    sentence: "She _____ laps tomorrow.",
+    verb: "swim",
+    tense: "future simple",
+    answer: "will swim",
+  },
+  {
+    sentence: "She _____ across the bay by noon.",
+    verb: "swim",
+    tense: "future perfect",
+    answer: "will have swum",
+  },
+
+  // Verb: Speak (22-28)
+  {
+    sentence: "She _____ French fluently.",
+    verb: "speak",
+    tense: "present simple",
+    answer: "speaks",
+  },
+  {
+    sentence: "They _____ to the manager last week.",
+    verb: "speak",
+    tense: "past simple",
+    answer: "spoke",
+  },
+  {
+    sentence: "He is _____ at the conference right now.",
+    verb: "speak",
+    tense: "present continuous",
+    answer: "speaking",
+  },
+  {
+    sentence: "I _____ to her before she left.",
+    verb: "speak",
+    tense: "past perfect",
+    answer: "had spoken",
+  },
+  {
+    sentence: "They _____ about the issue when the meeting ended.",
+    verb: "speak",
+    tense: "past continuous",
+    answer: "were speaking",
+  },
+  {
+    sentence: "He _____ at the event next week.",
+    verb: "speak",
+    tense: "future simple",
+    answer: "will speak",
+  },
+  {
+    sentence: "By tomorrow, she _____ to the team.",
+    verb: "speak",
+    tense: "future perfect",
+    answer: "will have spoken",
+  },
+
+  // Verb: Take (29-35)
+  {
+    sentence: "She _____ the bus to work every day.",
+    verb: "take",
+    tense: "present simple",
+    answer: "takes",
+  },
+  {
+    sentence: "They _____ a photo yesterday.",
+    verb: "take",
+    tense: "past simple",
+    answer: "took",
+  },
+  {
+    sentence: "He is _____ notes during the lecture.",
+    verb: "take",
+    tense: "present continuous",
+    answer: "taking",
+  },
+  {
+    sentence: "I _____ the medicine before the fever dropped.",
+    verb: "take",
+    tense: "past perfect",
+    answer: "had taken",
+  },
+  {
+    sentence: "They _____ a walk when it started raining.",
+    verb: "take",
+    tense: "past continuous",
+    answer: "were taking",
+  },
+  {
+    sentence: "He _____ a test next week.",
+    verb: "take",
+    tense: "future simple",
+    answer: "will take",
+  },
+  {
+    sentence: "By tomorrow, she _____ all her exams.",
+    verb: "take",
+    tense: "future perfect",
+    answer: "will have taken",
+  },
+
+  // Verb: Give (36-42)
+  {
+    sentence: "She _____ a gift to her friend every birthday.",
+    verb: "give",
+    tense: "present simple",
+    answer: "gives",
+  },
+  {
+    sentence: "They _____ a surprise party last weekend.",
+    verb: "give",
+    tense: "past simple",
+    answer: "gave",
+  },
+  {
+    sentence: "He is _____ a presentation right now.",
+    verb: "give",
+    tense: "present continuous",
+    answer: "giving",
+  },
+  {
+    sentence: "I _____ my consent before they started.",
+    verb: "give",
+    tense: "past perfect",
+    answer: "had given",
+  },
+  {
+    sentence: "They _____ out flyers when I arrived.",
+    verb: "give",
+    tense: "past continuous",
+    answer: "were giving",
+  },
+  {
+    sentence: "She _____ a speech at the event.",
+    verb: "give",
+    tense: "future simple",
+    answer: "will give",
+  },
+  {
+    sentence: "By next week, he _____ all his interviews.",
+    verb: "give",
+    tense: "future perfect",
+    answer: "will have given",
+  },
+
+  // Verb: See (43-49)
+  {
+    sentence: "She _____ the sunrise every morning.",
+    verb: "see",
+    tense: "present simple",
+    answer: "sees",
+  },
+  {
+    sentence: "They _____ a shooting star last night.",
+    verb: "see",
+    tense: "past simple",
+    answer: "saw",
+  },
+  {
+    sentence: "He is _____ the doctor right now.",
+    verb: "see",
+    tense: "present continuous",
+    answer: "seeing",
+  },
+  {
+    sentence: "I _____ that movie before it became popular.",
+    verb: "see",
+    tense: "past perfect",
+    answer: "had seen",
+  },
+  {
+    sentence: "They _____ the exhibition when it got crowded.",
+    verb: "see",
+    tense: "past continuous",
+    answer: "were seeing",
+  },
+  {
+    sentence: "She _____ the play tomorrow.",
+    verb: "see",
+    tense: "future simple",
+    answer: "will see",
+  },
+  {
+    sentence: "By next month, he _____ all the episodes.",
+    verb: "see",
+    tense: "future perfect",
+    answer: "will have seen",
+  },
+
+  // Verb: Come (50-56)
+  {
+    sentence: "She _____ to the office by bus every day.",
+    verb: "come",
+    tense: "present simple",
+    answer: "comes",
+  },
+  {
+    sentence: "They _____ to the party late last night.",
+    verb: "come",
+    tense: "past simple",
+    answer: "came",
+  },
+  {
+    sentence: "He is _____ over to our place right now.",
+    verb: "come",
+    tense: "present continuous",
+    answer: "coming",
+  },
+  {
+    sentence: "I _____ to a conclusion before you spoke.",
+    verb: "come",
+    tense: "past perfect",
+    answer: "had come",
+  },
+  {
+    sentence: "They _____ home when the accident occurred.",
+    verb: "come",
+    tense: "past continuous",
+    answer: "were coming",
+  },
+  {
+    sentence: "She _____ to the meeting tomorrow.",
+    verb: "come",
+    tense: "future simple",
+    answer: "will come",
+  },
+  {
+    sentence: "By noon, he _____ back from lunch.",
+    verb: "come",
+    tense: "future perfect",
+    answer: "will have come",
+  },
+
+  // Verb: Know (57-63)
+  {
+    sentence: "She _____ the answer to every question.",
+    verb: "know",
+    tense: "present simple",
+    answer: "knows",
+  },
+  {
+    sentence: "They _____ about the event yesterday.",
+    verb: "know",
+    tense: "past simple",
+    answer: "knew",
+  },
+  {
+    sentence: "He is _____ more details as the discussion progresses.",
+    verb: "know",
+    tense: "present continuous",
+    answer: "knowing",
+  },
+  {
+    sentence: "I _____ that fact before you mentioned it.",
+    verb: "know",
+    tense: "past perfect",
+    answer: "had known",
+  },
+  {
+    sentence: "They _____ the secret when the conversation was interrupted.",
+    verb: "know",
+    tense: "past continuous",
+    answer: "were knowing",
+  },
+  {
+    sentence: "She _____ the results by tomorrow.",
+    verb: "know",
+    tense: "future simple",
+    answer: "will know",
+  },
+  {
+    sentence: "By next week, he _____ all the details.",
+    verb: "know",
+    tense: "future perfect",
+    answer: "will have known",
+  },
+
+  // Verb: Get (64-70)
+  {
+    sentence: "She _____ a new book every month.",
+    verb: "get",
+    tense: "present simple",
+    answer: "gets",
+  },
+  {
+    sentence: "They _____ lost in the city last night.",
+    verb: "get",
+    tense: "past simple",
+    answer: "got",
+  },
+  {
+    sentence: "He is _____ ready for the exam right now.",
+    verb: "get",
+    tense: "present continuous",
+    answer: "getting",
+  },
+  {
+    sentence: "I _____ the chance to meet her before the event started.",
+    verb: "get",
+    tense: "past perfect",
+    answer: "had gotten",
+  },
+  {
+    sentence: "They _____ excited when the concert began.",
+    verb: "get",
+    tense: "past continuous",
+    answer: "were getting",
+  },
+  {
+    sentence: "He _____ a promotion soon.",
+    verb: "get",
+    tense: "future simple",
+    answer: "will get",
+  },
+  {
+    sentence: "By next month, she _____ her results.",
+    verb: "get",
+    tense: "future perfect",
+    answer: "will have gotten",
+  },
+
+  // Verb: Think (71-77)
+  {
+    sentence: "She _____ about the solution all day.",
+    verb: "think",
+    tense: "present simple",
+    answer: "thinks",
+  },
+  {
+    sentence: "They _____ the idea was brilliant.",
+    verb: "think",
+    tense: "past simple",
+    answer: "thought",
+  },
+  {
+    sentence: "He is _____ about the problem right now.",
+    verb: "think",
+    tense: "present continuous",
+    answer: "thinking",
+  },
+  {
+    sentence: "I _____ it would work out before I tried.",
+    verb: "think",
+    tense: "past perfect",
+    answer: "had thought",
+  },
+  {
+    sentence: "They _____ about the plan when the phone rang.",
+    verb: "think",
+    tense: "past continuous",
+    answer: "were thinking",
+  },
+  {
+    sentence: "She _____ about it later.",
+    verb: "think",
+    tense: "future simple",
+    answer: "will think",
+  },
+  {
+    sentence: "By tomorrow, he _____ of a solution.",
+    verb: "think",
+    tense: "future perfect",
+    answer: "will have thought",
+  },
+
+  // Verb: Find (78-84)
+  {
+    sentence: "She _____ new opportunities every day.",
+    verb: "find",
+    tense: "present simple",
+    answer: "finds",
+  },
+  {
+    sentence: "They _____ the lost keys yesterday.",
+    verb: "find",
+    tense: "past simple",
+    answer: "found",
+  },
+  {
+    sentence: "He is _____ the answer at this moment.",
+    verb: "find",
+    tense: "present continuous",
+    answer: "finding",
+  },
+  {
+    sentence: "I _____ the solution before the deadline.",
+    verb: "find",
+    tense: "past perfect",
+    answer: "had found",
+  },
+  {
+    sentence: "They _____ the balance when the meeting ended.",
+    verb: "find",
+    tense: "past continuous",
+    answer: "were finding",
+  },
+  {
+    sentence: "She _____ a way to solve the problem.",
+    verb: "find",
+    tense: "future simple",
+    answer: "will find",
+  },
+  {
+    sentence: "By next week, he _____ all the errors.",
+    verb: "find",
+    tense: "future perfect",
+    answer: "will have found",
+  },
+
+  // Verb: Say (85-91)
+  {
+    sentence: "She _____ hello to everyone.",
+    verb: "say",
+    tense: "present simple",
+    answer: "says",
+  },
+  {
+    sentence: "They _____ goodbye at the party.",
+    verb: "say",
+    tense: "past simple",
+    answer: "said",
+  },
+  {
+    sentence: "He is _____ something important right now.",
+    verb: "say",
+    tense: "present continuous",
+    answer: "saying",
+  },
+  {
+    sentence: "I _____ the truth before it was too late.",
+    verb: "say",
+    tense: "past perfect",
+    answer: "had said",
+  },
+  {
+    sentence: "They _____ their farewells when the event ended.",
+    verb: "say",
+    tense: "past continuous",
+    answer: "were saying",
+  },
+  {
+    sentence: "She _____ her piece at the meeting.",
+    verb: "say",
+    tense: "future simple",
+    answer: "will say",
+  },
+  {
+    sentence: "By tomorrow, he _____ everything he needed to.",
+    verb: "say",
+    tense: "future perfect",
+    answer: "will have said",
+  },
+
+  // Verb: Become (92-98)
+  {
+    sentence: "She _____ a doctor after many years of study.",
+    verb: "become",
+    tense: "present simple",
+    answer: "becomes",
+  },
+  {
+    sentence: "They _____ famous overnight.",
+    verb: "become",
+    tense: "past simple",
+    answer: "became",
+  },
+  {
+    sentence: "He is _____ more confident every day.",
+    verb: "become",
+    tense: "present continuous",
+    answer: "becoming",
+  },
+  {
+    sentence: "I _____ interested in art long before you did.",
+    verb: "become",
+    tense: "past perfect",
+    answer: "had become",
+  },
+  {
+    sentence: "They _____ popular as the trend grew.",
+    verb: "become",
+    tense: "past continuous",
+    answer: "were becoming",
+  },
+  {
+    sentence: "She _____ a leader in her field.",
+    verb: "become",
+    tense: "future simple",
+    answer: "will become",
+  },
+  {
+    sentence: "By the end of the year, he _____ an expert.",
+    verb: "become",
+    tense: "future perfect",
+    answer: "will have become",
+  },
+
+  // Verb: Leave (99-105)
+  {
+    sentence: "She _____ for work at 8 AM every day.",
+    verb: "leave",
+    tense: "present simple",
+    answer: "leaves",
+  },
+  {
+    sentence: "They _____ the building early this morning.",
+    verb: "leave",
+    tense: "past simple",
+    answer: "left",
+  },
+  {
+    sentence: "He is _____ the office right now.",
+    verb: "leave",
+    tense: "present continuous",
+    answer: "leaving",
+  },
+  {
+    sentence: "I _____ the party before it got crowded.",
+    verb: "leave",
+    tense: "past perfect",
+    answer: "had left",
+  },
+  {
+    sentence: "They _____ when the rain started.",
+    verb: "leave",
+    tense: "past continuous",
+    answer: "were leaving",
+  },
+  {
+    sentence: "She _____ for vacation tomorrow.",
+    verb: "leave",
+    tense: "future simple",
+    answer: "will leave",
+  },
+  {
+    sentence: "By next week, he _____ the company.",
+    verb: "leave",
+    tense: "future perfect",
+    answer: "will have left",
+  },
+
+  // Verb: Keep (106-112)
+  {
+    sentence: "She _____ her promises no matter what.",
+    verb: "keep",
+    tense: "present simple",
+    answer: "keeps",
+  },
+  {
+    sentence: "They _____ the secret until the right moment.",
+    verb: "keep",
+    tense: "past simple",
+    answer: "kept",
+  },
+  {
+    sentence: "He is _____ a diary to record his thoughts.",
+    verb: "keep",
+    tense: "present continuous",
+    answer: "keeping",
+  },
+  {
+    sentence: "I _____ all the documents before the meeting.",
+    verb: "keep",
+    tense: "past perfect",
+    answer: "had kept",
+  },
+  {
+    sentence: "They _____ quiet during the performance.",
+    verb: "keep",
+    tense: "past continuous",
+    answer: "were keeping",
+  },
+  {
+    sentence: "She _____ the instructions in mind.",
+    verb: "keep",
+    tense: "future simple",
+    answer: "will keep",
+  },
+  {
+    sentence: "By tomorrow, he _____ everything in order.",
+    verb: "keep",
+    tense: "future perfect",
+    answer: "will have kept",
+  },
+
+  // Verb: Let (113-119)
+  {
+    sentence: "She _____ her children play outside.",
+    verb: "let",
+    tense: "present simple",
+    answer: "lets",
+  },
+  {
+    sentence: "They _____ him go to the concert last night.",
+    verb: "let",
+    tense: "past simple",
+    answer: "let",
+  },
+  {
+    sentence: "He is _____ his friend borrow his car right now.",
+    verb: "let",
+    tense: "present continuous",
+    answer: "letting",
+  },
+  {
+    sentence: "I _____ them choose their seats before the show began.",
+    verb: "let",
+    tense: "past perfect",
+    answer: "had let",
+  },
+  {
+    sentence: "They _____ the opportunity when it arose.",
+    verb: "let",
+    tense: "past continuous",
+    answer: "were letting",
+  },
+  {
+    sentence: "She _____ you know the details soon.",
+    verb: "let",
+    tense: "future simple",
+    answer: "will let",
+  },
+  {
+    sentence: "By the end of the day, he _____ everyone in.",
+    verb: "let",
+    tense: "future perfect",
+    answer: "will have let",
+  },
+
+  // Verb: Begin (120-126)
+  {
+    sentence: "She _____ her work at dawn every day.",
+    verb: "begin",
+    tense: "present simple",
+    answer: "begins",
+  },
+  {
+    sentence: "They _____ the meeting on time yesterday.",
+    verb: "begin",
+    tense: "past simple",
+    answer: "began",
+  },
+  {
+    sentence: "He is _____ a new project at the moment.",
+    verb: "begin",
+    tense: "present continuous",
+    answer: "beginning",
+  },
+  {
+    sentence: "I _____ the journey long before the rain started.",
+    verb: "begin",
+    tense: "past perfect",
+    answer: "had begun",
+  },
+  {
+    sentence: "They _____ to understand the concept when the lecture ended.",
+    verb: "begin",
+    tense: "past continuous",
+    answer: "were beginning",
+  },
+  {
+    sentence: "She _____ the course next week.",
+    verb: "begin",
+    tense: "future simple",
+    answer: "will begin",
+  },
+  {
+    sentence: "By tomorrow, he _____ all his assignments.",
+    verb: "begin",
+    tense: "future perfect",
+    answer: "will have begun",
+  },
+
+  // Verb: Bring (127-133)
+  {
+    sentence: "She _____ her lunch to work daily.",
+    verb: "bring",
+    tense: "present simple",
+    answer: "brings",
+  },
+  {
+    sentence: "They _____ the snacks to the party last night.",
+    verb: "bring",
+    tense: "past simple",
+    answer: "brought",
+  },
+  {
+    sentence: "He is _____ the documents to the meeting right now.",
+    verb: "bring",
+    tense: "present continuous",
+    answer: "bringing",
+  },
+  {
+    sentence: "I _____ the gift before you mentioned the occasion.",
+    verb: "bring",
+    tense: "past perfect",
+    answer: "had brought",
+  },
+  {
+    sentence: "They _____ extra chairs when the guests arrived.",
+    verb: "bring",
+    tense: "past continuous",
+    answer: "were bringing",
+  },
+  {
+    sentence: "She _____ her report tomorrow.",
+    verb: "bring",
+    tense: "future simple",
+    answer: "will bring",
+  },
+  {
+    sentence: "By noon, he _____ all the supplies.",
+    verb: "bring",
+    tense: "future perfect",
+    answer: "will have brought",
+  },
+
+  // Verb: Hear (134-140)
+  {
+    sentence: "She _____ the news every morning.",
+    verb: "hear",
+    tense: "present simple",
+    answer: "hears",
+  },
+  {
+    sentence: "They _____ a strange sound last night.",
+    verb: "hear",
+    tense: "past simple",
+    answer: "heard",
+  },
+  {
+    sentence: "He is _____ the announcement at this moment.",
+    verb: "hear",
+    tense: "present continuous",
+    answer: "hearing",
+  },
+  {
+    sentence: "I _____ the rumor before it spread widely.",
+    verb: "hear",
+    tense: "past perfect",
+    answer: "had heard",
+  },
+  {
+    sentence: "They _____ the music when we arrived.",
+    verb: "hear",
+    tense: "past continuous",
+    answer: "were hearing",
+  },
+  {
+    sentence: "She _____ the verdict soon.",
+    verb: "hear",
+    tense: "future simple",
+    answer: "will hear",
+  },
+  {
+    sentence: "By next week, he _____ all the updates.",
+    verb: "hear",
+    tense: "future perfect",
+    answer: "will have heard",
+  },
+
+  // Verb: Put (141-147)
+  {
+    sentence: "She _____ the keys on the table every day.",
+    verb: "put",
+    tense: "present simple",
+    answer: "puts",
+  },
+  {
+    sentence: "They _____ the chairs in the room yesterday.",
+    verb: "put",
+    tense: "past simple",
+    answer: "put",
+  },
+  {
+    sentence: "He is _____ the books back on the shelf right now.",
+    verb: "put",
+    tense: "present continuous",
+    answer: "putting",
+  },
+  {
+    sentence: "I _____ everything in order before the guests arrived.",
+    verb: "put",
+    tense: "past perfect",
+    answer: "had put",
+  },
+  {
+    sentence: "They _____ the decorations up when I called.",
+    verb: "put",
+    tense: "past continuous",
+    answer: "were putting",
+  },
+  {
+    sentence: "She _____ her ideas into action.",
+    verb: "put",
+    tense: "future simple",
+    answer: "will put",
+  },
+  {
+    sentence: "By tomorrow, he _____ all his work aside.",
+    verb: "put",
+    tense: "future perfect",
+    answer: "will have put",
+  },
+
+  // Verb: Meet (148-154)
+  {
+    sentence: "She _____ her colleagues at the café every week.",
+    verb: "meet",
+    tense: "present simple",
+    answer: "meets",
+  },
+  {
+    sentence: "They _____ an old friend at the reunion last month.",
+    verb: "meet",
+    tense: "past simple",
+    answer: "met",
+  },
+  {
+    sentence: "He is _____ new people at the event right now.",
+    verb: "meet",
+    tense: "present continuous",
+    answer: "meeting",
+  },
+  {
+    sentence: "I _____ him before the conference started.",
+    verb: "meet",
+    tense: "past perfect",
+    answer: "had met",
+  },
+  {
+    sentence: "They _____ for lunch when I called.",
+    verb: "meet",
+    tense: "past continuous",
+    answer: "were meeting",
+  },
+  {
+    sentence: "She _____ the team tomorrow.",
+    verb: "meet",
+    tense: "future simple",
+    answer: "will meet",
+  },
+  {
+    sentence: "By the end of the week, he _____ everyone.",
+    verb: "meet",
+    tense: "future perfect",
+    answer: "will have met",
+  },
+
+  // Verb: Stand (155-161)
+  {
+    sentence: "She _____ by the window waiting for the bus.",
+    verb: "stand",
+    tense: "present simple",
+    answer: "stands",
+  },
+  {
+    sentence: "They _____ in line for hours yesterday.",
+    verb: "stand",
+    tense: "past simple",
+    answer: "stood",
+  },
+  {
+    sentence: "He is _____ near the door right now.",
+    verb: "stand",
+    tense: "present continuous",
+    answer: "standing",
+  },
+  {
+    sentence: "I _____ in front of the store before it closed.",
+    verb: "stand",
+    tense: "past perfect",
+    answer: "had stood",
+  },
+  {
+    sentence: "They _____ outside when the show started.",
+    verb: "stand",
+    tense: "past continuous",
+    answer: "were standing",
+  },
+  {
+    sentence: "She _____ up when she enters the room.",
+    verb: "stand",
+    tense: "future simple",
+    answer: "will stand",
+  },
+  {
+    sentence: "By the end of the event, he _____ by the stage.",
+    verb: "stand",
+    tense: "future perfect",
+    answer: "will have stood",
+  },
+
+  // Verb: Understand (162-168)
+  {
+    sentence: "She _____ the concept quickly.",
+    verb: "understand",
+    tense: "present simple",
+    answer: "understands",
+  },
+  {
+    sentence: "They _____ the instructions clearly yesterday.",
+    verb: "understand",
+    tense: "past simple",
+    answer: "understood",
+  },
+  {
+    sentence: "He is _____ the problem as we speak.",
+    verb: "understand",
+    tense: "present continuous",
+    answer: "understanding",
+  },
+  {
+    sentence: "I _____ the idea long before it was explained.",
+    verb: "understand",
+    tense: "past perfect",
+    answer: "had understood",
+  },
+  {
+    sentence: "They _____ the details when the lecture ended.",
+    verb: "understand",
+    tense: "past continuous",
+    answer: "were understanding",
+  },
+  {
+    sentence: "She _____ the lesson eventually.",
+    verb: "understand",
+    tense: "future simple",
+    answer: "will understand",
+  },
+  {
+    sentence: "By tomorrow, he _____ all the concepts.",
+    verb: "understand",
+    tense: "future perfect",
+    answer: "will have understood",
+  },
+
+  // Additional Verbs:
+
+  // Verb: Write (169-175)
+  {
+    sentence: "She _____ a letter every day.",
+    verb: "write",
+    tense: "present simple",
+    answer: "writes",
+  },
+  {
+    sentence: "They _____ a story last night.",
+    verb: "write",
+    tense: "past simple",
+    answer: "wrote",
+  },
+  {
+    sentence: "He is _____ an email right now.",
+    verb: "write",
+    tense: "present continuous",
+    answer: "writing",
+  },
+  {
+    sentence: "I _____ my essay before the deadline.",
+    verb: "write",
+    tense: "past perfect",
+    answer: "had written",
+  },
+  {
+    sentence: "They _____ a report when the meeting started.",
+    verb: "write",
+    tense: "past continuous",
+    answer: "were writing",
+  },
+  {
+    sentence: "She _____ a book next year.",
+    verb: "write",
+    tense: "future simple",
+    answer: "will write",
+  },
+  {
+    sentence: "By tomorrow, he _____ his draft.",
+    verb: "write",
+    tense: "future perfect",
+    answer: "will have written",
+  },
+
+  // Verb: Read (176-182)
+  {
+    sentence: "She _____ a book every week.",
+    verb: "read",
+    tense: "present simple",
+    answer: "reads",
+  },
+  {
+    sentence: "They _____ the article yesterday.",
+    verb: "read",
+    tense: "past simple",
+    answer: "read",
+  },
+  {
+    sentence: "He is _____ a novel right now.",
+    verb: "read",
+    tense: "present continuous",
+    answer: "reading",
+  },
+  {
+    sentence: "I _____ the instructions before starting.",
+    verb: "read",
+    tense: "past perfect",
+    answer: "had read",
+  },
+  {
+    sentence: "They _____ the report when the phone rang.",
+    verb: "read",
+    tense: "past continuous",
+    answer: "were reading",
+  },
+  {
+    sentence: "She _____ the letter later.",
+    verb: "read",
+    tense: "future simple",
+    answer: "will read",
+  },
+  {
+    sentence: "By tonight, he _____ the chapter.",
+    verb: "read",
+    tense: "future perfect",
+    answer: "will have read",
+  },
+
+  // Verb: Drive (183-189)
+  {
+    sentence: "She _____ to work every day.",
+    verb: "drive",
+    tense: "present simple",
+    answer: "drives",
+  },
+  {
+    sentence: "They _____ to the beach last weekend.",
+    verb: "drive",
+    tense: "past simple",
+    answer: "drove",
+  },
+  {
+    sentence: "He is _____ to the store right now.",
+    verb: "drive",
+    tense: "present continuous",
+    answer: "driving",
+  },
+  {
+    sentence: "I _____ the car before the breakdown occurred.",
+    verb: "drive",
+    tense: "past perfect",
+    answer: "had driven",
+  },
+  {
+    sentence: "They _____ when the accident happened.",
+    verb: "drive",
+    tense: "past continuous",
+    answer: "were driving",
+  },
+  {
+    sentence: "She _____ to the concert tomorrow.",
+    verb: "drive",
+    tense: "future simple",
+    answer: "will drive",
+  },
+  {
+    sentence: "By evening, he _____ across town.",
+    verb: "drive",
+    tense: "future perfect",
+    answer: "will have driven",
+  },
+
+  // Verb: Sing (190-196)
+  {
+    sentence: "She _____ in the choir every Sunday.",
+    verb: "sing",
+    tense: "present simple",
+    answer: "sings",
+  },
+  {
+    sentence: "They _____ their favorite song at the party.",
+    verb: "sing",
+    tense: "past simple",
+    answer: "sang",
+  },
+  {
+    sentence: "He is _____ at the concert right now.",
+    verb: "sing",
+    tense: "present continuous",
+    answer: "singing",
+  },
+  {
+    sentence: "I _____ in the competition before it started.",
+    verb: "sing",
+    tense: "past perfect",
+    answer: "had sung",
+  },
+  {
+    sentence: "They _____ when the rain began.",
+    verb: "sing",
+    tense: "past continuous",
+    answer: "were singing",
+  },
+  {
+    sentence: "She _____ at the festival next month.",
+    verb: "sing",
+    tense: "future simple",
+    answer: "will sing",
+  },
+  {
+    sentence: "By then, he _____ every note perfectly.",
+    verb: "sing",
+    tense: "future perfect",
+    answer: "will have sung",
+  },
+
+  // Verb: Play (197-203)
+  {
+    sentence: "She _____ the piano beautifully.",
+    verb: "play",
+    tense: "present simple",
+    answer: "plays",
+  },
+  {
+    sentence: "They _____ soccer yesterday.",
+    verb: "play",
+    tense: "past simple",
+    answer: "played",
+  },
+  {
+    sentence: "He is _____ the guitar right now.",
+    verb: "play",
+    tense: "present continuous",
+    answer: "playing",
+  },
+  {
+    sentence: "I _____ video games before dinner.",
+    verb: "play",
+    tense: "past perfect",
+    answer: "had played",
+  },
+  {
+    sentence: "They _____ chess when I arrived.",
+    verb: "play",
+    tense: "past continuous",
+    answer: "were playing",
+  },
+  {
+    sentence: "She _____ tennis tomorrow.",
+    verb: "play",
+    tense: "future simple",
+    answer: "will play",
+  },
+  {
+    sentence: "By next week, he _____ in several matches.",
+    verb: "play",
+    tense: "future perfect",
+    answer: "will have played",
+  },
+];
+
+    </script>
+  </body>
+</html>
