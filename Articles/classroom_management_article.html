@@ -355,6 +355,9 @@
 
           /* Adding horizontal scroll functionality */
           .horizontal-scroll-container {
+  padding-left: 56px;
+  padding-right: 56px;
+
             display: flex;
             overflow-x: auto;
             scroll-snap-type: x mandatory;
@@ -413,6 +416,25 @@
           }
 
           .scroll-nav-button.next {
+  /* right: 10px; already set */
+}
+
+@media (max-width: 600px) {
+  .scroll-nav-button {
+    width: 32px;
+    height: 32px;
+  }
+  .scroll-nav-button.prev {
+    left: 2px;
+  }
+  .scroll-nav-button.next {
+    right: 2px;
+  }
+  .horizontal-scroll-container {
+    padding-left: 36px;
+    padding-right: 36px;
+  }
+}
             right: 10px;
           }
 
@@ -475,15 +497,10 @@
 </nav>
 </div>
 <div class="reading-progress"></div>
-<div class="article-container glass-card slide-up"><h1>🎮 Leveling Up Learning: Classroom Management Strategies and the Power of Consequences in a Gamified Classroom</h1>
-
-<p>Classroom management is the backbone of effective teaching. Without clear expectations and consistent responses to behavior, even the most engaging lesson plans can fall flat... [full article continues here]</p>
+<div class="article-container glass-card slide-up"><h1>🎮 Leveling Up Learning: The Power of Consequences in a Gamified Classroom</h1>
+  
 
 <!-- For the sake of this environment, we'll insert a placeholder. In implementation, insert the full HTML-converted article content here as structured <h2>, <p>, <ul> etc. -->
-
-<p><em>Would you like this article in PDF or DOCX format too?</em></p>
-
-<h1>Gamification in Learning<br><small>Making Education Fun and Effective</small></h1>
 <div class="table-of-contents">
 <h3>Table of Contents</h3>
 <ul>
@@ -506,12 +523,6 @@
 
 <h3>Popular Gamification Elements</h3>
 <div class="scroll-section">
-    <button class="scroll-nav-button prev" onclick="scrollHorizontal('gamification-elements', -1)">
-        <i class="fas fa-chevron-left"></i>
-    </button>
-    <button class="scroll-nav-button next" onclick="scrollHorizontal('gamification-elements', 1)">
-        <i class="fas fa-chevron-right"></i>
-    </button>
     <div id="gamification-elements" class="horizontal-scroll-container">
         <div class="scroll-item">
             <h4 style="color: var(--accent-color);">Points & Scoring</h4>

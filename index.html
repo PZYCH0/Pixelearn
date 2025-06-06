@@ -68,6 +68,9 @@
 
         <div class="navbar">
             <a href="#" class="logo">Pixelearn</a>
+            <button class="menu-toggle" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars"></i>
+            </button>
             <nav>
                 <a href="#games" class="btn ripple">Learning Games</a>
                 <a href="#lessons" class="btn ripple">Recent Videos</a>
@@ -87,32 +90,29 @@
             </button>
             <div class="games-grid">
                 <!-- Placeholder for YouTube videos -->
-                <div class="game-card hover-glow">
-                    <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Grammar Video">
-                    <h3>Coming Soon</h3>
-                    <p>Check back soon for our first video!</p>
-                    <div class="card-links">
-                        <a href="coming_soon.html" class="btn">Play Now</a>
+                <a href="coming_soon.html" class="card-link">
+                    <div class="game-card hover-glow">
+                        <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Grammar Video">
+                        <h3>Coming Soon</h3>
+                        <p>Check back soon for our first video!</p>
                     </div>
-                </div>
+                </a>
 
-                <div class="game-card hover-glow">
-                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Vocabulary Video">
-                    <h3>Coming Soon</h3>
-                    <p>More videos are on the way!</p>
-                    <div class="card-links">
-                        <a href="coming_soon.html" class="btn">Play Now</a>
+                <a href="coming_soon.html" class="card-link">
+                    <div class="game-card hover-glow">
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Vocabulary Video">
+                        <h3>Coming Soon</h3>
+                        <p>More videos are on the way!</p>
                     </div>
-                </div>
+                </a>
 
-                <div class="game-card hover-glow">
-                    <img src="https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Conversation Video">
-                    <h3>Coming Soon</h3>
-                    <p>Stay tuned for more content!</p>
-                    <div class="card-links">
-                        <a href="coming_soon.html" class="btn">Play Now</a>
+                <a href="coming_soon.html" class="card-link">
+                    <div class="game-card hover-glow">
+                        <img src="https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Conversation Video">
+                        <h3>Coming Soon</h3>
+                        <p>Stay tuned for more content!</p>
                     </div>
-                </div>
+                </a>
             </div>
         </section>
 
@@ -124,61 +124,50 @@
             <button class="nav-button next" onclick="scrollContainer('articles-grid', 1)">
                 <i class="fas fa-chevron-right"></i>
             </button>
-            <div class="articles-grid">
-                <!-- Articles --> 
-                <div class="article-card hover-glow">
-                    <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Writing Article">
-                    <h3>Task-Based Learning</h3>
-                    <p>Task-based learning: A game-changer in language education</p>
-                    <div class="card-links">
-                        <a href="Articles/task_based_learning_article.html" class="btn">Read Article</a>
+            <div class="games-grid articles-grid">
+                <!-- Articles -->
+                <a href="Articles/task_based_learning_article.html" class="card-link">
+                    <div class="article-card hover-glow">
+                        <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Writing Article">
+                        <h3>Task-Based Learning</h3>
+                        <p>Task-based learning: A game-changer in language education</p>
                     </div>
-                </div>
-                
-                <div class="article-card hover-glow">
-                    <img src="https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Grammar Article">
-                    <h3>Test-Teach-Test</h3>
-                    <p>How Test-Teach-Test works perfectly within Task-Based Learning</p>
-                    <div class="card-links">
-                        <a href="Articles/test_teach_test_article.html" class="btn">Read Article</a>
+                </a>
+                <a href="Articles/test_teach_test_article.html" class="card-link">
+                    <div class="article-card hover-glow">
+                        <img src="https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Grammar Article">
+                        <h3>Test-Teach-Test</h3>
+                        <p>How Test-Teach-Test works perfectly within Task-Based Learning</p>
                     </div>
-                </div>
-
-                <div class="article-card hover-glow">
-                    <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Writing Article">
-                    <h3>Four Types of Texts</h3>
-                    <p>Understanding different text types and their educational implications</p>
-                    <div class="card-links">
-                        <a href="Articles/four_text_types_article.html" class="btn">Read Article</a>
+                </a>
+                <a href="Articles/four_text_types_article.html" class="card-link">
+                    <div class="article-card hover-glow">
+                        <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Writing Article">
+                        <h3>Four Types of Texts</h3>
+                        <p>Understanding different text types and their educational implications</p>
                     </div>
-                </div>
-
-                <div class="article-card hover-glow">
-                    <img src="https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Communicative Competence Article">
-                    <h3>On Communicative Competence</h3>
-                    <p>Dell Hymes' revolutionary concept of communicative competence and its impact on language teaching</p>
-                    <div class="card-links">
-                        <a href="Articles/on_communicative_competence_article.html" class="btn">Read Article</a>
+                </a>
+                <a href="Articles/on_communicative_competence_article.html" class="card-link">
+                    <div class="article-card hover-glow">
+                        <img src="https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Communicative Competence Article">
+                        <h3>On Communicative Competence</h3>
+                        <p>Dell Hymes' revolutionary concept of communicative competence and its impact on language teaching</p>
                     </div>
-                </div>
-
-                <div class="article-card hover-glow">
-                    <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Gamification Article">
-                    <h3>Gamification in Learning</h3>
-                    <p>Making education fun and effective through game elements and mechanics</p>
-                    <div class="card-links">
-                        <a href="Articles/gamification_in_learning_article.html" class="btn">Read Article</a>
+                </a>
+                <a href="Articles/gamification_in_learning_article.html" class="card-link">
+                    <div class="article-card hover-glow">
+                        <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Gamification Article">
+                        <h3>Gamification in Learning</h3>
+                        <p>Making education fun and effective through game elements and mechanics</p>
                     </div>
-                </div>
-
-                <div class="article-card hover-glow">
-                    <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Classroom Management Article">
-                    <h3>Classroom Management Strategies</h3>
-                    <p>Leveling up learning with gamified classroom management strategies and consequences.</p>
-                    <div class="card-links">
-                        <a href="Articles/classroom_management_article.html" class="btn">Read Article</a>
+                </a>
+                <a href="Articles/classroom_management_article.html" class="card-link">
+                    <div class="article-card hover-glow">
+                        <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Classroom Management Article">
+                        <h3>Classroom Management Strategies</h3>
+                        <p>Leveling up learning with gamified classroom management strategies and consequences.</p>
                     </div>
-                </div>
+                </a>
             </div>
         </section>
 
@@ -191,32 +180,29 @@
                 <i class="fas fa-chevron-right"></i>
             </button>
             <div class="games-grid">
-                <div class="game-card hover-glow">
-                    <img src="assets/11.png" alt="Tic-Tac-Tense">
-                    <h3>Tic-Tac-Tense</h3>
-                    <p>I know my tenses more than you do!</p>
-                    <div class="game-links">
-                        <a href="TicTacTense.html" class="btn">Play Now</a>
+                <a href="TicTacTense.html" class="card-link">
+                    <div class="game-card hover-glow">
+                        <img src="assets/11.png" alt="Tic-Tac-Tense">
+                        <h3>Tic-Tac-Tense</h3>
+                        <p>I know my tenses more than you do!</p>
                     </div>
-                </div>
+                </a>
 
-                <div class="game-card hover-glow">
-                    <img src="https://cdn.dribbble.com/users/1787323/screenshots/10091971/media/d43c019bfeff34be8816481e843ea8c1.png" alt="Grammar Heroes">
-                    <h3>Grammar Heroes</h3>
-                    <p>Save the kingdom by mastering English grammar rules!</p>
-                    <div class="game-links">
-                        <a href="games/coming_soon.html" class="btn">Play Now</a>
+                <a href="games/coming_soon.html" class="card-link">
+                    <div class="game-card hover-glow">
+                        <img src="https://cdn.dribbble.com/users/1787323/screenshots/10091971/media/d43c019bfeff34be8816481e843ea8c1.png" alt="Grammar Heroes">
+                        <h3>Grammar Heroes</h3>
+                        <p>Save the kingdom by mastering English grammar rules!</p>
                     </div>
-                </div>
+                </a>
 
-                <div class="game-card hover-glow">
-                    <img src="https://cdn.dribbble.com/users/1787323/screenshots/10091971/media/d43c019bfeff34be8816481e843ea8c1.png" alt="Pronunciation Master">
-                    <h3>Pronunciation Master</h3>
-                    <p>Perfect your English pronunciation through fun exercises!</p>
-                    <div class="game-links">
-                        <a href="games/coming_soon.html" class="btn">Play Now</a>
+                <a href="games/coming_soon.html" class="card-link">
+                    <div class="game-card hover-glow">
+                        <img src="https://cdn.dribbble.com/users/1787323/screenshots/10091971/media/d43c019bfeff34be8816481e843ea8c1.png" alt="Pronunciation Master">
+                        <h3>Pronunciation Master</h3>
+                        <p>Perfect your English pronunciation through fun exercises!</p>
                     </div>
-                </div>
+                </a>
             </div>
         </section>
 
@@ -247,5 +233,8 @@
     <footer>
         <p>&copy; 2024 English Teacher Portfolio. All rights reserved.</p>
     </footer>
+    
+    <!-- JavaScript Files -->
+    <script src="scripts/script.js"></script>
 </body>
 </html>

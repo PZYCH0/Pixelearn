@@ -1,9 +1,15 @@
-/* ==========================================
+.article-full-page p, .article-full-page ul, .article-full-page li {
+  color: #ddd;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  font-family: 'Inter', Arial, sans-serif;
+}/* ==========================================
    COLOR VARIABLES & THEME SETTINGS
    These are the main colors and measurements used throughout the website.
    Changing these values will affect the entire site's appearance.
    ========================================== */
 :root {
+  /* Colors */
   --primary: #4a00e0;        /* Main purple color */
   --secondary: #8e2de2;      /* Secondary purple shade */
   --accent: #f953c6;         /* Pink accent color for highlights */
@@ -11,8 +17,36 @@
   --light: #ffffff;          /* Light text color */
   --glass: rgba(255, 255, 255, 0);  /* Transparent glass effect */
   --glass-dark: rgba(0, 0, 0, 0.3);  /* Semi-transparent dark background */
+  --text-color: var(--light); /* Default text color */
+  
+  /* Spacing - consistent across all devices */
+  --spacing-xs: 0.5rem;      /* 8px - Extra small spacing */
+  --spacing-sm: 0.75rem;     /* 12px - Small spacing */
+  --spacing-md: 1rem;        /* 16px - Medium spacing */
+  --spacing-lg: 1.5rem;      /* 24px - Large spacing */
+  --spacing-xl: 2rem;        /* 32px - Extra large spacing */
+  
+  /* Sizing */
   --border-radius: 15px;     /* Rounded corners for elements */
   --pixel-size: 2px;         /* Size for pixel effects */
+  
+  /* Section heights */
+  --section-height-desktop: 90vh; /* Section height on desktop */
+  --section-height-mobile: 70vh;  /* Section height on mobile */
+  
+  /* Card dimensions */
+  --card-width: clamp(220px, 28vw, 320px); /* Responsive card width */
+  --card-height: clamp(260px, 38vw, 400px); /* Responsive card height */
+  --card-image-height: clamp(100px, 18vw, 180px); /* Responsive card image height */
+  
+  /* Font sizes - reduced for better spacing */
+  --font-size-xs: 0.6rem;    /* Extra small text */
+  --font-size-sm: 0.7rem;    /* Small text */
+  --font-size-md: 0.8rem;    /* Medium/body text */
+  --font-size-lg: 1rem;      /* Large text/subheadings */
+  --font-size-xl: 1.2rem;    /* Extra large/headings */
+  --font-size-xxl: 1.5rem;   /* Very large text */
+  --font-size-hero: 2rem;    /* Hero/main headings */
 }
 
 /* ==========================================
@@ -28,20 +62,24 @@
   -webkit-touch-callout: none; /* Disable long press callout on iOS */
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* Remove tap highlight color on mobile */
   image-rendering: pixelated;       /* Creates crisp pixel edges for images */
-  image-rendering: crisp-edges;
-  font-family: 'Press Start 2P', cursive;  /* Retro gaming font */
   letter-spacing: 1px;
 }
 
-/* Prevent dragging for images and other interactive elements */
-img, a, button, input, textarea {
+h1, h2, h3, h4, h5, h6, .btn, nav a {
+  font-family: 'Press Start 2P', cursive;  /* Retro gaming font */
+}
+
+/* Prevent dragging for images while allowing interaction with interactive elements */
+img {
   -webkit-user-drag: none;
-  user-drag: none;
-  -khtml-user-drag: none;
-  -moz-user-drag: none;
-  -o-user-drag: none;
-  drag: none;
+  user-select: none;
   image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Make sure interactive elements are clickable */
+a, button, input, textarea {
+  cursor: pointer;
   image-rendering: crisp-edges;
 }
 
@@ -58,7 +96,8 @@ img, a, button, input, textarea {
    The complex background has multiple layers for a retro game aesthetic.
    ========================================== */
 body {
-  font-family: "Press Start 2P", cursive;
+  font-family: Arial, 'Helvetica Neue', sans-serif;
+  font-size: var(--font-size-md); /* Base font size for the entire site */
   background-color: #1a1a2e;
   background-image: 
     /* Pixel Grid - creates a subtle grid pattern */ 
@@ -181,6 +220,20 @@ body::after {
 }
 
 /* ==========================================
+   HAMBURGER MENU BUTTON
+   Hidden by default on desktop, shown only on mobile
+   ========================================== */
+.menu-toggle {
+  display: none; /* Hidden by default on desktop */
+  background: transparent;
+  border: none;
+  color: var(--light);
+  font-size: var(--font-size-lg);
+  cursor: pointer;
+  z-index: 1001;
+}
+
+/* ==========================================
    NAVIGATION BUTTONS
    These are the left and right arrow buttons that appear in 
    scrollable sections like games, lessons, and articles.
@@ -191,18 +244,18 @@ body::after {
 #articles .nav-button {
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);  /* Centers button vertically */
+    transform: translateY(-50%);
     background: rgba(74, 0, 224, 0.2);
-    border: 4px solid var(--accent);
-    border-radius: 0;
-    width: 50px;
-    height: 50px;
+    border: 0.3em solid var(--accent);
+    border-radius: 0.15em;
+    width: clamp(2.2rem, 6vw, 3.2rem);
+    height: clamp(2.2rem, 6vw, 3.2rem);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 10;  /* Makes buttons appear above content */
+    z-index: 10;
     box-shadow: 0 0 10px rgba(249, 83, 198, 0.3);
     backdrop-filter: blur(5px);
     image-rendering: pixelated;
@@ -566,7 +619,7 @@ header h1 {
 /* Logo styling */
 .navbar .logo {
   font-family: 'Press Start 2P', cursive;
-  font-size: 1.5rem;
+  font-size: var(--font-size-xl);
   color: #ff00ff;  /* Bright pink color */
   text-shadow: 2px 2px 6px rgba(255, 0, 255, 0.6);
   letter-spacing: 2px;
@@ -586,7 +639,7 @@ header h1 {
 /* Navigation links container */
 .navbar nav {
   display: flex;
-  gap: 1rem;
+  gap: var(--spacing-md);
   align-items: center;
   flex: 1;
   justify-content: flex-end;
@@ -596,10 +649,10 @@ header h1 {
 .navbar nav a {
   color: var(--light);
   text-decoration: none;
-  padding: 0.3rem 0.8rem;
+  padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--border-radius);
   transition: all 0.3s ease;
-  font-size: 0.8em;
+  font-size: var(--font-size-xs);
   text-transform: uppercase;  /* Makes text ALL CAPS */
   letter-spacing: 1px;
   background: rgba(255, 255, 255, 0.1);
@@ -620,7 +673,7 @@ header h1 {
 nav a {
   color: var(--light);
   text-decoration: none;
-  padding: 0.8rem 1.5rem;
+  padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--border-radius);
   transition: all 0.3s ease;
   background: var(--glass);
@@ -641,11 +694,25 @@ nav a:hover {
 section {
   background: var(--glass);
   border-radius: var(--border-radius);
-  padding: 2rem;
-  margin-bottom: 2rem;
+  padding: var(--spacing-xl) var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
   border: 1px solid var(--glass);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  animation: revealSection 0.8s ease forwards;  /* Animation when section appears */
+  animation: revealSection 0.8s ease forwards;
+}
+
+@media (max-width: 768px) {
+  section {
+    padding: var(--spacing-lg) var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+  }
+}
+
+@media (max-width: 576px) {
+  section {
+    padding: var(--spacing-md) var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+  }
 }
 
 /* ==========================================
@@ -653,25 +720,29 @@ section {
    Styling for the section containing game cards
    ========================================== */
 #games {
-  height: 90vh;  /* Takes up 90% of the viewport height */
-  overflow-y: auto;  /* Allows vertical scrolling if content is too tall */
-  padding: 1rem;
+  height: var(--section-height-desktop);  /* Uses standardized section height */
+  padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: hidden; /* Hide overflow to prevent scrollbars, matching articles section */
 }
 
 /* Container for game cards */
 .games-grid {
   display: flex;
-  overflow-x: auto;  /* Allows horizontal scrolling */
+  flex-direction: row; /* Always horizontal */
+  overflow-x: auto;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
-  gap: 20px;  /* Space between cards */
-  padding: 20px 0;
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-  scrollbar-width: none;  /* Firefox */
-}
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) 0;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  width: 100%;
+  margin: 0 auto;
+  align-items: stretch;
+} /* Ensure single row, no vertical stacking */
 
 /* Hides scrollbar in WebKit browsers (Chrome, Safari) */
 .games-grid::-webkit-scrollbar {
@@ -679,11 +750,39 @@ section {
 }
 
 /* ==========================================
+   CARD LINKS
+   Styling for clickable card links
+   ========================================== */
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  flex: 0 0 var(--card-width);
+  min-width: var(--card-width);
+  max-width: var(--card-width);
+  cursor: pointer;
+}
+
+/* Hover effects for clickable cards */
+.card-link:hover .game-card,
+.card-link:hover .article-card {
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px var(--accent);
+  border-color: var(--accent);
+}
+
+/* ==========================================
    GAME CARDS
    Individual game cards within the games section
    ========================================== */
 .game-card {
-  background: var(--glass-dark);  /* Semi-transparent dark background */
+  width: 100%;
+  min-width: 80%;
+  max-width: clamp(15rem, 20vw, 25rem); /* Responsive width */
+  min-height: var(--card-height);
+  height: 100%;
+  scroll-snap-align: start;
+  background: var(--glass-dark);
   border-radius: var(--border-radius);
   overflow: hidden;
   transition: all 0.3s ease;
@@ -692,70 +791,65 @@ section {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: var(--spacing-md);
-  gap: var(--spacing-sm);
+  padding: clamp(0.7rem, 2vw, 1.5rem);
+  gap: clamp(0.5rem, 1vw, 1rem);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 576px) {
+  .game-card {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-xs);
+  }
 }
 
 /* Game card image */
 .game-card img {
   width: 100%;
-  height: 120px;
-  object-fit: cover;  /* Ensures image covers area without distortion */
+  height: var(--card-image-height);
+  max-height: 40vw;
+  object-fit: cover;
   border-radius: var(--border-radius);
+  transition: transform 0.3s ease;
+  margin-bottom: clamp(0.3rem, 1vw, 0.7rem);
+  image-rendering: pixelated;
 }
 
 /* Game card title */
 .game-card h3 {
-  font-size: 1.2rem;
-  margin: 0;
   color: var(--text-color);
-  font-size: 1.2em;
+  font-size: var(--font-size-lg);
+  margin: 0;
   text-align: center;
+  padding: 0 var(--spacing-sm); /* Added horizontal padding */
+  width: 100%; /* Full width for better text layout */
 }
 
 /* Game card description */
 .game-card p {
-  font-size: 0.75rem;
-  line-height: 1.4;
-  margin: 0;
   color: var(--text-color);
+  font-size: var(--font-size-sm); /* Reduced font size */
+  line-height: 1.5;
+  margin: var(--spacing-sm) 0;
   opacity: 0.8;
   text-align: center;
   flex-grow: 1;  /* Takes up available space to push button to bottom */
+  padding: 0 var(--spacing-sm); /* Added horizontal padding */
+  width: 100%; /* Full width for better text layout */
 }
 
 /* Container for buttons/links at bottom of game card */
 .game-links {
-  padding: 0.8rem;
+  padding: var(--spacing-md);
   text-align: center;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: flex-end;
+  margin-top: auto; /* Push to bottom */
 }
 
 /* ==========================================
-   CUSTOM SCROLLBAR
-   Styling for scrollbars in the games section
-   ========================================== */
-#games::-webkit-scrollbar {
-  width: 10px;
-}
-
-#games::-webkit-scrollbar-track {
-  background: var(--glass);
-  border-radius: 5px;
-}
-
-#games::-webkit-scrollbar-thumb {
-  background: linear-gradient(var(--primary), var(--secondary));
-  border-radius: 5px;
-  border: 2px solid var(--glass);
-}
-
-#games::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(var(--accent), var(--primary));
-}
 
 /* ==========================================
    BUTTONS
@@ -805,29 +899,455 @@ footer {
 
 /* ==========================================
    RESPONSIVE DESIGN
-   Adjustments for smaller screens (mobile devices)
+   Media queries to ensure the site works well on all devices
    ========================================== */
-@media (max-width: 768px) {
-  /* Stack navigation links vertically */
-  nav {
-    flex-direction: column;
-  }
 
-  /* Full width navigation links */
-  nav a {
+/* Large devices (desktops, less than 1200px) */
+@media (max-width: 1200px) {
+  .container {
+    max-width: 960px;
+  }
+  
+  .game-card, .article-card {
+    width: 280px;
+  }
+}
+
+/* Medium devices (tablets, less than 992px) */
+@media (max-width: 992px) {
+  .container {
+    max-width: 720px;
+  }
+  
+  header h1 {
+    font-size: 2rem;
+  }
+  
+  .game-card, .article-card {
+    width: 240px;
+  }
+  
+  .navbar {
+    padding: 0.3rem 1rem;
+  }
+  
+  .navbar .logo {
+    font-size: 1.2rem;
+  }
+  
+  .navbar nav a {
+    padding: 0.3rem 0.5rem;
+    min-width: 70px;
+    font-size: 0.7em;
+  }
+}
+
+/* Small devices (landscape phones, less than 768px) */
+@media (max-width: 768px) {
+  .container {
+    max-width: 540px;
+    padding: 10px;
+  }
+  
+  header {
+    padding: 1.5rem 1rem;
+  }
+  
+  header h1 {
+    font-size: var(--font-size-xxl);
+  }
+  
+  h2 {
+    font-size: var(--font-size-xl);
+    margin-bottom: 1rem;
+  }
+  
+  /* Convert navbar to mobile-friendly dropdown */
+  .navbar {
+    flex-direction: column;
+    height: auto;
+    padding: 0.5rem;
+  }
+  
+  .navbar .logo {
+    margin-bottom: 0.5rem;
     width: 100%;
     text-align: center;
+    margin-right: 0;
   }
-
-  /* Single column grid for games */
-  .games-grid {
-    grid-template-columns: 1fr;
+  
+  .navbar nav {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+    display: none; /* Hidden by default, shown when menu-toggle is clicked */
   }
+  
+  .navbar nav.active {
+    display: flex;
+  }
+  
+  .navbar nav a {
+    width: 100%;
+    text-align: center;
+    padding: 0.8rem;
+  }
+  
+  /* Show hamburger menu button on mobile */
+  .menu-toggle {
+    display: block;
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+  }
+  
+  /* Adjust section padding */
+  section {
+    padding: var(--spacing-lg) var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  /* Fixed height for scrollable sections */
+  #games,
+  #articles {
+    height: var(--section-height-mobile); /* Fixed height on mobile to enable scrolling */
+    overflow: hidden; /* Hide overflow to prevent double scrollbars */
+  }
+  
+  /* Make lessons display in a single column */
+  .lessons-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: 0;
+  }
+  
+  /* Enable horizontal scrolling for games and articles on mobile */
+  .games-grid,
+  .articles-grid {
+    display: flex;
+    flex-direction: row; /* Keep horizontal layout */
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) 0;
+    overflow-x: auto; /* Enable horizontal scrolling on mobile */
+    scroll-snap-type: x mandatory; /* Snap to cards */
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+  
+  /* Enhanced mobile card styling */
+  .game-card, 
+  .article-card {
+    flex: 0 0 85%; /* Take up most of the screen width */
+    min-width: 250px;
+    max-width: var(--card-width);
+    min-height: var(--card-height); /* Consistent height */
+    scroll-snap-align: center; /* Snap to center of card */
+    margin: 0 auto; /* Center cards */
+  }
+  
+  .game-card img, 
+  .article-card img {
+    height: 160px; /* Consistent image height with desktop */
+    image-rendering: pixelated; /* Ensure pixel art rendering is preserved */
+  }
+  
+  .game-card h3, 
+  .article-card h3 {
+    font-size: var(--font-size-lg);
+    margin: 8px 0;
+  }
+  
+  .game-card p, 
+  .article-card p {
+    font-size: var(--font-size-xs); /* Reduced font size */
+    margin-bottom: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+  
+  /* Mobile touch optimizations */
+  .game-links a, 
+  .card-links a, 
+  .article-card .btn {
+    padding: 10px 15px;
+    min-width: 90px;
+    font-size: var(--font-size-xs);
+    min-height: 44px; /* Minimum touch target size */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+  }
+  
+  /* Mobile-specific touch interactions */
+  .game-card:active, 
+  .article-card:active {
+    transform: scale(0.98);
+    box-shadow: 0 0 8px var(--accent);
+    transition: transform 0.1s, box-shadow 0.1s;
+    background-color: rgba(30, 30, 40, 0.9); /* Slightly darker when pressed */
+  }
+  
+  .game-card:active img, 
+  .article-card:active img {
+    transform: scale(0.95);
+    transition: transform 0.1s;
+  }
+  
+  /* Adjust navigation buttons */
+  #games .nav-button,
+  #lessons .nav-button,
+  #articles .nav-button {
+    width: 40px;
+    height: 40px;
+  }
+  
+  #games .nav-button.prev,
+  #lessons .nav-button.prev,
+  #articles .nav-button.prev {
+    left: 5px;
+  }
+  
+  #games .nav-button.next,
+  #lessons .nav-button.next,
+  #articles .nav-button.next {
+    right: 5px;
+  }
+  
+  /* Adjust contact section */
+  .contact-info {
+    flex-direction: column;
+    padding: 0;
+  }
+  
+  .contact-item {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  /* Adjust social links */
+  .social-links {
+    justify-content: center;
+  }
+  
+  .social-btn {
+    width: 40px;
+    height: 40px;
+  }
+}
 
-  /* Smaller heading */
+/* Extra small devices (phones, less than 576px) */
+@media (max-width: 576px) {
+  .container {
+    padding: 5px;
+  }
+  
+  header {
+    padding: 1rem 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
   header h1 {
-    font-size: 1.8em;
+    font-size: 1.5rem;
   }
+  
+  header p {
+    font-size: 0.7rem;
+  }
+  
+  h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Enhanced small screen card styling */
+  .game-card,
+  .article-card {
+    padding: 12px;
+    gap: 8px;
+    max-width: 280px;
+  }
+  
+  .game-card h3,
+  .article-card h3 {
+    font-size: 1rem;
+  }
+  
+  .game-card p,
+  .article-card p {
+    font-size: 0.7rem;
+  }
+  
+  /* Stack buttons vertically on very small screens */
+  .game-links, 
+  .card-links {
+    padding: 0.5rem;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .game-links a, 
+  .card-links a, 
+  .article-card .btn {
+    padding: 8px 12px;
+    min-width: 80px;
+    font-size: 0.7rem;
+    width: 100%; /* Full width buttons on very small screens */
+    min-height: 44px; /* Maintain minimum touch target size */
+  }
+  
+  .btn {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.8rem;
+  }
+  
+  /* Further reduce navigation button size */
+  #games .nav-button,
+  #lessons .nav-button,
+  #articles .nav-button {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .nav-button i {
+    font-size: 1rem;
+  }
+  
+  /* Adjust scroll to top button */
+  .scroll-to-top {
+    right: 10px;
+    bottom: 10px;
+    width: 40px;
+    height: 40px;
+  }
+  
+  /* Adjust footer */
+  footer {
+    padding: 1rem;
+    font-size: 0.7rem;
+  }
+  
+  /* Fix video background */
+  #background-video {
+    height: 100%;
+    width: auto;
+    object-fit: cover;
+  }
+}
+
+/* ==========================================
+   ACCESSIBILITY AND TOUCH OPTIMIZATIONS
+   Improvements for mobile devices and accessibility
+   ========================================== */
+/* Ensure proper touch target sizes for all interactive elements */
+.btn,
+.game-links a,
+.card-links a,
+.social-btn,
+.menu-toggle,
+.scroll-to-top {
+  touch-action: manipulation; /* Prevents delays on touch devices */
+}
+
+/* Improve keyboard navigation focus styles */
+.btn:focus-visible,
+.game-links a:focus-visible,
+.card-links a:focus-visible,
+.navbar a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(249, 83, 198, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+/* Add prefers-reduced-motion support for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .game-card:hover,
+  .article-card:hover,
+  .game-card:active,
+  .article-card:active {
+    transform: none;
+  }
+  
+  .game-card img:hover,
+  .article-card img:hover {
+    transform: none;
+  }
+}
+
+/* Improve card rendering on high-density displays while preserving pixel art */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .game-card img,
+  .article-card img {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Optimize touch feedback for mobile devices */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets for finger input */
+  .game-links a,
+  .card-links a,
+  .btn {
+    min-height: 48px; /* Even larger for better touch targets */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Visual feedback for touch */
+  .game-card:active,
+  .article-card:active {
+    background-color: rgba(30, 30, 40, 0.9); /* Slightly darker when pressed */
+  }
+  
+  .game-links a:active,
+  .card-links a:active,
+  .btn:active {
+    background-color: var(--primary-dark);
+    transform: scale(0.97);
+    transition: all 0.1s ease;
+  }
+}
+
+/* Specific improvements for landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .games-grid, .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    overflow-x: visible;
+    justify-content: center;
+  }
+  
+  .game-card, .article-card {
+    width: 100%;
+    max-width: 250px;
+    min-height: 280px;
+  }
+  
+  .game-card img, .article-card img {
+    height: 120px;
+  }
+}
+
+/* Add smooth scrolling to improve mobile experience */
+html {
+  scroll-behavior: smooth;
 }
 
 /* ==========================================
@@ -877,13 +1397,8 @@ footer {
   transition: all 0.3s ease;
 }
 
-/* Specific hover effect for game cards */
-.game-card:hover {
-  transform: translateY(-5px);  /* Lifts card slightly */
-  box-shadow: 0 0 20px var(--accent);  /* Adds colorful glow */
-  border: 1px solid var(--accent);  /* Highlights border */
-  transition: all 0.3s ease;
-}
+/* Game card specific styling */
+/* Hover effects are now handled by .card-link:hover */
 
 /* ==========================================
    GLASS CARDS
@@ -976,13 +1491,14 @@ footer {
 }
 
 /* Progress bar background */
-.progress-bar {
-  width: 100%;
-  height: 8px;
-  background: var(--glass);
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 0.5rem;
+.progress-body {
+  margin: 0;
+  padding: 0;
+  background: var(--dark);
+  color: var(--light);
+  overflow-x: hidden;
+  min-height: 100vh;
+  font-family: Arial, 'Helvetica Neue', sans-serif;
 }
 
 /* Progress bar filled part */
@@ -1069,20 +1585,31 @@ footer {
    ARTICLES SECTION
    Styling for the horizontal scrollable articles grid
    ========================================== */
+#articles {
+  height: var(--section-height-desktop);  /* Uses standardized section height */
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden; /* Hide overflow to prevent double scrollbars */
+}
+
 .articles-grid {
   display: flex;
+  flex-direction: row; /* Always horizontal */
+  align-items: stretch; /* Make all cards same height */
   overflow-x: auto;  /* Allows horizontal scrolling */
   scroll-snap-type: x mandatory;  /* Makes scrolling snap to card boundaries */
   scroll-behavior: smooth;  /* Smooth scrolling animation */
-  gap: 20px;  /* Space between cards */
-  padding: 20px 0;
+  gap: var(--spacing-md);  /* Space between cards */
+  padding: var(--spacing-md) 0;
   -ms-overflow-style: none;  /* Hides scrollbar in IE/Edge */
   scrollbar-width: none;  /* Hides scrollbar in Firefox */
-  width: calc(100% - 40px);  /* Leaves space for navigation buttons */
+  width: 100%;  /* Full width */
   margin: 0 auto;
-}
+} /* Ensure single row, no vertical stacking */
 
-/* Hides scrollbar in WebKit browsers */
+/* Hides scrollbar in WebKit browsers (Chrome, Safari) */
 .articles-grid::-webkit-scrollbar {
   display: none;
 }
@@ -1092,10 +1619,10 @@ footer {
    Styling for individual article cards
    ========================================== */
 .article-card {
-  /* Fixed width calculation based on 3 cards per row with spacing */
-  flex: 0 0 calc(33.333% - 14px);
-  min-width: calc(33.333% - 14px);
-  max-width: calc(33.333% - 14px);
+  /* Use standardized card dimensions */
+  width: 100%;
+  min-height: var(--card-height);
+  height: 100%; /* Fill parent height */
   scroll-snap-align: start;  /* Where to snap when scrolling */
   background: var(--glass-dark);
   border-radius: var(--border-radius);
@@ -1106,52 +1633,60 @@ footer {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: var(--spacing-md);
-  gap: var(--spacing-sm);
+  padding: var(--spacing-md); /* Same padding as game cards */
+  gap: var(--spacing-sm); /* Same gap as game cards */
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 /* Article card image styling */
 .article-card img {
   width: 100%;
-  height: 120px;
-  object-fit: cover;  /* Makes images cover their container without distortion */
+  height: var(--card-image-height);
+  max-height: 40vw;
+  object-fit: cover;
   border-radius: var(--border-radius);
   transition: transform 0.3s ease;
+  margin-bottom: clamp(0.3rem, 1vw, 0.7rem);
+  image-rendering: pixelated;
 }
 
 /* Article card title styling */
 .article-card h3 {
   color: var(--text-color);
-  font-size: 1.2rem;
+  font-size: var(--font-size-lg);
   margin: 0;
   text-align: center;
+  padding: 0 var(--spacing-sm); /* Added horizontal padding */
+  width: 100%; /* Full width for better text layout */
 }
 
 /* Article card description styling */
 .article-card p {
   color: var(--text-color);
-  font-size: 0.75rem;
-  line-height: 1.4;
-  margin: 0;
+  font-size: var(--font-size-sm); /* Reduced font size */
+  line-height: 1.5;
+  margin: var(--spacing-sm) 0;
   opacity: 0.8;
   text-align: center;
   flex-grow: 1;  /* Takes up available space to push button to bottom */
+  padding: 0 var(--spacing-sm); /* Added horizontal padding */
+  width: 100%; /* Full width for better text layout */
 }
 
 /* Article card button styling */
 .article-card .card-links {
-  padding: 0.8rem;
+  padding: var(--spacing-md);
   text-align: center;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: flex-end;
+  margin-top: auto; /* Push to bottom */
 }
 
 .article-card .btn {
   display: inline-block;
-  width: 80%;
+  width: 90%; /* Wider button */
   padding: 0.8rem;
   text-align: center;
 }
@@ -1285,12 +1820,36 @@ footer {
 
 /* Responsive adjustments for articles on mobile */
 @media (max-width: 768px) {
+  #games,
+  #articles {
+    height: auto;
+    min-height: unset;
+    max-height: unset;
+    overflow: visible;
+  }
+  
   .articles-grid {
-    grid-template-columns: 1fr;  /* Single column on mobile */
+    display: flex;
+    flex-direction: row; /* Keep horizontal layout */
+    align-items: center;
+    gap: 15px;
+    padding: 1rem 0;
+    overflow-x: auto; /* Enable horizontal scrolling on mobile */
+    scroll-snap-type: x mandatory; /* Snap to cards */
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
   }
 
-  .article-image {
-    height: 180px;  /* Taller images on mobile */
+  .article-card {
+    flex: 0 0 85%; /* Take up most of the screen width */
+    min-width: 250px;
+    max-width: 300px;
+    min-height: 350px;
+    scroll-snap-align: center; /* Snap to center of card */
+  }
+
+  .article-card img {
+    height: 160px;  /* Same as game cards */
   }
 
   .article-content h3 {
@@ -1480,6 +2039,60 @@ nav .btn:active {
 .social-btn:hover {
   color: var(--accent);
   transform: translateY(-2px);  /* Slight lift */
+}
+
+/* ==========================================
+   ARTICLE STYLES
+   Styling for article content
+   ========================================== */
+.article-container h1,
+.article-container h2,
+.article-container h3,
+.article-container h4,
+.article-container h5,
+.article-container h6 {
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.article-container p,
+.article-container ul,
+.article-container ol,
+.article-container li {
+  color: var(--light);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  font-family: Arial, sans-serif;
+  margin-bottom: var(--spacing-md);
+}
+
+.article-container ul,
+.article-container ol {
+  margin-bottom: var(--spacing-md);
+  padding-left: var(--spacing-lg);
+}
+
+@media (max-width: 576px) {
+  .article-container h1,
+  .article-container h2,
+  .article-container h3,
+  .article-container h4,
+  .article-container h5,
+  .article-container h6 {
+    margin-top: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+  }
+  .article-container p,
+  .article-container ul,
+  .article-container ol,
+  .article-container li {
+    margin-bottom: var(--spacing-sm);
+  }
+  .article-container ul,
+  .article-container ol {
+    margin-bottom: var(--spacing-sm);
+    padding-left: var(--spacing-md);
+  }
 }
 
 /* ==========================================
@@ -1691,15 +2304,15 @@ button:hover {
    FULL ARTICLE PAGE STYLING
    Styling for the detailed article pages
    ========================================== */
-.article-full-page {
+.article-container {
   max-width: 800px;
-  margin: 5rem auto;
-  background: rgba(255, 255, 255, 0.05);
+  margin: 0 auto;
   padding: 2rem;
+  background: var(--glass-dark);
   border-radius: var(--border-radius);
-  border: 2px solid var(--accent);
-  box-shadow: 0 0 20px var(--accent);  /* Glow effect */
-  font-family: 'Press Start 2P', cursive;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(249, 83, 198, 0.2);
+  border: 1px solid var(--glass);
 }
 
 .article-full-page h1, .article-full-page h2 {
@@ -1710,8 +2323,9 @@ button:hover {
 
 .article-full-page p, .article-full-page ul, .article-full-page li {
   color: #ddd;
-  font-size: 10px;
-  line-height: 1.8;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  font-family: 'Inter', Arial, sans-serif;
 }
 
 .article-full-page ul {
