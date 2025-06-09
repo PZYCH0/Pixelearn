@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tic-Tac-Tense</title>
+    <link rel="icon" href="15.png">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Quicksand:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="portfolio.css" />
+    <script src="script.js" defer></script>
+    <style>
+      :root {
+        --primary-color: #ff71ce;
+        --secondary-color: #b967ff;
+        --accent-color: #01cdfe;
+        --text-color: #ffffff;
+        --bg-color: rgba(20, 10, 30, 0.8);
+        --border-radius: 8px;
+        --pixel-border: 4px solid var(--primary-color);
+        --spacing-sm: 10px;
+        --spacing-md: 20px;
+        --spacing-lg: 30px;
+        --glow: 0 0 10px var(--accent-color);
+      }
+
+      body {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../assets/10.gif') no-repeat center center/cover;
+        font-family: 'Press Start 2P', cursive;
+        margin: 0;
+        padding: var(--spacing-lg);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: var(--text-color);
+      }
+
+      /* Global scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: var(--border-radius);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        border-radius: var(--border-radius);
+        border: 2px solid var(--bg-color);
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+        box-shadow: 0 0 10px var(--accent-color);
+      }
+
+      /* Firefox scrollbar */
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.3);
+      }
+
+      h1 {
+        color: var(--primary-color);
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: var(--spacing-lg);
+        text-shadow: 3px 3px 0px #000;
+        letter-spacing: 2px;
+      }
+
+      #nameEntry {
+        background: var(--bg-color);
+        padding: var(--spacing-lg);
+        border: var(--pixel-border);
+        border-radius: var(--border-radius);
+        margin-bottom: var(--spacing-lg);
+        width: 100%;
+        max-width: 500px;
+      }
+
+      #nameEntry form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+      }
+
+      label {
+        color: var(--primary-color);
+        margin-bottom: var(--spacing-sm);
+        text-shadow: 2px 2px 0px #000;
+      }
+
+      input[type="text"] {
+        padding: var(--spacing-md);
+        background: rgba(0, 0, 0, 0.8);
+        border: 2px solid var(--primary-color);
+        border-radius: var(--border-radius);
+        color: var(--primary-color);
+        font-family: 'Press Start 2P', cursive;
+        font-size: 14px;
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 10px var(--primary-color);
+      }
+
+      button {
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        color: #fff;
+        border: none;
+        border-radius: var(--border-radius);
+        padding: var(--spacing-md) var(--spacing-lg);
+        cursor: pointer;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 14px;
+        position: relative;
+        transition: all 0.2s;
+        text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+      }
+
+      button:active {
+        transform: translateY(1px);
+      }
+
+      .game-container {
+        width: 100%;
+        max-width: 600px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-lg);
+      }
+
+      .scoreboard {
+        background: var(--bg-color);
+        padding: var(--spacing-lg);
+        border: var(--pixel-border);
+        border-radius: var(--border-radius);
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-lg);
+      }
+
+      .scoreboard > div {
+        padding: var(--spacing-md);
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: var(--border-radius);
+      }
+
+      .stats-display {
+        display: flex;
+        justify-content: space-between;
+        margin-top: var(--spacing-sm);
+        font-size: 0.8em;
+        color: #ccc;
+      }
+
+      .board {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        background: var(--primary-color);
+        padding: 8px;
+        border-radius: var(--border-radius);
+        margin: var(--spacing-lg) 0;
+      }
+
+      .cell {
+        background: var(--bg-color);
+        border: 2px solid var(--primary-color);
+        border-radius: var(--border-radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2em;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        aspect-ratio: 1;
+        color: var(--accent-color);
+        text-shadow: 0 0 5px var(--accent-color);
+      }
+
+      .cell:hover {
+        background: rgba(255, 113, 206, 0.1);
+        border-color: var(--accent-color);
+        box-shadow: var(--glow);
+      }
+
+      .cell.x {
+        color: var(--primary-color);
+        text-shadow: 0 0 5px var(--primary-color);
+      }
+
+      .cell.o {
+        color: var(--secondary-color);
+        text-shadow: 0 0 5px var(--secondary-color);
+      }
+
+      .question-box {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: black;
+        padding: var(--spacing-lg);
+        border: var(--pixel-border);
+        border-radius: var(--border-radius);
+        width: 90%;
+        max-width: 500px;
+        z-index: 1000;
+      }
+
+      .question-box form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+      }
+
+      .player-turn {
+        font-size: 1.2em;
+        color: var(--primary-color);
+        margin-bottom: var(--spacing-md);
+        text-align: center;
+      }
+
+      .timer-container {
+        text-align: center;
+        margin: var(--spacing-md) 0;
+      }
+
+      .timer {
+        display: inline-block;
+        padding: var(--spacing-sm) var(--spacing-md);
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: var(--border-radius);
+      }
+
+      .timer.warning {
+        background: rgba(255, 71, 71, 0.3);
+        border-color: #ff4747;
+        color: #ff4747;
+        animation: pulse 1s infinite;
+      }
+
+      #feedback {
+        text-align: center;
+        margin-top: var(--spacing-sm);
+        font-size: 0.9em;
+      }
+
+      #feedback.correct {
+        color: #05ffa1;
+        text-shadow: 0 0 5px #05ffa1;
+      }
+
+      #feedback.incorrect {
+        color: #ff4747;
+        text-shadow: 0 0 5px #ff4747;
+      }
+
+      #winScreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1100;
+      }
+
+      .win-content {
+        background: var(--bg-color);
+        padding: var(--spacing-lg);
+        border: var(--pixel-border);
+        border-radius: var(--border-radius);
+        text-align: center;
+        animation: scaleIn 0.5s ease-out;
+      }
+
+      @keyframes scaleIn {
+        from { transform: scale(0); }
+        to { transform: scale(1); }
+      }
+
+      .trophy {
+        font-size: 4em;
+        margin-bottom: var(--spacing-md);
+      }
+
+      .win-text {
+        color: var(--primary-color);
+        font-size: 2em;
+        margin: var(--spacing-md) 0;
+      }
+
+      .winner-name {
+        font-size: 1.5em;
+        margin: var(--spacing-md) 0;
+      }
+
+      .continue-btn {
+        margin-top: var(--spacing-lg);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* Add styles for difficulty selector and score display */
+      .game-settings {
+        display: none;
+      }
+
+      .stats-display {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        font-size: 0.8em;
+      }
+
+      .streak-bonus {
+        color: var(--primary-color);
+        animation: pulse 1s infinite;
+      }
+
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+      }
+
+      /* Responsive Design */
+      @media screen and (max-width: 768px) {
+        :root {
+          --spacing-sm: 8px;
+          --spacing-md: 15px;
+          --spacing-lg: 20px;
+        }
+
+        body {
+          padding: var(--spacing-md);
+        }
+
+        h1 {
+          font-size: 1.8rem;
+          margin: var(--spacing-md) 0;
+        }
+
+        .game-container {
+          width: 100%;
+          max-width: 400px;
+          padding: var(--spacing-md);
+        }
+
+        .board {
+          gap: var(--spacing-sm);
+          margin: var(--spacing-md) 0;
+        }
+
+        .cell {
+          font-size: 1.5em;
+        }
+
+        .scoreboard {
+          width: 100%;
+          grid-template-columns: 1fr;
+          gap: var(--spacing-md);
+          padding: var(--spacing-md);
+        }
+
+        .stats-display {
+          flex-direction: column;
+          align-items: center;
+          gap: var(--spacing-sm);
+        }
+
+        button {
+          padding: var(--spacing-sm) var(--spacing-md);
+          font-size: 12px;
+          width: 100%;
+          max-width: 300px;
+        }
+
+        input[type="text"] {
+          width: 100%;
+          max-width: 300px;
+          padding: var(--spacing-sm);
+          font-size: 12px;
+        }
+
+        .question-box {
+          width: 100%;
+          max-width: 400px;
+          padding: var(--spacing-md);
+        }
+
+        .question-details {
+          font-size: 0.9em;
+        }
+
+        .timer {
+          font-size: 0.9em;
+        }
+
+        #feedback {
+          font-size: 0.8em;
+        }
+
+        .win-content {
+          width: 90%;
+          max-width: 350px;
+          padding: var(--spacing-md);
+        }
+
+        .trophy {
+          font-size: 3em;
+        }
+
+        .win-text {
+          font-size: 1.5em;
+        }
+
+        .winner-name {
+          font-size: 1.2em;
+        }
+      }
+
+      /* Additional adjustments for very small screens */
+      @media screen and (max-width: 320px) {
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        .cell {
+          font-size: 1.2em;
+        }
+
+        .trophy {
+          font-size: 2.5em;
+        }
+
+        .win-text {
+          font-size: 1.2em;
+        }
+
+        .stats-display {
+          font-size: 0.7em;
+        }
+      }
+
+      .sound-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--bg-color);
+        border: 2px solid var(--primary-color);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 1000;
+      }
+
+      .sound-toggle i {
+        color: var(--primary-color);
+        font-size: 1.2em;
+      }
+
+      .sound-toggle:hover {
+        transform: scale(1.1);
+        border-color: var(--accent-color);
+      }
+
+      .sound-toggle.muted {
+        background: rgba(255, 71, 71, 0.2);
+        border-color: #ff4747;
+      }
+
+      .sound-toggle.muted i {
+        color: #ff4747;
+      }
+
+      .review-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1100;
+      }
+
+      .review-content {
+        background: var(--bg-color);
+        padding: var(--spacing-lg);
+        border: var(--pixel-border);
+        border-radius: var(--border-radius);
+        text-align: center;
+      }
+
+      .review-header {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      #mistakesList {
+        margin-bottom: var(--spacing-lg);
+        max-height: 60vh;
+        overflow-y: auto;
+        padding-right: var(--spacing-sm);
+      }
+
+      .mistake-item {
+        background: rgba(0, 0, 0, 0.3);
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
+        border-radius: var(--border-radius);
+        text-align: left;
+      }
+
+      .mistake-item .wrong-answer {
+        color: #ff4747;
+        text-decoration: line-through;
+      }
+
+      .mistake-item .correct-answer {
+        color: #05ffa1;
+      }
+
+      /* Webkit (Chrome, Safari, newer versions of Opera) */
+      #mistakesList::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      #mistakesList::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: var(--border-radius);
+      }
+
+      #mistakesList::-webkit-scrollbar-thumb {
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        border-radius: var(--border-radius);
+        border: 2px solid var(--bg-color);
+      }
+
+      #mistakesList::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+        box-shadow: 0 0 10px var(--accent-color);
+      }
+
+      /* Firefox */
+      #mistakesList {
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <button class="sound-toggle" onclick="toggleSound()">
+      <i class="fas fa-volume-up"></i>
+    </button>
+
+    <h1>Tic-Tac-Tense</h1>
+    <div id="nameEntry">
+      <form action="javascript:void(0)">
+        <label for="playerX">Player X Name:</label>
+        <input type="text" id="playerX" placeholder="Enter name for Player X" />
+        <label for="playerO">Player O Name:</label>
+        <input type="text" id="playerO" placeholder="Enter name for Player O" />
+        <button onclick="startGame()">Start Game</button>
+      </form>
+    </div>
+    <div class="game-container">
+      <div class="scoreboard hidden">
+        <div>
+          <p><span id="nameX">Player X</span>: <span id="scoreX">0</span> pts</p>
+          <p class="stats-display">
+            <span>Streak: <span id="streakX">0</span></span>
+            <span>Accuracy: <span id="accuracyX">0%</span></span>
+          </p>
+        </div>
+        <div>
+          <p><span id="nameO">Player O</span>: <span id="scoreO">0</span> pts</p>
+          <p class="stats-display">
+            <span>Streak: <span id="streakO">0</span></span>
+            <span>Accuracy: <span id="accuracyO">0%</span></span>
+          </p>
+        </div>
+      </div>
+      <div class="board hidden" id="board"></div>
+    </div>
+    <div class="question-box hidden">
+      <form action="javascript:void(0)">
+        <div class="player-turn">
+          <span id="currentPlayerName">Player X</span>'s Turn
+        </div>
+        <div class="timer-container">
+          <div class="timer">Time left: <span id="timer">30</span>s</div>
+        </div>
+        <p id="question"></p>
+        <p><strong>Verb:</strong> <span id="verb"></span></p>
+        <p><strong>Tense:</strong> <span id="tense"></span></p>
+        <input type="text" id="answer" placeholder="Enter the missing word" />
+        <button type="submit" onclick="checkAnswer()">Submit</button>
+        <p id="feedback" style="color: red"></p>
+      </form>
+    </div>
+    <div id="winScreen" class="hidden">
+      <div class="win-content">
+        <div class="trophy">🏆</div>
+        <h2 class="win-text">VICTORY!</h2>
+        <p class="winner-name">Player wins!</p>
+        <div class="firework"></div>
+        <div class="firework"></div>
+        <div class="firework"></div>
+        <button onclick="closeWinScreen()" class="continue-btn">Continue</button>
+      </div>
+    </div>
+
+    <div id="reviewScreen" class="review-screen hidden">
+      <div class="review-content">
+        <div class="review-header">
+          <h3>Learning Review</h3>
+          <p>Let's review what we learned!</p>
+        </div>
+        <div id="mistakesList"></div>
+        <button onclick="closeReviewScreen()" class="continue-btn">Close Review</button>
+      </div>
+    </div>
+    <p id="message"></p>
+    <script>
+      // Sound effects using available audio files
+      const sounds = {
+        click: new Audio('sounds/click.wav'),
+        correct: new Audio('sounds/correct.mp3'),
+        incorrect: new Audio('sounds/wrong.mp3'),
+        win: new Audio('sounds/round.mp3'), // Using correct.mp3 for win sound as well
+        timer: new Audio('sounds/timer.mp3')
+      };
+
+      let timerSoundInterval = null; // New variable to track timer sound interval
+
+      // Safe sound playing function
+      function playSound(soundName) {
+        try {
+          if (sounds[soundName]) {
+            // Reset the audio to start if it's already playing
+            sounds[soundName].currentTime = 0;
+            sounds[soundName].play().catch(e => console.log('Sound play failed:', e));
+          }
+        } catch (e) {
+          console.log('Sound system not available:', e);
+        }
+      }
+
+      // Function to stop a specific sound
+      function stopSound(soundName) {
+        try {
+          if (sounds[soundName]) {
+            sounds[soundName].pause();
+            sounds[soundName].currentTime = 0;
+          }
+        } catch (e) {
+          console.log('Could not stop sound:', e);
+        }
+      }
+
+      // Function to start timer sound
+      function startTimerSound() {
+        if (!timerSoundInterval) {
+          timerSoundInterval = setInterval(() => {
+            playSound('timer');
+          }, 1000);
+        }
+      }
+
+      // Function to stop timer sound
+      function stopTimerSound() {
+        if (timerSoundInterval) {
+          clearInterval(timerSoundInterval);
+          timerSoundInterval = null;
+          stopSound('timer');
+        }
+      }
+
+      // Function to cleanup timer
+      function cleanupTimer() {
+        clearInterval(timerInterval);
+        stopTimerSound();
+        timerInterval = null;
+      }
+
+      // Preload sounds and set appropriate volumes
+      Object.values(sounds).forEach(sound => {
+        sound.load();
+        // Set different volumes for different sounds
+        if (sound.src.includes('timer.mp3')) {
+          sound.volume = 0.3; // Lower volume for timer tick
+        } else if (sound.src.includes('correct.mp3')) {
+          sound.volume = 0.6; // Medium volume for correct/win sound
+        } else {
+          sound.volume = 0.5; // Default volume for other sounds
+        }
+      });
+
+      let board = Array(9).fill(null);
+      let currentPlayer = "X";
+      let selectedCell = null;
+      let roundsWon = { X: 0, O: 0 };
+      let timerInterval = null;
+      let timeLeft = 30;
+      const boardDiv = document.getElementById("board");
+      const scoreX = document.getElementById("scoreX");
+      const scoreO = document.getElementById("scoreO");
+      const nameX = document.getElementById("nameX");
+      const nameO = document.getElementById("nameO");
+      const timerElement = document.getElementById("timer");
+
+      // Game configuration with fixed settings
+      const GAME_SETTINGS = {
+        timeLimit: 30,
+        basePoints: 10,
+        streakBonus: 5
+      };
+
+      // Player statistics
+      const playerStats = {
+        X: { streak: 0, correct: 0, total: 0 },
+        O: { streak: 0, correct: 0, total: 0 }
+      };
+
+      // Track mistakes
+      let playerMistakes = {
+        X: [],
+        O: []
+      };
+
+      function updatePlayerStats(player, isCorrect) {
+        const stats = playerStats[player];
+        stats.total++;
+        if (isCorrect) {
+          stats.correct++;
+          stats.streak++;
+        } else {
+          stats.streak = 0;
+        }
+        
+        // Update display
+        document.getElementById(`streak${player}`).textContent = stats.streak;
+        document.getElementById(`accuracy${player}`).textContent = 
+          Math.round((stats.correct / stats.total) * 100) + '%';
+        
+        // Show streak bonus animation if applicable
+        if (stats.streak > 1) {
+          const streakSpan = document.getElementById(`streak${player}`);
+          streakSpan.classList.add('streak-bonus');
+          setTimeout(() => streakSpan.classList.remove('streak-bonus'), 1000);
+        }
+      }
+
+      function calculateScore(timeLeft, isCorrect) {
+        if (!isCorrect) return 0;
+        
+        let score = GAME_SETTINGS.basePoints;
+        
+        // Time bonus: more points for faster answers
+        score += Math.floor(timeLeft / 2);
+        
+        // Streak bonus
+        const streak = playerStats[currentPlayer].streak;
+        if (streak > 1) {
+          score += GAME_SETTINGS.streakBonus * (streak - 1);
+        }
+        
+        return score;
+      }
+
+      function trackMistake(player, question, wrongAnswer, correctAnswer) {
+        playerMistakes[player].push({
+          question: question,
+          wrongAnswer: wrongAnswer,
+          correctAnswer: correctAnswer
+        });
+      }
+
+      function showMistakesReview() {
+        const reviewScreen = document.getElementById('reviewScreen');
+        const mistakesList = document.getElementById('mistakesList');
+        mistakesList.innerHTML = '';
+
+        // Combine mistakes from both players
+        const allMistakes = [...playerMistakes.X, ...playerMistakes.O];
+
+        if (allMistakes.length > 0) {
+          allMistakes.forEach(mistake => {
+            const mistakeItem = document.createElement('div');
+            mistakeItem.className = 'mistake-item';
+            mistakeItem.innerHTML = `
+              <p>Question: ${mistake.question}</p>
+              <p class="wrong-answer">Your answer: ${mistake.wrongAnswer}</p>
+              <p class="correct-answer">Correct answer: ${mistake.correctAnswer}</p>
+            `;
+            mistakesList.appendChild(mistakeItem);
+          });
+          reviewScreen.classList.remove('hidden');
+        }
+      }
+
+      function closeReviewScreen() {
+        document.getElementById('reviewScreen').classList.add('hidden');
+        // Reset mistakes for next game
+        playerMistakes = { X: [], O: [] };
+      }
+
+      function startTimer() {
+        cleanupTimer();
+        timeLeft = GAME_SETTINGS.timeLimit;
+        timerElement.textContent = timeLeft;
+        timerElement.parentElement.classList.remove('warning');
+        
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          timerElement.textContent = timeLeft;
+          
+          if (timeLeft === 10) {
+            timerElement.parentElement.classList.add('warning');
+            startTimerSound();
+          }
+          
+          if (timeLeft <= 0) {
+            cleanupTimer();
+            playSound('incorrect');
+            document.getElementById("feedback").textContent = "Time's up! You lose your turn.";
+            updatePlayerStats(currentPlayer, false);
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            document.querySelector(".question-box").classList.add("hidden");
+            renderBoard();
+          }
+        }, 1000);
+      }
+
+      function startGame() {
+        const playerXName =
+          document.getElementById("playerX").value || "Player X";
+        const playerOName =
+          document.getElementById("playerO").value || "Player O";
+        nameX.textContent = playerXName;
+        nameO.textContent = playerOName;
+        document.getElementById("nameEntry").classList.add("hidden");
+        document.querySelector(".scoreboard").classList.remove("hidden");
+        boardDiv.classList.remove("hidden");
+        renderBoard();
+      }
+
+      function renderBoard() {
+        boardDiv.innerHTML = "";
+        board.forEach((cell, index) => {
+          const cellDiv = document.createElement("div");
+          cellDiv.classList.add("cell");
+          cellDiv.textContent = cell || "";
+          cellDiv.onclick = () => selectCell(index);
+          boardDiv.appendChild(cellDiv);
+        });
+      }
+
+      function selectCell(index) {
+        if (board[index] !== null) return;
+        selectedCell = index;
+        playSound('click');
+        askQuestion();
+      }
+
+      function askQuestion() {
+        const randomIndex = Math.floor(Math.random() * questions.length);
+        const question = questions[randomIndex];
+        const currentPlayerName = currentPlayer === "X" ? 
+          (document.getElementById("playerX").value || "Player X") : 
+          (document.getElementById("playerO").value || "Player O");
+        
+        document.getElementById("currentPlayerName").textContent = currentPlayerName;
+        document.getElementById("question").textContent = question.sentence;
+        document.getElementById("verb").textContent = question.verb;
+        document.getElementById("tense").textContent = question.tense;
+        document.getElementById("answer").value = "";
+        document.getElementById("feedback").textContent = "";
+        document.querySelector(".question-box").classList.remove("hidden");
+        document.getElementById("answer").dataset.correct = question.answer;
+        startTimer();
+      }
+
+      function checkAnswer() {
+        cleanupTimer();
+        const userAnswer = document.getElementById("answer").value.trim();
+        const correctAnswer = document.getElementById("answer").dataset.correct;
+        const questionText = document.getElementById("question").textContent;
+        const isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
+        
+        if (isCorrect) {
+          playSound('correct');
+          const score = calculateScore(timeLeft, true);
+          roundsWon[currentPlayer] += score;
+          board[selectedCell] = currentPlayer;
+          checkWin();
+        } else {
+          playSound('incorrect');
+          document.getElementById("feedback").textContent = "Incorrect! You lose your turn.";
+          // Track the mistake for review
+          trackMistake(currentPlayer, questionText, userAnswer, correctAnswer);
+        }
+        
+        updatePlayerStats(currentPlayer, isCorrect);
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        renderBoard();
+        document.querySelector(".question-box").classList.add("hidden");
+      }
+
+      function checkWin() {
+        const winningCombinations = [
+          [0, 1, 2],
+          [3, 4, 5],
+          [6, 7, 8],
+          [0, 3, 6],
+          [1, 4, 7],
+          [2, 5, 8],
+          [0, 4, 8],
+          [2, 4, 6],
+        ];
+
+        for (const combination of winningCombinations) {
+          const [a, b, c] = combination;
+          if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+            const winner = currentPlayer === "X" ? 
+              (document.getElementById("playerX").value || "Player X") : 
+              (document.getElementById("playerO").value || "Player O");
+            
+            document.getElementById("message").textContent = `${winner} wins this round!`;
+            updateScoreboard();
+            
+            document.querySelectorAll(".cell")[a].classList.add("win");
+            document.querySelectorAll(".cell")[b].classList.add("win");
+            document.querySelectorAll(".cell")[c].classList.add("win");
+            
+            // Montrer l'écran de victoire
+            setTimeout(() => {
+              showWinScreen(winner);
+            }, 1000);
+            
+            setTimeout(() => {
+              resetBoard();
+            }, 1500);
+            return;
+          }
+        }
+      }
+
+      function updateScoreboard() {
+        scoreX.textContent = roundsWon.X;
+        scoreO.textContent = roundsWon.O;
+      }
+
+      function resetBoard() {
+        clearInterval(timerInterval);
+        board.fill(null);
+        renderBoard();
+      }
+
+      function showWinScreen(winner) {
+        const winScreen = document.getElementById('winScreen');
+        const winnerName = winScreen.querySelector('.winner-name');
+        winnerName.textContent = `${winner} WINS!`;
+        winScreen.classList.remove('hidden');
+        playSound('win');
+      }
+
+      function closeWinScreen() {
+        document.getElementById('winScreen').classList.add('hidden');
+        // Show review screen after win screen is closed
+        setTimeout(() => {
+          showMistakesReview();
+        }, 300);
+      }
+
+      // Add sound control
+      let isSoundMuted = false;
+      
+      function toggleSound() {
+        isSoundMuted = !isSoundMuted;
+        const soundToggle = document.querySelector('.sound-toggle');
+        const icon = soundToggle.querySelector('i');
+        
+        if (isSoundMuted) {
+          icon.className = 'fas fa-volume-mute';
+          soundToggle.classList.add('muted');
+        } else {
+          icon.className = 'fas fa-volume-up';
+          soundToggle.classList.remove('muted');
+        }
+      }
+
+      function playSound(soundName) {
+        if (!isSoundMuted) {
+          if (soundName === 'correct') {
+            const audio = new Audio('sounds/correct.mp3');
+            audio.play();
+          } else if (soundName === 'incorrect') {
+            const audio = new Audio('sounds/wrong.mp3');
+            audio.play();
+          } else if (soundName === 'win') {
+            const audio = new Audio('sounds/round.mp3');
+            audio.play();
+          }
+        }
+      }
+
+      // Array of question objects//
+      const questions = [
+// Verb: Be (was/were) - 30 Sentences
+// Verb: Be (was/were) - Weather Context (31–60)
+{
+  sentence: "The weather _____ cold yesterday.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "The skies _____ cloudy in the morning.",
+  verb: "be",
+  tense: "past simple",
+  answer: "were",
+},
+{
+  sentence: "It _____ sunny when we left the house.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "The winds _____ strong during the storm.",
+  verb: "be",
+  tense: "past simple",
+  answer: "were",
+},
+{
+  sentence: "The temperature _____ below zero last night.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "There _____ heavy clouds over the mountains.",
+  verb: "be",
+  tense: "past simple",
+  answer: "were",
+},
+{
+  sentence: "It _____ raining when I woke up.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "was",
+},
+{
+  sentence: "Thunderstorms _____ moving across the city.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "were",
+},
+{
+  sentence: "It _____ snowing all afternoon.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "was",
+},
+{
+  sentence: "The clouds _____ getting darker before the hail started.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "were",
+},
+{
+  sentence: "The sky _____ clear by the evening.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "There _____ no wind in the morning.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "The waves _____ high because of the storm.",
+  verb: "be",
+  tense: "past simple",
+  answer: "were",
+},
+{
+  sentence: "It _____ foggy on our way to work.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "Lightning _____ striking nearby trees.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "was",
+},
+{
+  sentence: "The mornings _____ chilly last week.",
+  verb: "be",
+  tense: "past simple",
+  answer: "were",
+},
+{
+  sentence: "There _____ a rainbow after the rain stopped.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "The sky _____ changing colors at sunset.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "was",
+},
+{
+  sentence: "The raindrops _____ hitting the window softly.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "were",
+},
+{
+  sentence: "It _____ windy and cold during the hike.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "The air _____ dry in the desert.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "Snowflakes _____ falling silently.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "were",
+},
+{
+  sentence: "There _____ ice on the roads this morning.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "The clouds _____ moving fast across the sky.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "were",
+},
+{
+  sentence: "The evening _____ cool and pleasant.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "It _____ stormy during the night.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "There _____ puddles everywhere after the rain.",
+  verb: "be",
+  tense: "past simple",
+  answer: "were",
+},
+{
+  sentence: "The morning _____ unusually warm for winter.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "It _____ humid all day yesterday.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "The storms _____ getting worse by the hour.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "were",
+},
+{
+  sentence: "The forecast _____ wrong—it didn’t snow.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+
+{
+  sentence: "The cat _____ under the table all night.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "The books _____ on the shelf before the move.",
+  verb: "be",
+  tense: "past simple",
+  answer: "were",
+},
+{
+  sentence: "My brother _____ sick last weekend.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "The windows _____ open when it started raining.",
+  verb: "be",
+  tense: "past simple",
+  answer: "were",
+},
+{
+  sentence: "Her shoes _____ wet after walking in the rain.",
+  verb: "be",
+  tense: "past simple",
+  answer: "were",
+},
+{
+  sentence: "The baby _____ asleep in her crib.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "The birds _____ in the tree this morning.",
+  verb: "be",
+  tense: "past simple",
+  answer: "were",
+},
+{
+  sentence: "The manager _____ late to the meeting.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "Their phones _____ off during the exam.",
+  verb: "be",
+  tense: "past simple",
+  answer: "were",
+},
+{
+  sentence: "The museum _____ closed when we arrived.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "The players _____ ready for the match.",
+  verb: "be",
+  tense: "past simple",
+  answer: "were",
+},
+{
+  sentence: "That movie _____ really boring.",
+  verb: "be",
+  tense: "past simple opinion",
+  answer: "was",
+},
+{
+  sentence: "My shoes _____ by the door.",
+  verb: "be",
+  tense: "past simple",
+  answer: "were",
+},
+{
+  sentence: "The team _____ practicing when the power went out.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "was",
+},
+{
+  sentence: "The children _____ playing in the yard.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "were",
+},
+{
+  sentence: "The chef _____ cooking when the fire alarm rang.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "was",
+},
+{
+  sentence: "The lights _____ flickering all night.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "were",
+},
+{
+  sentence: "Her hands _____ shaking from the cold.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "were",
+},
+{
+  sentence: "The dog _____ barking loudly at the mailman.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "was",
+},
+{
+  sentence: "My parents _____ talking in the living room.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "were",
+},
+{
+  sentence: "That book _____ very interesting.",
+  verb: "be",
+  tense: "past simple opinion",
+  answer: "was",
+},
+{
+  sentence: "Our neighbors _____ on vacation last week.",
+  verb: "be",
+  tense: "past simple",
+  answer: "were",
+},
+{
+  sentence: "The classroom _____ noisy before the teacher came in.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+{
+  sentence: "The roads _____ slippery after the snowstorm.",
+  verb: "be",
+  tense: "past simple",
+  answer: "were",
+},
+{
+  sentence: "The singer _____ performing when the microphone failed.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "was",
+},
+{
+  sentence: "The engineers _____ fixing the problem all morning.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "were",
+},
+{
+  sentence: "The clouds _____ getting darker before the rain.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "were",
+},
+{
+  sentence: "The bell _____ ringing when we entered the school.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "was",
+},
+{
+  sentence: "The actors _____ rehearsing for the final scene.",
+  verb: "be",
+  tense: "past continuous",
+  answer: "were",
+},
+{
+  sentence: "The laptop _____ working fine yesterday.",
+  verb: "be",
+  tense: "past simple",
+  answer: "was",
+},
+];
+
+    </script>
+  </body>
+</html>

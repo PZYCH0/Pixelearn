@@ -1,0 +1,273 @@
+/* Import Google Font used in main site - must be at the top */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+    font-family: 'Press Start 2P', 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+    background-color: #1a1a2e !important; /* Match main theme dark color */
+    background-image: linear-gradient(to bottom, rgba(74, 0, 224, 0.2), rgba(142, 45, 226, 0.1)); /* Subtle purple gradient */
+    color: var(--light, #fff);
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* Global rule to force Press Start 2P everywhere */
+* {
+    font-family: 'Press Start 2P', cursive !important;
+}
+
+/* Styles for the main container, complementing Bootstrap's .container */
+.leaderboard-container.container {
+    background-color: rgba(255, 255, 255, 0.05); /* Glass effect like main site */
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(249, 83, 198, 0.3); /* Pink accent glow from main theme */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 1000px;
+    margin: 2rem auto;
+}
+
+h1 {
+    font-size: 1.8em; /* Smaller for Press Start 2P readability */
+    color: var(--accent, #f953c6); /* Pink accent from main theme */
+    text-shadow: 2px 2px 4px #000;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+    padding: 10px 0;
+}
+
+h2 {
+    font-size: 1.2em; /* Smaller for Press Start 2P readability */
+    color: var(--light, #FFFFFF); /* Light color from theme */
+    margin-top: 30px;
+    margin-bottom: 15px;
+    text-shadow: 0 0 8px rgba(142, 45, 226, 0.5); /* Purple glow */
+}
+
+/* Podium Styles */
+/* .podium - layout now handled by Bootstrap row/col */
+
+.podium-place {
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    /* padding: 15px; Handled by Bootstrap .p-3 */
+    /* width: 120px; Handled by Bootstrap col-* */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* align-items: center; Handled by Bootstrap .text-center */
+    min-height: 150px; /* Minimum height for visual consistency */
+}
+
+.podium-place.first {
+    background: linear-gradient(135deg, #ffd700 0%, #ffbf00 100%); /* Gold gradient */
+    color: #000000; /* Black text on gold for better contrast */
+    /* order: 2; Handled by Bootstrap order-* classes */
+    min-height: 200px; /* Taller for 1st place */
+    transform: scale(1.05); /* Slightly reduced scale */
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); /* Gold glow */
+}
+
+.podium-place.second {
+    background: linear-gradient(135deg, #e0e0e0 0%, #c0c0c0 100%); /* Silver gradient */
+    color: #000000; /* Black text on silver for better contrast */
+    /* order: 1; Handled by Bootstrap order-* classes */
+    min-height: 170px; /* Medium height for 2nd place */
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 15px rgba(192, 192, 192, 0.5); /* Silver glow */
+}
+
+.podium-place.third {
+    background: linear-gradient(135deg, #cd7f32 0%, #a05a2c 100%); /* Bronze gradient */
+    color: #000000; /* Black text on bronze for better contrast */
+    /* order: 3; Handled by Bootstrap order-* classes */
+    min-height: 150px; /* Standard height for 3rd place */
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 15px rgba(205, 127, 50, 0.5); /* Bronze glow */
+}
+
+.podium-rank {
+    font-size: 1.5em;
+    font-weight: bold;
+    font-family: 'Press Start 2P', cursive;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.podium-name {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin: 5px 0;
+    word-break: break-word; /* Handle very long names */
+    font-family: 'Press Start 2P', cursive;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3); /* Pixel-style text shadow */
+    color: var(--light, #FFFFFF);
+}
+
+.podium-emoji {
+    font-size: 3em;
+    margin: 8px 0;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); /* Glow effect */
+}
+
+.podium-score {
+    font-weight: bold;
+    font-size: 1.8em;
+    margin-top: 5px;
+    font-family: 'Press Start 2P', cursive; /* Pixel font from main theme */
+    color: var(--secondary, #8e2de2); /* Secondary color from theme */
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5); /* Pixel-style text shadow */
+}
+
+/* Table Styles - Bootstrap .table, .table-striped, .table-hover, .table-dark handle most of this */
+#rankings-table {
+    background-color: rgba(26, 26, 46, 0.7); /* Dark background matching theme */
+    border-radius: 10px;
+    overflow: hidden; /* For rounded corners */
+    border: 1px solid rgba(142, 45, 226, 0.3); /* Secondary color border */
+}
+
+#rankings-table th, #rankings-table td {
+    border: 1px solid rgba(74, 0, 224, 0.4); /* Primary color border with transparency */
+    color: var(--accent, #f953c6); /* Pink accent text from theme */
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7em; /* Smaller size for pixel font readability */
+    padding: 12px !important; /* Override Bootstrap for better spacing with pixel font */
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8); /* Shadow to improve contrast */
+}
+
+#rankings-table thead {
+    background: linear-gradient(90deg, var(--primary, #4a00e0), var(--secondary, #8e2de2)) !important;
+    color: white;
+}
+
+#rankings-table tbody tr:hover {
+    background-color: rgba(249, 83, 198, 0.15) !important; /* Accent color with alpha */
+    box-shadow: 0 0 10px rgba(249, 83, 198, 0.3);
+    transition: all 0.3s ease;
+}
+
+#rankings-table td:nth-child(1), /* Rank */
+#rankings-table td:nth-child(3), /* Emoji */
+#rankings-table td:nth-child(4)  /* Score */
+{
+    text-align: center;
+}
+
+/* .add-points-btn - Styles now handled by Bootstrap .btn classes */
+/* Custom class 'add-points-btn' might be removed from JS if Bootstrap covers all needs */
+
+
+/* Add Participant Section */
+.add-participant-section {
+    /* margin-top: 40px; Handled by Bootstrap .mt-5 */
+    /* padding: 20px; Handled by Bootstrap .p-4 */
+    background-color: rgba(0,0,0,0.2); /* Keep custom background */
+    /* border-radius: 10px; Handled by Bootstrap .rounded */
+}
+
+/* .add-participant-section input[type="text"] - Handled by Bootstrap .form-control */
+
+/* .add-participant-section button - Handled by Bootstrap .btn .btn-success */
+
+
+/* Responsive Design - Bootstrap handles most responsiveness with its grid and utilities. */
+/* Some custom adjustments might still be needed, but many of these rules are now covered. */
+
+/* @media (max-width: 768px) { ... } - Review if specific overrides are still needed */
+/* .podium flex-direction, .podium-place width, etc. are handled by Bootstrap col-sm-* and order-sm-* */
+
+/* @media (max-width: 480px) { ... } - Review if specific overrides are still needed */
+
+/* Reset Section and Button */
+.reset-section {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: rgba(0,0,0,0.15);
+    border-radius: 8px;
+}
+
+#reset-leaderboard-btn {
+    /* background-color: #DC143C; Handled by .btn-danger */
+    /* color: white; Handled by .btn-danger */
+    /* border: none; Handled by .btn */
+    /* padding: 12px 20px; Handled by .btn-lg */
+    /* border-radius: 5px; Handled by .btn */
+    /* cursor: pointer; Handled by .btn */
+    /* font-size: 1.1em; Handled by .btn-lg */
+    font-weight: bold; /* Keep if a bolder look than default Bootstrap is desired */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Keep custom transition if desired */
+}
+
+#reset-leaderboard-btn:hover {
+    /* background-color: #B22222; Handled by .btn-danger:hover */
+    transform: translateY(-2px); /* Keep custom hover effect if desired */
+}
+
+/* Decrease Points Button */
+/* .decrease-points-btn - Styles now handled by Bootstrap .btn .btn-warning */
+/* Custom class 'decrease-points-btn' might be removed from JS if Bootstrap covers all needs */
+
+/* Adjustments for button spacing in table on smaller screens */
+/* Bootstrap's .btn-sm and .me-1 (margin end) should handle spacing. */
+/* @media (max-width: 768px) { ... } */
+/* @media (max-width: 480px) { ... } */
+/* Review if these specific media query overrides for buttons are still necessary */
+
+/* --- Animation Keyframes --- */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 255, 0, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px 5px rgba(255, 255, 0, 0.4);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 255, 0, 0.0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes highlight-change {
+  0% { background-color: transparent; }
+  50% { background-color: rgba(255, 215, 0, 0.5); } /* Gold highlight */
+  100% { background-color: transparent; }
+}
+
+/* --- Animation Classes --- */
+.animate-pulse {
+  animation: pulse 0.7s ease-out;
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.animate-highlight {
+  animation: highlight-change 1s ease-out;
+}
+
+/* Styling for elements that will be animated via JS */
+.podium-place .podium-emoji,
+.podium-place .podium-name,
+.podium-place .podium-score {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+#rankings-table tbody tr.new-row-animation {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+

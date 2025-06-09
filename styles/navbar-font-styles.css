@@ -1,0 +1,182 @@
+/* ==========================================
+   COLLAPSIBLE NAVBAR STYLES
+   Enhances the mobile navbar with smooth animations
+   ========================================== */
+
+/* Menu toggle button styling */
+.menu-toggle {
+  display: none; /* Hidden by default, shown in mobile view */
+  background: transparent;
+  border: none;
+  color: var(--light);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  padding: 0.5rem;
+  z-index: 1001;
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-toggle:hover {
+  color: var(--accent);
+  transform: scale(1.1);
+  text-shadow: 0 0 8px var(--accent);
+}
+
+.menu-toggle:active {
+  transform: scale(0.95);
+}
+
+/* Ripple effect for menu toggle button */
+.menu-ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  background: rgba(255, 0, 255, 0.4);
+  border-radius: 50%;
+  opacity: 1;
+  animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+  to {
+    width: 80px;
+    height: 80px;
+    opacity: 0;
+  }
+}
+
+/* Mobile navbar styles - Commented out to prevent conflict with portfolio.css slide-in menu
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+  }
+  
+  .navbar {
+    flex-direction: column;
+    height: auto;
+    padding: 0.5rem;
+    overflow: hidden;
+    max-height: 60px; 
+    transition: max-height 0.5s cubic-bezier(0.17,0.67,0.83,0.67);
+  }
+  .navbar.open {
+    max-height: 350px; 
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  }
+  
+  .navbar .logo {
+    margin-bottom: 0.5rem;
+    width: 100%;
+    text-align: center;
+    margin-right: 0;
+    z-index: 1001; 
+  }
+  
+  .navbar nav {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: max-height 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67), 
+                opacity 0.4s ease, 
+                transform 0.4s cubic-bezier(0.17, 0.67, 0.83, 0.67), 
+                padding 0.5s ease;
+    padding: 0;
+    margin: 0;
+    pointer-events: none; 
+  }
+  
+  .navbar nav.active {
+    max-height: 300px; 
+    opacity: 1;
+    transform: translateY(0);
+    padding: 0.5rem 0;
+    margin-top: 0.5rem;
+    pointer-events: all; 
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+  
+  .navbar nav a {
+    width: 100%;
+    text-align: center;
+    padding: 0.8rem;
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.17, 0.67, 0.83, 0.67), 
+                opacity 0.4s ease, 
+                background-color 0.3s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .navbar nav.active a {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  
+  .navbar nav a:last-child {
+    border-bottom: none;
+  }
+  
+  
+  .navbar nav.active a:nth-child(1) { transition-delay: 0.1s; }
+  .navbar nav.active a:nth-child(2) { transition-delay: 0.2s; }
+  .navbar nav.active a:nth-child(3) { transition-delay: 0.3s; }
+  .navbar nav.active a:nth-child(4) { transition-delay: 0.4s; }
+  .navbar nav.active a:nth-child(5) { transition-delay: 0.5s; }
+}
+*/
+
+/* ==========================================
+   FONT STYLING
+   Applies Press Start 2P font consistently across the site
+   ========================================== */
+
+/* Apply Press Start 2P to all text elements except article body paragraphs */
+h1, h2, h3, h4, h5, h6,
+.btn, 
+nav a,
+.logo,
+.game-card h3,
+.article-card h3,
+.card-title,
+.section-title,
+button,
+input,
+select,
+.navbar *,
+footer *,
+#scroll-to-top,
+.nav-button {
+  font-family: 'Press Start 2P', cursive !important;
+}
+
+/* Keep article body paragraphs readable */
+.article-container p,
+.article-container li,
+.article-container td,
+.article-container th,
+.article-container figcaption {
+  font-family: 'Inter', Arial, sans-serif !important;
+}
+
+/* Adjust line heights for Press Start 2P font */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.6;
+}
+
+/* Ensure buttons and interactive elements have appropriate sizing */
+.btn, button, input[type="button"], input[type="submit"] {
+  padding: 0.8em 1.2em;
+  line-height: 1.5;
+}
