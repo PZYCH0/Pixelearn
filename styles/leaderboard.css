@@ -120,6 +120,31 @@ h2 {
 }
 
 /* Table Styles - Bootstrap .table, .table-striped, .table-hover, .table-dark handle most of this */
+
+/* Custom scrollbar for rankings table wrapper */
+.table-responsive {
+    overflow: auto;
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: var(--primary, #4a00e0) rgba(0,0,0,0.3);
+}
+
+.table-responsive::-webkit-scrollbar {
+    width: 12px;
+}
+.table-responsive::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, var(--primary, #4a00e0), var(--secondary, #8e2de2));
+    border-radius: 10px;
+    border: 2px solid #1a1a2e;
+}
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, var(--secondary, #8e2de2), var(--accent, #f953c6));
+    box-shadow: 0 0 10px var(--accent, #f953c6);
+}
+
 #rankings-table {
     background-color: rgba(26, 26, 46, 0.7); /* Dark background matching theme */
     border-radius: 10px;

@@ -93,6 +93,53 @@
           min-height: 600px;
         }
       }
+      /* Ensure button positioning */
+      .game-container {
+        position: relative;
+        overflow: auto; /* enable scrolling when needed */
+        scrollbar-width: thin; /* Firefox */
+        scrollbar-color: var(--primary-color) rgba(210, 63, 201, 0.3);
+      }
+
+      /* Custom scrollbar for WebKit browsers */
+      .game-container::-webkit-scrollbar {
+        width: 12px;
+      }
+      .game-container::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: var(--border-radius);
+      }
+      .game-container::-webkit-scrollbar-thumb {
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        border-radius: var(--border-radius);
+        border: 2px solid var(--bg-color);
+      }
+      .game-container::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+        box-shadow: 0 0 10px var(--accent-color);
+      }
+
+      /* Fullscreen button styling */
+      .fullscreen-btn {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        width: 44px;
+        height: 44px;
+        border: none;
+        border-radius: var(--border-radius);
+        background: var(--accent-color);
+        color: var(--text-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+        transition: transform 0.2s ease;
+      }
+      .fullscreen-btn:hover {
+        transform: scale(1.1);
+      }
     </style>
     <link rel="stylesheet" href="styles/navbar-font-styles.css">
     <link rel="stylesheet" href="styles/enhancements.css">
@@ -149,10 +196,13 @@
 
         <div class="game-section">
             <div class="game-container glass-card slide-up">
-                <iframe src="games/XO.html" 
+                <iframe id="leaderboardFrame" src="games/leaderboard.html" 
                     class="game-frame" 
                     allowfullscreen>
                 </iframe>
+                <button class="fullscreen-btn" onclick="toggleFullScreen()" aria-label="Toggle full screen">
+                    <i class="fas fa-expand"></i>
+                </button>
             </div>
 
             <div class="game-description glass-card fade-in">
@@ -194,5 +244,27 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- JavaScript Files -->
     <script src="scripts/script.js"></script>
+    <script>
+      function toggleFullScreen() {
+        const iframe = document.getElementById('leaderboardFrame');
+        if (!document.fullscreenElement) {
+          if (iframe.requestFullscreen) {
+            iframe.requestFullscreen();
+          } else if (iframe.webkitRequestFullscreen) {
+            iframe.webkitRequestFullscreen();
+          } else if (iframe.msRequestFullscreen) {
+            iframe.msRequestFullscreen();
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+        }
+      }
+    </script>
 </body>
 </html>
