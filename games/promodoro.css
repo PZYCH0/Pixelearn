@@ -1,0 +1,138 @@
+/* General body styling */
+body {
+    font-family: Arial, sans-serif; /* Sets the font for the page */
+    background: #f5f5fa; /* A light purple-gray background color */
+    display: flex; /* Enables flexbox layout */
+    flex-direction: column; /* Stacks flex items vertically */
+    align-items: center; /* Centers items horizontally */
+    justify-content: center; /* Centers items vertically */
+    height: 100vh; /* Makes the body take up the full viewport height */
+    margin: 0; /* Removes default body margin */
+}
+
+/* Main container for the timer and controls */
+.container {
+    background: #fff; /* White background */
+    padding: 2rem 3rem; /* Adds padding inside the container */
+    border-radius: 16px; /* Rounds the corners */
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07); /* Adds a subtle shadow */
+    display: flex; /* Enables flexbox for its children */
+    flex-direction: column; /* Stacks children vertically */
+    align-items: center; /* Centers children horizontally */
+}
+
+/* Main heading style */
+h1 {
+    color: #4a4a8a; /* A dark blue-purple color */
+    margin-bottom: 1rem; /* Adds space below the heading */
+}
+
+/* Timer display style */
+#timer {
+    font-size: 3rem; /* Large font size for the timer */
+    margin: 1rem 0; /* Adds vertical margin */
+    color: #4a4a8a; /* Same color as the heading */
+}
+
+/* General styling for control buttons */
+.controls button {
+    padding: 0.7rem 1.5rem; /* Padding inside buttons */
+    margin: 0 0.3rem; /* Margin between buttons */
+    border: none; /* Removes the default border */
+    border-radius: 8px; /* Rounds button corners */
+    background: #6a6aff; /* A bright blue-purple background */
+    color: #fff; /* White text color */
+    font-size: 1rem; /* Sets the font size */
+    cursor: pointer; /* Changes cursor to a pointer on hover */
+    transition: background 0.2s; /* Smooth background color transition */
+}
+
+/* Hover effect for control buttons */
+.controls button:hover {
+    background: #4a4a8a;
+}
+
+#distractionBtn {
+    background-color: #f0f0f0;
+    color: #555;
+}
+
+#distractionBtn:hover {
+    background-color: #dcdcdc;
+    color: #333;
+}
+
+#goalDisplay {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: #555;
+}
+
+/* Container for mode-switching buttons */
+.mode {
+    margin: 1rem 0; /* Adds vertical margin */
+}
+
+/* General styling for mode buttons */
+.mode button {
+    background: #e0e0ff; /* A very light purple background */
+    color: #4a4a8a; /* Dark blue-purple text */
+}
+
+/* Style for the currently active mode button */
+.mode button.active {
+    background: #6a6aff; /* Bright blue-purple background */
+    color: #fff; /* White text */
+}
+
+/* Modal styles */
+.modal {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    display: none; /* Hidden by default */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.modal-content textarea {
+    width: 95%;
+    height: 80px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.modal-content button {
+    background-color: #5a5a9a; /* Match theme */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.modal-content button:hover {
+    background-color: #4a4a8a;
+}
