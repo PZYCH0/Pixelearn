@@ -16,7 +16,29 @@
             <button id="shortBreakBtn">Short Break</button>
             <button id="longBreakBtn">Long Break</button>
         </div>
+        
+        <!-- Visual Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="sessionProgress">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-labels">
+                <span>0%</span>
+                <span>25%</span>
+                <span>50%</span>
+                <span>75%</span>
+                <span>100%</span>
+            </div>
+        </div>
+        
         <div id="timer">25:00</div>
+        
+        <!-- Visual Streak Counter -->
+        <div class="streak-display">
+            <div class="streak-icon">🔥</div>
+            <div class="streak-count" id="streakCount">0</div>
+            <div class="streak-label">Day Streak</div>
+        </div>
         <div class="controls">
             <button id="startBtn">Start</button>
             <button id="pauseBtn">Pause</button>
@@ -26,15 +48,47 @@
             <button id="distractionBtn">Log Distraction</button>
             <button id="muteBtn">Mute</button>
         </div>
-        <div id="stats" style="margin-top:1.2rem; text-align:center;">
-            <div><strong>Pomodoros completed:</strong> <span id="pomodoroCount">0</span></div>
-            <div><strong>Study Sessions:</strong> <span id="sessionCount">0</span></div>
-            <div><strong>Distractions:</strong> <span id="distractionCountElem">0</span></div>
+        
+        <!-- Visual Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-icon">🍅</div>
+                <div class="stat-value" id="pomodoroCount">0</div>
+                <div class="stat-label">Pomodoros</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">📚</div>
+                <div class="stat-value" id="sessionCount">0</div>
+                <div class="stat-label">Sessions</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value" id="focusPercentage">100%</div>
+                <div class="stat-label">Focus</div>
+            </div>
         </div>
-        <div id="goalDisplay"></div>
-        <div id="checkpoints" style="margin-top:1.2rem; text-align:left;">
-            <strong>Checkpoints this session:</strong>
-            <ul id="checkpointList" style="padding-left:1.2em;"></ul>
+        
+        <!-- Visual Goal Progress -->
+        <div class="goal-container" id="goalContainer">
+            <div class="goal-header">
+                <span>🎯 Current Goal</span>
+                <span class="goal-progress" id="goalProgress">0%</span>
+            </div>
+            <div class="goal-progress-bar">
+                <div class="goal-progress-fill" id="goalProgressFill"></div>
+            </div>
+            <div id="goalDisplay"></div>
+        </div>
+        
+        <!-- Checkpoints with visual indicators -->
+        <div class="checkpoints-container">
+            <div class="checkpoints-header">
+                <span>✅ Checkpoints</span>
+                <span class="checkpoints-count" id="checkpointsCount">0</span>
+            </div>
+            <div id="checkpoints">
+                <ul id="checkpointList"></ul>
+            </div>
         </div>
     </div>
 
@@ -117,6 +171,9 @@
         let lastPomodoroDate = localStorage.getItem('lastPomodoroDate') || '';
         let pomodorosPerDay = getJSONFromStorage('pomodorosPerDay');
         let dailyGoals = getJSONFromStorage('dailyGoals');
+        let sessionDistractions = 0;
+        let sessionPomodoros = 0;
+        let lastCompletedDate = localStorage.getItem('lastCompletedDate') || '';
 
         let checkpoints = [];
         let timer;
@@ -126,9 +183,11 @@
         let distractionCount = 0;
         let currentGoal = '';
         let isMuted = false;
+        let lastUpdateTime = Date.now();
+        let sessionStartTime = 0;
 
         const timeSettings = {
-            pomodoro: 25 * 60,
+            pomodoro: 1 * 60,
             short: 5 * 60,
             long: 15 * 60
         };
@@ -152,9 +211,21 @@
                 localStorage.setItem('pomodorosPerDay', JSON.stringify(pomodorosPerDay));
                 localStorage.setItem('pomodoroStreak', streak);
                 localStorage.setItem('lastPomodoroDate', today);
+                lastCompletedDate = today;
+                localStorage.setItem('lastCompletedDate', today);
+                
+                // Update streak display with animation
+                document.getElementById('streakCount').textContent = streak;
+                const streakIcon = document.querySelector('.streak-icon');
+                streakIcon.classList.add('celebrate');
+                setTimeout(() => streakIcon.classList.remove('celebrate'), 1000);
             }
-            streakDisplay.textContent = streak > 0 ? `🔥 Streak: ${streak} days!` : 'Start a session to build your streak!';
-
+            
+            // Update streak display
+            document.getElementById('streakCount').textContent = streak;
+            streakDisplay.textContent = streak > 0 ? `🔥 ${streak} day streak!` : 'Start a session to build your streak!';
+            
+            // Update progress chart
             const ctx = progressChart.getContext('2d');
             progressChart.style.display = 'block';
             ctx.clearRect(0, 0, progressChart.width, progressChart.height);
@@ -168,21 +239,44 @@
             const maxVal = Math.max(...vals, 1);
             days.forEach((d, i) => {
                 const barHeight = (vals[i] / maxVal) * barMaxHeight;
-                ctx.fillStyle = '#e0e0ff';
+                ctx.fillStyle = '#8a5cc3';
                 ctx.fillRect(i * barW + 10, progressChart.height - barHeight - 20, barW - 6, barHeight);
-                ctx.fillStyle = '#4a4a8a';
-                ctx.font = '12px Arial';
+                ctx.fillStyle = '#e6e6fa';
+                ctx.font = '10px "Press Start 2P", cursive';
                 ctx.textAlign = 'center';
                 ctx.fillText(vals[i], i * barW + (barW/2), progressChart.height - barHeight - 25);
                 ctx.fillText(d.slice(5), i * barW + (barW/2), progressChart.height - 5);
             });
+            
+            // Update stats
+            updateSessionStats();
         }
 
         function updateDisplay() {
+            const now = Date.now();
+            const deltaTime = now - lastUpdateTime;
+            lastUpdateTime = now;
+            
+            // Update timer display
             const min = String(Math.floor(timeLeft / 60)).padStart(2, '0');
             const sec = String(timeLeft % 60).padStart(2, '0');
             timerDisplay.textContent = `${min}:${sec}`;
-            document.title = `${min}:${sec} - ${currentMode}`;
+            document.title = `${min}:${sec} - ${currentMode.charAt(0).toUpperCase() + currentMode.slice(1)}`;
+            
+            // Update progress bar
+            if (running && currentMode === 'pomodoro') {
+                const totalTime = timeSettings.pomodoro;
+                const remainingRatio = timeLeft / totalTime;
+                const progressPercentage = Math.round((1 - remainingRatio) * 100);
+                const progressFill = document.getElementById('progressFill');
+                progressFill.style.width = `${progressPercentage}%`;
+                progressFill.style.setProperty('--progress', `${progressPercentage}%`);
+                
+                // Update session stats periodically
+                if (now % 5000 < deltaTime) { // Every ~5 seconds
+                    updateSessionStats();
+                }
+            }
         }
 
         function startTimer() {
@@ -192,29 +286,77 @@
                 goalModal.style.display = 'block';
                 return;
             }
-
-            running = true;
-            timer = setInterval(() => {
-                if (timeLeft > 0) {
-                    timeLeft--;
-                    updateDisplay();
-                } else {
-                    clearInterval(timer);
-                    running = false;
-                    sessionEnded();
+            
+            // Start or resume session
+            if (!running) {
+                if (timeLeft === timeSettings[currentMode === 'short' ? 'short' : currentMode === 'long' ? 'long' : 'pomodoro']) {
+                    // Starting a new session
+                    sessionStartTime = Date.now();
+                    if (currentMode === 'pomodoro') {
+                        sessionPomodoros = 0;
+                        sessionDistractions = 0;
+                    }
                 }
-            }, 1000);
+                running = true;
+                lastUpdateTime = Date.now();
+                
+                // Update button states
+                startBtn.disabled = true;
+                pauseBtn.disabled = false;
+                
+                // Start the timer
+                timer = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateDisplay();
+                    } else {
+                        clearInterval(timer);
+                        running = false;
+                        sessionEnded();
+                    }
+                }, 1000);
+                
+                // Update display immediately
+                updateDisplay();
+            }
         }
 
         function pauseTimer() {
-            running = false;
-            clearInterval(timer);
+            if (running) {
+                running = false;
+                clearInterval(timer);
+                
+                // Update button states
+                startBtn.disabled = false;
+                pauseBtn.disabled = true;
+                
+                // Update session stats
+                updateSessionStats();
+            }
         }
 
         function resetTimer() {
+            // Clear the current timer
+            clearInterval(timer);
+            running = false;
+            
+            // Reset button states
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            
+            // Reset current goal and display
             currentGoal = '';
-            goalDisplay.textContent = '';
+            document.getElementById('goalDisplay').textContent = '';
+            
+            // Reset the timer display
             setMode(currentMode);
+            
+            // Reset progress bar
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressFill').style.setProperty('--progress', '0%');
+            
+            // Update stats
+            updateSessionStats();
         }
 
         function setMode(mode, autoStart = false) {
@@ -242,38 +384,54 @@
         }
 
         function sessionEnded() {
-            if (!isMuted) {
-                notificationSound.play().catch(e => console.error("Error playing sound:", e));
-            }
-
+            playSound();
+            
             if (currentMode === 'pomodoro') {
-                const today = new Date().toISOString().slice(0, 10);
-                if (!dailyGoals[today]) {
-                    dailyGoals[today] = { goals: [], distractions: 0, pomodoros: 0 };
-                }
-                dailyGoals[today].goals.push(currentGoal);
-                dailyGoals[today].distractions += distractionCount;
-                dailyGoals[today].pomodoros += 1;
-                localStorage.setItem('dailyGoals', JSON.stringify(dailyGoals));
-
                 pomodoroCount++;
-                sessionCount++;
-                updateStats();
-                saveStats();
+                sessionPomodoros++;
+                localStorage.setItem('pomodoroCount', pomodoroCount);
                 updateStreakAndChart(true);
-
-                currentGoal = ''; 
-                goalDisplay.textContent = '';
-
-                reflectionPrompt.textContent = `You logged ${distractionCount} distraction(s). What's your plan to improve focus next session?`;
-                reflectionModal.style.display = 'block';
                 
-            } else { // After a break
-                sessionCount++;
-                updateStats();
-                saveStats();
-                setMode('pomodoro', false);
+                // Update progress bar to 100%
+                document.getElementById('progressFill').style.width = '100%';
+                document.getElementById('progressFill').style.setProperty('--progress', '100%');
+                
+                // Show celebration for completed pomodoro
+                const timerDisplay = document.getElementById('timer');
+                timerDisplay.classList.add('celebrate');
+                setTimeout(() => timerDisplay.classList.remove('celebrate'), 1000);
+                
+                // Show reflection prompt after 4 pomodoros
+                if (pomodoroCount % 4 === 0) {
+                    showReflectionPrompt();
+                } else {
+                    // Short break after pomodoro
+                    setMode('short');
+                    startTimer();
+                }
+            } else if (currentMode === 'short' || currentMode === 'long') {
+                // Pomodoro after break
+                setMode('pomodoro');
+                
+                // Reset progress bar for new session
+                document.getElementById('progressFill').style.width = '0%';
+                document.getElementById('progressFill').style.setProperty('--progress', '0%');
+                
+                // Ask for a new goal if none exists
+                if (!currentGoal) {
+                    goalModal.style.display = 'block';
+                } else {
+                    startTimer();
+                }
             }
+            
+            // Update all stats and UI
+            updateSessionStats();
+            updateCheckpointList();
+            
+            // Save session data
+            sessionCount++;
+            localStorage.setItem('sessionCount', sessionCount);
         }
         
         function updateStats() {
@@ -297,13 +455,98 @@
         }
 
         function addCheckpoint() {
-            const min = String(Math.floor(timeLeft / 60)).padStart(2, '0');
-            const sec = String(timeLeft % 60).padStart(2, '0');
-            const checkpointTime = `${min}:${sec}`;
-            checkpoints.push(checkpointTime);
-            const li = document.createElement('li');
-            li.textContent = `Checkpoint at ${checkpointTime} left`;
-            checkpointList.appendChild(li);
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            checkpoints.push({
+                time: now,
+                text: `Checkpoint at ${timeString}`
+            });
+            
+            // Add visual feedback
+            const checkpointsList = document.getElementById('checkpointList');
+            const newItem = document.createElement('li');
+            newItem.textContent = `Checkpoint at ${timeString}`;
+            newItem.style.animation = 'fadeIn 0.5s ease-out';
+            checkpointsList.prepend(newItem);
+            
+            // Update stats
+            document.getElementById('checkpointsCount').textContent = checkpoints.length;
+            
+            // Scroll to top of list
+            checkpointsList.scrollTop = 0;
+            
+            playSound();
+        }
+
+        function updateSessionStats() {
+            // Update pomodoro count
+            document.getElementById('pomodoroCount').textContent = pomodoroCount + sessionPomodoros;
+            
+            // Update session count
+            document.getElementById('sessionCount').textContent = sessionCount;
+            
+            // Calculate and update focus percentage
+            const totalSessions = sessionCount + 1;
+            const distractionRate = totalSessions > 0 ? (distractionCount + sessionDistractions) / totalSessions : 0;
+            const focusPercentage = Math.max(0, 100 - Math.min(100, distractionRate * 50));
+            document.getElementById('focusPercentage').textContent = `${Math.round(focusPercentage)}%`;
+            
+            // Update goal progress
+            updateGoalProgress();
+            
+            // Update checkpoint count
+            document.getElementById('checkpointsCount').textContent = checkpoints.length;
+            
+            // Update checkpoint list
+            updateCheckpointList();
+        }
+
+        function updateGoalProgress() {
+            const goalContainer = document.getElementById('goalContainer');
+            const goalProgress = document.getElementById('goalProgress');
+            const goalProgressFill = document.getElementById('goalProgressFill');
+            
+            if (currentGoal) {
+                goalContainer.style.display = 'block';
+                const goalProgressValue = Math.min(100, (pomodoroCount % 10) * 10);
+                goalProgress.textContent = `${goalProgressValue}%`;
+                goalProgressFill.style.width = `${goalProgressValue}%`;
+                
+                // Update goal text
+                const goalDisplay = document.getElementById('goalDisplay');
+                goalDisplay.textContent = currentGoal;
+                goalDisplay.style.display = 'block';
+            } else {
+                goalContainer.style.display = 'none';
+            }
+        }
+
+        function updateCheckpointList() {
+            const checkpointList = document.getElementById('checkpointList');
+            checkpointList.innerHTML = '';
+            
+            // Show most recent checkpoints first
+            const recentCheckpoints = [...checkpoints].reverse().slice(0, 5);
+            
+            if (recentCheckpoints.length === 0) {
+                const emptyMsg = document.createElement('div');
+                emptyMsg.textContent = 'No checkpoints yet. Click the Checkpoint button to add one!';
+                emptyMsg.style.fontSize = '0.7rem';
+                emptyMsg.style.color = '#8a5cc3';
+                emptyMsg.style.textAlign = 'center';
+                emptyMsg.style.padding = '10px';
+                checkpointList.appendChild(emptyMsg);
+                return;
+            }
+            
+            recentCheckpoints.forEach(checkpoint => {
+                const li = document.createElement('li');
+                li.textContent = checkpoint.text;
+                checkpointList.appendChild(li);
+            });
+            
+            // Update count
+            document.getElementById('checkpointsCount').textContent = checkpoints.length;
         }
 
         // --- Event Listeners ---

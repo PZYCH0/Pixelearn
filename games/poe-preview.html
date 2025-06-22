@@ -1,0 +1,747 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                        'primary-dark': '#4C4BC9'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+        }
+        
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 1; }
+            80% { transform: scale(1.2); opacity: 0; }
+            100% { transform: scale(1.2); opacity: 0; }
+        }
+        
+        .timer-glow {
+            box-shadow: 0 0 0 0 rgba(93, 92, 222, 0.7);
+            animation: timer-glow 2s infinite;
+        }
+        
+        @keyframes timer-glow {
+            0% { box-shadow: 0 0 0 0 rgba(93, 92, 222, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(93, 92, 222, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(93, 92, 222, 0); }
+        }
+        
+        .task-slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .task-slide-out {
+            animation: slideOut 0.3s ease-in forwards;
+        }
+        
+        @keyframes slideOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">🍅 Pomodoro</h1>
+            <p class="text-gray-600 dark:text-gray-400">Stay focused, stay productive</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Timer Section -->
+            <div class="order-2 lg:order-1">
+                <!-- Session Type -->
+                <div class="text-center mb-6">
+                    <div id="sessionType" class="inline-block px-4 py-2 rounded-full text-sm font-medium bg-primary text-white">
+                        Work Session
+                    </div>
+                </div>
+
+                <!-- Timer Circle -->
+                <div class="relative flex items-center justify-center mb-8">
+                    <!-- Pulse Ring (only when active) -->
+                    <div id="pulseRing" class="absolute w-72 h-72 rounded-full border-2 border-primary opacity-0 pulse-ring"></div>
+                    
+                    <!-- Main Timer Circle -->
+                    <div id="timerCircle" class="relative w-64 h-64 lg:w-72 lg:h-72 rounded-full border-8 border-gray-200 dark:border-gray-700 flex items-center justify-center bg-white dark:bg-gray-800 shadow-2xl">
+                        <!-- Timer Display -->
+                        <div class="text-center">
+                            <div id="timerDisplay" class="text-4xl lg:text-6xl font-bold text-gray-800 dark:text-white mb-2">25:00</div>
+                            <div id="sessionCount" class="text-sm lg:text-lg text-gray-600 dark:text-gray-400">Session 1</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Task Display -->
+                <div id="currentTaskDisplay" class="text-center mb-6 hidden">
+                    <div class="bg-primary/10 dark:bg-primary/20 rounded-lg p-4 border border-primary/20">
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Working on:</p>
+                        <p id="currentTaskText" class="font-medium text-gray-800 dark:text-white"></p>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex justify-center space-x-4 mb-8">
+                    <button id="startPauseBtn" class="flex items-center justify-center w-16 h-16 rounded-full bg-primary hover:bg-primary-dark text-white shadow-lg transform transition-all duration-200 hover:scale-105 active:scale-95">
+                        <svg id="playIcon" class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"></path>
+                        </svg>
+                        <svg id="pauseIcon" class="w-8 h-8 hidden" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
+                        </svg>
+                    </button>
+                    
+                    <button id="resetBtn" class="flex items-center justify-center w-16 h-16 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 shadow-lg transform transition-all duration-200 hover:scale-105 active:scale-95">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"></path>
+                        </svg>
+                    </button>
+                    
+                    <button id="skipBtn" class="flex items-center justify-center w-16 h-16 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 shadow-lg transform transition-all duration-200 hover:scale-105 active:scale-95">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Settings -->
+                <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Settings</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <label class="text-gray-700 dark:text-gray-300 font-medium">Work Duration</label>
+                            <select id="workDuration" class="px-3 py-2 text-base bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="25">25 min</option>
+                                <option value="30">30 min</option>
+                                <option value="45">45 min</option>
+                                <option value="60">60 min</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <label class="text-gray-700 dark:text-gray-300 font-medium">Short Break</label>
+                            <select id="shortBreak" class="px-3 py-2 text-base bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="5">5 min</option>
+                                <option value="10">10 min</option>
+                                <option value="15">15 min</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <label class="text-gray-700 dark:text-gray-300 font-medium">Long Break</label>
+                            <select id="longBreak" class="px-3 py-2 text-base bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="15">15 min</option>
+                                <option value="20">20 min</option>
+                                <option value="30">30 min</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="mt-6 text-center">
+                    <div class="text-sm text-gray-600 dark:text-gray-400">
+                        Completed Sessions: <span id="completedSessions" class="font-semibold text-primary">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task List Section -->
+            <div class="order-1 lg:order-2">
+                <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Tasks</h3>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">
+                            <span id="completedTasks">0</span>/<span id="totalTasks">0</span> completed
+                        </div>
+                    </div>
+
+                    <!-- Add Task Form -->
+                    <div class="mb-6">
+                        <div class="flex space-x-2">
+                            <input type="text" id="taskInput" placeholder="Add a new task..." class="flex-1 px-4 py-3 text-base bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <button id="addTaskBtn" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg font-medium transform transition-all duration-200 hover:scale-105 active:scale-95 flex items-center">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Task List -->
+                    <div id="taskList" class="space-y-3 max-h-96 overflow-y-auto">
+                        <!-- Tasks will be dynamically added here -->
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="emptyState" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                        <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"></path>
+                        </svg>
+                        <p class="text-sm">No tasks yet. Add one to get started!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode detection and handling
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        class TaskManager {
+            constructor() {
+                this.tasks = [];
+                this.nextId = 1;
+                this.currentTaskId = null;
+                
+                this.initializeElements();
+                this.attachEventListeners();
+                this.loadTasks(); // Load saved tasks
+                this.updateTaskDisplay();
+            }
+            
+            // Save tasks to localStorage
+            saveTasks() {
+                localStorage.setItem('pomodoroTasks', JSON.stringify(this.tasks));
+                // Also save the current task ID if there is one
+                if (this.currentTaskId) {
+                    localStorage.setItem('pomodoroCurrentTaskId', this.currentTaskId);
+                } else {
+                    localStorage.removeItem('pomodoroCurrentTaskId');
+                }
+            }
+            
+            // Load tasks from localStorage
+            loadTasks() {
+                const savedTasks = localStorage.getItem('pomodoroTasks');
+                if (savedTasks) {
+                    this.tasks = JSON.parse(savedTasks);
+                    // Update nextId to be higher than any existing task ID
+                    if (this.tasks.length > 0) {
+                        const maxId = Math.max(...this.tasks.map(task => parseInt(task.id) || 0));
+                        this.nextId = maxId + 1;
+                    }
+                    // Restore the current task ID
+                    const savedCurrentTaskId = localStorage.getItem('pomodoroCurrentTaskId');
+                    if (savedCurrentTaskId && this.tasks.some(task => task.id === savedCurrentTaskId)) {
+                        this.currentTaskId = savedCurrentTaskId;
+                    }
+                }
+                this.updateTaskDisplay();
+            }
+            
+            /**
+             * Initialize DOM element references for task management
+             * Caches frequently accessed elements to improve performance
+             */
+            initializeElements() {
+                // Input field for new tasks
+                this.taskInput = document.getElementById('taskInput');
+                // Button to add new tasks
+                this.addTaskBtn = document.getElementById('addTaskBtn');
+                // Container element that holds the list of tasks
+                this.taskList = document.getElementById('taskList');
+                // Element shown when no tasks exist
+                this.emptyState = document.getElementById('emptyState');
+                // Element displaying total number of tasks
+                this.totalTasksSpan = document.getElementById('totalTasks');
+                // Element displaying number of completed tasks
+                this.completedTasksSpan = document.getElementById('completedTasks');
+            }
+            
+            /**
+             * Sets up event listeners for user interactions
+             * Handles both button clicks and keyboard input for adding tasks
+             */
+            attachEventListeners() {
+                // Add task when the '+' button is clicked
+                this.addTaskBtn.addEventListener('click', () => this.addTask());
+                
+                // Add task when Enter key is pressed in the input field
+                this.taskInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.addTask();
+                    }
+                });
+            }
+            
+            /**
+             * Creates and adds a new task to the task list
+             * Validates input and initializes task properties
+             */
+            addTask() {
+                // Get and clean the task text from input
+                const taskText = this.taskInput.value.trim();
+                // Exit if the input is empty
+                if (!taskText) return;
+                
+                // Create task object with default values
+                const task = {
+                    id: this.nextId.toString(),
+                    text: taskText,
+                    completed: false,
+                    pomodorosUsed: 0,
+                    createdAt: new Date()
+                };
+                
+                // Add new task to the tasks array
+                this.tasks.push(task);
+                // Clear the input field
+                this.taskInput.value = '';
+                // Update the UI to reflect the new task
+                this.saveTasks(); // Save to localStorage
+                this.updateTaskDisplay();
+            }
+            
+            /**
+             * Removes a task from the task list by ID
+             * Also handles cleanup if the deleted task was currently active
+             * @param {number} taskId - The ID of the task to delete
+             */
+            deleteTask(taskId) {
+                // Remove task by filtering it out of the tasks array
+                this.tasks = this.tasks.filter(task => task.id !== taskId);
+                
+                // If the deleted task was the current task, clear the current task
+                if (this.currentTaskId === taskId) {
+                    this.currentTaskId = null;
+                }
+                this.saveTasks(); // Save to localStorage
+                this.updateTaskDisplay();
+            }
+            
+            toggleTaskComplete(taskId) {
+                const task = this.tasks.find(task => task.id === taskId);
+                if (task) {
+                    task.completed = !task.completed;
+                    if (task.completed && this.currentTaskId === taskId) {
+                        this.currentTaskId = null;
+                    }
+                    this.saveTasks(); // Save to localStorage
+                    this.updateTaskDisplay();
+                }
+            }
+            
+            setCurrentTask(taskId) {
+                this.currentTaskId = taskId;
+                this.saveTasks(); // Save to localStorage
+                this.updateTaskDisplay();
+            }
+            
+            // Add one pomodoro to the current task's count
+            // Only works if there's an active task and it's not completed
+            incrementTaskPomodoros() {
+                // Check if there's a current task selected
+                if (this.currentTaskId) {
+                    // Find the current task in our tasks array
+                    const task = this.tasks.find(task => task.id === this.currentTaskId);
+                    // If task exists and isn't completed, add a pomodoro
+                    if (task && !task.completed) {
+                        task.pomodorosUsed++;
+                        this.saveTasks(); // Save to localStorage
+                        this.updateTaskDisplay();
+                    }
+                }
+            }
+            
+            // Update all the task counters and show/hide the empty state message
+            updateTaskDisplay() {
+                // Count how many tasks are completed
+                const completedCount = this.tasks.filter(task => task.completed).length;
+                
+                // Update the counters at the top of the task list
+                this.totalTasksSpan.textContent = this.tasks.length;  // Total number of tasks
+                this.completedTasksSpan.textContent = completedCount;  // Number of completed tasks
+                
+                // If there are no tasks, show the empty state message
+                if (this.tasks.length === 0) {
+                    this.taskList.classList.add('hidden');      // Hide the task list
+                    this.emptyState.classList.remove('hidden');  // Show "No tasks" message
+                } else {
+                    // If there are tasks, make sure the list is visible
+                    this.taskList.classList.remove('hidden');    // Show the task list
+                    this.emptyState.classList.add('hidden');     // Hide "No tasks" message
+                    this.renderTasks();  // Update the list of tasks
+                }
+            }
+            
+            // Clear the task list and redraw all tasks
+            renderTasks() {
+                this.taskList.innerHTML = '';  // Clear the current list
+                
+                // For each task, create its HTML and add it to the list
+                this.tasks.forEach(task => {
+                    const taskElement = this.createTaskElement(task);  // Make HTML for this task
+                    this.taskList.appendChild(taskElement);  // Add it to the page
+                });
+            }
+            
+            // Create the HTML for a single task
+            createTaskElement(task) {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = `task-slide-in bg-white dark:bg-gray-700 rounded-lg p-4 border ${
+                    this.currentTaskId === task.id 
+                        ? 'border-primary bg-primary/5 dark:bg-primary/10' 
+                        : 'border-gray-200 dark:border-gray-600'
+                } ${task.completed ? 'opacity-60' : ''}`;
+                
+                taskDiv.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <button class="task-complete-btn flex-shrink-0 w-6 h-6 rounded-full border-2 ${
+                            task.completed 
+                                ? 'bg-green-500 border-green-500' 
+                                : 'border-gray-300 dark:border-gray-500 hover:border-green-500'
+                        } flex items-center justify-center transition-colors">
+                            ${task.completed ? '<svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>' : ''}
+                        </button>
+                        
+                        <div class="flex-1 min-w-0">
+                            <p class="text-gray-800 dark:text-white font-medium ${task.completed ? 'line-through' : ''}">${task.text}</p>
+                            ${task.pomodorosUsed > 0 ? `<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">🍅 ${task.pomodorosUsed} pomodoro${task.pomodorosUsed > 1 ? 's' : ''}</p>` : ''}
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                            ${!task.completed ? `
+                                <button class="task-work-btn px-3 py-1 text-sm ${
+                                    this.currentTaskId === task.id 
+                                        ? 'bg-primary text-white' 
+                                        : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-primary hover:text-white'
+                                } rounded-full transition-colors">
+                                    ${this.currentTaskId === task.id ? 'Working' : 'Work on'}
+                                </button>
+                            ` : ''}
+                            
+                            <button class="task-delete-btn text-gray-400 hover:text-red-500 transition-colors">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // Attach event listeners
+                const completeBtn = taskDiv.querySelector('.task-complete-btn');
+                const workBtn = taskDiv.querySelector('.task-work-btn');
+                const deleteBtn = taskDiv.querySelector('.task-delete-btn');
+                
+                completeBtn.addEventListener('click', () => this.toggleTaskComplete(task.id));
+                if (workBtn) {
+                    workBtn.addEventListener('click', () => {
+                        if (this.currentTaskId === task.id) {
+                            this.currentTaskId = null;
+                        } else {
+                            this.setCurrentTask(task.id);
+                        }
+                    });
+                }
+                deleteBtn.addEventListener('click', () => this.deleteTask(task.id));
+                
+                return taskDiv;
+            }
+            
+            getCurrentTask() {
+                return this.tasks.find(task => task.id === this.currentTaskId);
+            }
+        }
+
+        class PomodoroTimer {
+            constructor() {
+                this.workDuration = 25 * 60; // 25 minutes in seconds
+                this.shortBreakDuration = 5 * 60; // 5 minutes in seconds
+                this.longBreakDuration = 15 * 60; // 15 minutes in seconds
+                
+                this.currentTime = this.workDuration;
+                this.isRunning = false;
+                this.isWorkSession = true;
+                this.sessionCount = 1;
+                this.completedSessions = 0;
+                this.timer = null;
+                
+                this.taskManager = new TaskManager();
+                
+                // Event handlers (can be set from outside)
+                this.onSessionStart = () => {};
+                this.onSessionEnd = () => {};
+                
+                this.initializeElements();
+                this.attachEventListeners();
+                this.updateDisplay();
+            }
+            
+            initializeElements() {
+                this.timerDisplay = document.getElementById('timerDisplay');
+                this.sessionType = document.getElementById('sessionType');
+                this.sessionCountDisplay = document.getElementById('sessionCount');
+                this.completedSessionsDisplay = document.getElementById('completedSessions');
+                this.startPauseBtn = document.getElementById('startPauseBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.skipBtn = document.getElementById('skipBtn');
+                this.playIcon = document.getElementById('playIcon');
+                this.pauseIcon = document.getElementById('pauseIcon');
+                this.timerCircle = document.getElementById('timerCircle');
+                this.pulseRing = document.getElementById('pulseRing');
+                this.workDurationSelect = document.getElementById('workDuration');
+                this.shortBreakSelect = document.getElementById('shortBreak');
+                this.longBreakSelect = document.getElementById('longBreak');
+                this.currentTaskDisplay = document.getElementById('currentTaskDisplay');
+                this.currentTaskText = document.getElementById('currentTaskText');
+            }
+            
+            attachEventListeners() {
+                this.startPauseBtn.addEventListener('click', () => this.toggleTimer());
+                this.resetBtn.addEventListener('click', () => this.resetTimer());
+                this.skipBtn.addEventListener('click', () => this.skipSession());
+                
+                this.workDurationSelect.addEventListener('change', (e) => {
+                    this.workDuration = parseInt(e.target.value) * 60;
+                    if (this.isWorkSession && !this.isRunning) {
+                        this.currentTime = this.workDuration;
+                        this.updateDisplay();
+                    }
+                });
+                
+                this.shortBreakSelect.addEventListener('change', (e) => {
+                    this.shortBreakDuration = parseInt(e.target.value) * 60;
+                });
+                
+                this.longBreakSelect.addEventListener('change', (e) => {
+                    this.longBreakDuration = parseInt(e.target.value) * 60;
+                });
+            }
+            
+            toggleTimer() {
+                if (this.isRunning) {
+                    this.pauseTimer();
+                } else {
+                    this.startTimer();
+                }
+            }
+            
+            startTimer() {
+                if (!this.isRunning) {
+                    this.isRunning = true;
+                    this.updateButtonStates();
+                    this.pulseRing.classList.remove('opacity-0');
+                    this.timerCircle.classList.add('timer-glow');
+                    
+                    // Notify that a session has started
+                    this.onSessionStart();
+                    
+                    const startTime = Date.now() - (this.workDuration - this.currentTime) * 1000;
+                    
+                    const update = () => {
+                        if (!this.isRunning) return;
+                        
+                        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                        this.currentTime = Math.max(0, this.workDuration - elapsed);
+                        
+                        this.updateDisplay();
+                        
+                        if (this.currentTime <= 0) {
+                            this.sessionComplete();
+                        } else {
+                            requestAnimationFrame(update);
+                        }
+                    };
+                    
+                    update();
+                }
+            }
+            
+            pauseTimer() {
+                this.isRunning = false;
+                this.updateButtonStates();
+                clearInterval(this.timer);
+                
+                // Remove glow effect and pulse ring
+                this.timerCircle.classList.remove('timer-glow');
+                this.pulseRing.classList.add('opacity-0');
+            }
+            
+            resetTimer() {
+                this.pauseTimer();
+                this.currentTime = this.isWorkSession ? this.workDuration : 
+                    (this.sessionCount % 4 === 0 ? this.longBreakDuration : this.shortBreakDuration);
+                this.updateDisplay();
+            }
+            
+            skipSession() {
+                this.pauseTimer();
+                this.sessionComplete();
+            }
+            
+            sessionComplete() {
+                this.pauseTimer();
+                this.playCompletionSound();
+                
+                // Notify that the current session has ended
+                this.onSessionEnd();
+                
+                if (this.isWorkSession) {
+                    this.completedSessions++;
+                    this.sessionCount++;
+                    
+                    // Increment pomodoros for current task
+                    this.taskManager.incrementTaskPomodoros();
+                    
+                    // Determine break type
+                    if (this.sessionCount % 4 === 0) {
+                        this.currentTime = this.longBreakDuration;
+                        this.sessionType.textContent = 'Long Break';
+                        this.sessionType.className = 'inline-block px-4 py-2 rounded-full text-sm font-medium bg-green-500 text-white';
+                    } else {
+                        this.currentTime = this.shortBreakDuration;
+                        this.sessionType.textContent = 'Short Break';
+                        this.sessionType.className = 'inline-block px-4 py-2 rounded-full text-sm font-medium bg-blue-500 text-white';
+                    }
+                    this.isWorkSession = false;
+                } else {
+                    // Break complete, start new work session
+                    this.currentTime = this.workDuration;
+                    this.sessionType.textContent = 'Work Session';
+                    this.sessionType.className = 'inline-block px-4 py-2 rounded-full text-sm font-medium bg-primary text-white';
+                    this.isWorkSession = true;
+                }
+                
+                this.updateDisplay();
+            }
+            
+            playCompletionSound() {
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.2);
+                    
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                } catch (error) {
+                    console.log('Audio not supported');
+                }
+            }
+            
+            updateDisplay() {
+                const minutes = Math.floor(this.currentTime / 60);
+                const seconds = this.currentTime % 60;
+                this.timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                this.sessionCountDisplay.textContent = `Session ${this.sessionCount}`;
+                this.completedSessionsDisplay.textContent = this.completedSessions;
+                
+                // Update current task display
+                const currentTask = this.taskManager.getCurrentTask();
+                if (currentTask && this.isWorkSession) {
+                    this.currentTaskDisplay.classList.remove('hidden');
+                    this.currentTaskText.textContent = currentTask.text;
+                } else {
+                    this.currentTaskDisplay.classList.add('hidden');
+                }
+                
+                // Update document title for tab notification
+                const taskText = currentTask && this.isWorkSession ? ` - ${currentTask.text}` : '';
+                document.title = `${this.timerDisplay.textContent} - ${this.sessionType.textContent}${taskText}`;
+            }
+            
+            updateButtonStates() {
+                if (this.isRunning) {
+                    this.playIcon.classList.add('hidden');
+                    this.pauseIcon.classList.remove('hidden');
+                } else {
+                    this.playIcon.classList.remove('hidden');
+                    this.pauseIcon.classList.add('hidden');
+                }
+            }
+        }
+        
+        // Simple audio player for Pomodoro sounds
+        class AudioPlayer {
+            constructor() {
+                this.startSound = document.getElementById('sessionStartSound');
+                this.endSound = document.getElementById('sessionEndSound');
+            }
+
+            playStart() {
+                if (this.startSound) {
+                    this.startSound.currentTime = 0; // Rewind to start
+                    this.startSound.play().catch(e => console.log("Couldn't play start sound:", e));
+                }
+            }
+
+
+            playEnd() {
+                if (this.endSound) {
+                    this.endSound.currentTime = 0; // Rewind to start
+                    this.endSound.play().catch(e => console.log("Couldn't play end sound:", e));
+                }
+            }
+        }
+
+
+        // Initialize the Pomodoro timer when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const pomodoro = new PomodoroTimer();
+            const audioPlayer = new AudioPlayer();
+            
+            // Add audio feedback to timer events
+            pomodoro.onSessionStart = () => {
+                audioPlayer.playStart();
+            };
+            
+            pomodoro.onSessionEnd = () => {
+                audioPlayer.playEnd();
+            };
+        });
+    </script>
+
+    <!-- Audio elements for Pomodoro sounds -->
+    <audio id="sessionStartSound" preload="auto">
+        <source src="../assets/sounds/start.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="sessionEndSound" preload="auto">
+        <source src="../assets/sounds/End.wav" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+
+</body></html>

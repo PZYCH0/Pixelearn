@@ -1,138 +1,588 @@
-/* General body styling */
-body {
-    font-family: Arial, sans-serif; /* Sets the font for the page */
-    background: #f5f5fa; /* A light purple-gray background color */
-    display: flex; /* Enables flexbox layout */
-    flex-direction: column; /* Stacks flex items vertically */
-    align-items: center; /* Centers items horizontally */
-    justify-content: center; /* Centers items vertically */
-    height: 100vh; /* Makes the body take up the full viewport height */
-    margin: 0; /* Removes default body margin */
+/* Import pixel font */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+    --primary: #9b59b6; /* Main purple */
+    --primary-dark: #8e44ad; /* Darker purple */
+    --secondary: #e84393; /* Pink accent */
+    --background: #2c3e50; /* Dark blue background */
+    --light-bg: #34495e; /* Lighter background for containers */
+    --text: #ecf0f1; /* Light text */
+    --accent: #f1c40f; /* Yellow accent */
+    --pixel-border: 4px solid #000;
+    --pixel-shadow: 8px 8px 0 rgba(0, 0, 0, 0.3);
 }
 
-/* Main container for the timer and controls */
+/* General body styling */
+body {
+    font-family: 'Press Start 2P', cursive, monospace;
+    background-color: #1a1a2e;
+    color: #e6e6fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    line-height: 1.6;
+    background-image: 
+        linear-gradient(rgba(41, 32, 71, 0.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(41, 32, 71, 0.5) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* Pixel art container */
 .container {
-    background: #fff; /* White background */
-    padding: 2rem 3rem; /* Adds padding inside the container */
-    border-radius: 16px; /* Rounds the corners */
-    box-shadow: 0 2px 16px rgba(0,0,0,0.07); /* Adds a subtle shadow */
-    display: flex; /* Enables flexbox for its children */
-    flex-direction: column; /* Stacks children vertically */
-    align-items: center; /* Centers children horizontally */
+    background: var(--light-bg);
+    padding: 2rem;
+    border: var(--pixel-border);
+    box-shadow: var(--pixel-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 600px;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    margin: 1rem;
+    text-align: center;
+    background-color: #2a1e4a;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 
+        0 0 0 4px #4a3b8a,
+        0 0 0 8px #8a5cc3,
+        0 0 20px rgba(0, 0, 0, 0.7);
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+    border: 4px solid #8a5cc3;
+    transform: translateZ(0);
+    overflow: hidden;
 }
 
 /* Main heading style */
 h1 {
-    color: #4a4a8a; /* A dark blue-purple color */
-    margin-bottom: 1rem; /* Adds space below the heading */
+    color: var(--secondary);
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    text-align: center;
+    text-shadow: 2px 2px 0 var(--primary-dark);
+    line-height: 1.4;
 }
 
 /* Timer display style */
 #timer {
-    font-size: 3rem; /* Large font size for the timer */
-    margin: 1rem 0; /* Adds vertical margin */
-    color: #4a4a8a; /* Same color as the heading */
-}
-
-/* General styling for control buttons */
-.controls button {
-    padding: 0.7rem 1.5rem; /* Padding inside buttons */
-    margin: 0 0.3rem; /* Margin between buttons */
-    border: none; /* Removes the default border */
-    border-radius: 8px; /* Rounds button corners */
-    background: #6a6aff; /* A bright blue-purple background */
-    color: #fff; /* White text color */
-    font-size: 1rem; /* Sets the font size */
-    cursor: pointer; /* Changes cursor to a pointer on hover */
-    transition: background 0.2s; /* Smooth background color transition */
-}
-
-/* Hover effect for control buttons */
-.controls button:hover {
-    background: #4a4a8a;
-}
-
-#distractionBtn {
-    background-color: #f0f0f0;
-    color: #555;
-}
-
-#distractionBtn:hover {
-    background-color: #dcdcdc;
-    color: #333;
-}
-
-#goalDisplay {
-    margin-top: 1rem;
-    font-size: 1.1rem;
-    font-style: italic;
-    color: #555;
-}
-
-/* Container for mode-switching buttons */
-.mode {
-    margin: 1rem 0; /* Adds vertical margin */
-}
-
-/* General styling for mode buttons */
-.mode button {
-    background: #e0e0ff; /* A very light purple background */
-    color: #4a4a8a; /* Dark blue-purple text */
-}
-
-/* Style for the currently active mode button */
-.mode button.active {
-    background: #6a6aff; /* Bright blue-purple background */
-    color: #fff; /* White text */
-}
-
-/* Modal styles */
-.modal {
-    position: fixed;
+    font-size: 4.5rem;
+    font-weight: bold;
+    margin: 1.5rem 0;
+    color: #ff79c6;
+    text-shadow: 
+        2px 0 0 #bd93f9,
+        -2px 0 0 #bd93f9,
+        0 2px 0 #bd93f9,
+        0 -2px 0 #bd93f9,
+        1px 1px #bd93f9,
+        -1px -1px 0 #bd93f9,
+        1px -1px 0 #bd93f9,
+        -1px 1px 0 #bd93f9,
+        1px 1px 0 #bd93f9;
+    letter-spacing: 2px;
+    position: relative;
     z-index: 1;
-    left: 0;
+    background: linear-gradient(135deg, #ff79c6, #bd93f9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Button base styles */
+button {
+    font-family: 'Press Start 2P', cursive, monospace;
+    font-size: 0.8rem;
+    padding: 0.8rem 1.2rem;
+    margin: 0.3rem;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.1s ease;
+    background: var(--primary);
+    color: white;
+    border-bottom: 4px solid var(--primary-dark);
+    border-right: 4px solid var(--primary-dark);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+button:active {
+    transform: translate(1px, 1px);
+    box-shadow: none;
+    border-bottom: 2px solid var(--primary-dark);
+    border-right: 2px solid var(--primary-dark);
+}
+
+/* Controls container */
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+/* Mode buttons */
+.mode {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.mode button {
+    background-color: #4a3b8a;
+    border: none;
+    color: #e6e6fa;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.6rem;
+    transition: all 0.2s ease;
+    box-shadow: 
+        0 4px 0 #2a1e4a,
+        0 0 0 2px #8a5cc3;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    flex: 1;
+    min-width: 100px;
+    max-width: 150px;
+}
+
+.mode button::before {
+    content: '';
+    position: absolute;
     top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
-    display: none; /* Hidden by default */
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: translateX(-100%);
+    transition: 0.5s;
+}
+
+.mode button:hover::before {
+    transform: translateX(100%);
+}
+
+.mode button.active {
+    background-color: #8a5cc3;
+    transform: translateY(2px);
+    box-shadow: 
+        0 2px 0 #4a3b8a,
+        0 0 0 2px #8a5cc3;
+    color: #fff;
+}
+
+.mode button:hover {
+    background-color: #6d4a9e;
+    transform: translateY(1px);
+    box-shadow: 
+        0 3px 0 #4a3b8a,
+        0 0 0 2px #8a5cc3;
+}
+
+/* Progress Bar */
+.progress-container {
+    margin: 1.5rem 0;
+    width: 100%;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background-color: #2a1e4a;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #8a5cc3;
+    box-shadow: 0 0 0 2px #4a3b8a;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ff79c6, #bd93f9);
+    background-size: 200% 100%;
+    animation: progressGradient 2s linear infinite, progressGrow 1s ease-out;
+    transition: width 0.5s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.1) 25%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0.1) 75%
+    );
+    background-size: 200% 100%;
+    animation: shine 2s infinite;
+}
+
+@keyframes progressGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes progressGrow {
+    from { width: 0; }
+    to { width: var(--progress, 0%); }
+}
+
+@keyframes shine {
+    0% { background-position: -100% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-size: 0.6rem;
+    color: #8a5cc3;
+}
+
+/* Streak Display */
+.streak-display {
+    margin: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.streak-icon {
+    font-size: 2.5rem;
+    margin-bottom: 5px;
+    animation: pulse 2s infinite;
+    text-shadow: 0 0 10px rgba(255, 100, 100, 0.5);
+    transition: transform 0.3s ease;
+}
+
+.streak-icon.celebrate {
+    animation: celebrate 0.5s ease-out;
+}
+
+@keyframes celebrate {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.5) rotate(15deg); }
+    100% { transform: scale(1) rotate(0); }
+}
+
+.streak-count {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ff79c6;
+    text-shadow: 2px 2px 0 #8a5cc3;
+    line-height: 1;
+}
+
+.streak-label {
+    font-size: 0.7rem;
+    color: #bd93f9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin: 1.5rem 0;
+    padding: 15px;
+    background-color: rgba(74, 59, 138, 0.2);
+    border-radius: 8px;
+    border: 2px solid #4a3b8a;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    background-color: rgba(42, 30, 74, 0.5);
+    border-radius: 6px;
+    border: 1px solid #4a3b8a;
+}
+
+.stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ff79c6;
+    margin-bottom: 3px;
+}
+
+.stat-label {
+    font-size: 0.6rem;
+    color: #bd93f9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Goal Container */
+.goal-container {
+    margin: 1.5rem 0;
+    padding: 15px;
+    background-color: rgba(74, 59, 138, 0.2);
+    border-radius: 8px;
+    border: 2px solid #4a3b8a;
+    text-align: left;
+}
+
+.goal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.8rem;
+    color: #bd93f9;
+}
+
+.goal-progress {
+    font-weight: bold;
+    color: #ff79c6;
+}
+
+.goal-progress-bar {
+    width: 100%;
+    height: 12px;
+    background-color: #2a1e4a;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #4a3b8a;
+    margin: 8px 0;
+}
+
+.goal-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #bd93f9, #ff79c6);
+    transition: width 0.5s ease-in-out;
+    position: relative;
+}
+
+.goal-progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.1) 25%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0.1) 75%
+    );
+    background-size: 200% 100%;
+    animation: shine 2s infinite;
+}
+
+/* Checkpoints Container */
+.checkpoints-container {
+    margin: 1.5rem 0;
+    padding: 15px;
+    background-color: rgba(74, 59, 138, 0.2);
+    border-radius: 8px;
+    border: 2px solid #4a3b8a;
+    text-align: left;
+}
+
+.checkpoints-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.8rem;
+    color: #bd93f9;
+}
+
+.checkpoints-count {
+    background-color: #4a3b8a;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+}
+
+#checkpointList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 150px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #8a5cc3 #2a1e4a;
+}
+
+#checkpointList::-webkit-scrollbar {
+    width: 6px;
+}
+
+#checkpointList::-webkit-scrollbar-track {
+    background: #2a1e4a;
+    border-radius: 3px;
+}
+
+#checkpointList::-webkit-scrollbar-thumb {
+    background-color: #8a5cc3;
+    border-radius: 3px;
+}
+
+#checkpointList li {
+    padding: 8px 0;
+    border-bottom: 1px solid #4a3b8a;
+    font-size: 0.7rem;
+    color: #e6e6fa;
+    display: flex;
+    align-items: center;
+}
+
+#checkpointList li::before {
+    content: '✓';
+    color: #50fa7b;
+    margin-right: 8px;
+    font-size: 0.8rem;
+}
+
+#checkpointList li:last-child {
+    border-bottom: none;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
 }
 
 .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
+    background-color: #2a1e4a;
+    padding: 2rem;
+    border-radius: 8px;
     max-width: 500px;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    width: 90%;
+    border: 4px solid #8a5cc3;
+    box-shadow: 0 0 20px rgba(138, 92, 195, 0.5);
+    position: relative;
+    animation: modalAppear 0.3s ease-out;
 }
 
-.modal-content textarea {
-    width: 95%;
-    height: 80px;
-    margin-top: 10px;
-    margin-bottom: 15px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-family: inherit;
-    font-size: 1rem;
+@keyframes modalAppear {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
 
-.modal-content button {
-    background-color: #5a5a9a; /* Match theme */
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5rem;
     cursor: pointer;
-    font-size: 1rem;
+    color: #ff79c6;
+    transition: color 0.2s ease;
 }
 
-.modal-content button:hover {
-    background-color: #4a4a8a;
+.close-btn:hover {
+    color: #ff5555;
 }
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        padding: 1.2rem;
+        margin: 0.8rem;
+        transform: none;
+    }
+    
+    #timer {
+        font-size: 3rem;
+    }
+    
+    .mode, .controls {
+        gap: 6px;
+    }
+    
+    .mode button, .controls button {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.5rem;
+        min-width: auto;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .streak-count {
+        font-size: 1.8rem;
+    }
+    
+    .streak-label {
+        font-size: 0.6rem;
+    }
+}
+
+/* Pixel art corners */
+.container::before,
+.container::after,
+.modal-content::before,
+.modal-content::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--primary);
+    z-index: 1;
+}
+
+.container::before { top: -5px; left: -5px; }
+.container::after { top: -5px; right: -5px; }
+.modal-content::before { bottom: -5px; left: -5px; }
+.modal-content::after { bottom: -5px; right: -5px; }

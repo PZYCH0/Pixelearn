@@ -93,7 +93,57 @@
           min-height: 600px;
         }
       }
+      /* Top-center text logo */
+      .top-logo {
+        display: block;
+        margin: 20px auto 0;
+        font-family: 'Press Start 2P', cursive;
+        color: var(--accent);
+        font-size: 1.6rem;
+        text-decoration: none;
+        text-shadow: 0 0 10px rgba(249, 83, 198, 0.6);
+        text-align: center;
+      }
+          /* Fullscreen button */
+      .fullscreen-btn {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+        background: var(--accent);
+        color: #ffffff;
+        border: none;
+        border-radius: var(--border-radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(249, 83, 198, 0.5);
+        transition: transform 0.2s ease;
+      }
+      .fullscreen-btn:hover {
+        transform: scale(1.1);
+      }
+      .game-container {
+        position: relative;
+      }
     </style>
+    <script>
+      function toggleFullScreen(elId){
+        const element = document.getElementById(elId);
+        if(!document.fullscreenElement){
+          if(element.requestFullscreen){element.requestFullscreen();}
+          else if(element.webkitRequestFullscreen){element.webkitRequestFullscreen();}
+          else if(element.msRequestFullscreen){element.msRequestFullscreen();}
+        } else {
+          if(document.exitFullscreen){document.exitFullscreen();}
+          else if(document.webkitExitFullscreen){document.webkitExitFullscreen();}
+          else if(document.msExitFullscreen){document.msExitFullscreen();}
+        }
+      }
+    </script>
+
     <link rel="stylesheet" href="styles/navbar-font-styles.css">
     <link rel="stylesheet" href="styles/enhancements.css">
     <script src="scripts/script.js" defer></script>
@@ -115,6 +165,9 @@
         Your browser does not support the video tag.
     </video>
 
+    <!-- Top-center logo -->
+    <a href="index.html" class="top-logo">Pixelearn</a>
+
     <div class="pixel-cloud"></div>
     <div class="container py-4">
        
@@ -131,7 +184,7 @@
                 <i class="fas fa-times"></i>
             </button>
             <div class="side-nav-content">
-                <a href="#" class="side-nav-logo">Pixelearn</a>
+                
                 <nav class="side-nav-links">
                     <a href="#games" class="side-nav-link ripple">Learning Games</a>
                     <a href="#lessons" class="side-nav-link ripple">Recent Videos</a>
@@ -144,10 +197,13 @@
 
         <div class="game-section">
             <div class="game-container glass-card slide-up">
-                <iframe src="games/EXO.html" 
+                <iframe id="gameFrame" src="games/EXO.html" 
                     class="game-frame" 
                     allowfullscreen>
                 </iframe>
+                <button class="fullscreen-btn" onclick="toggleFullScreen('gameFrame')" aria-label="Toggle full screen">
+                    <i class="fas fa-expand"></i>
+                </button>
             </div>
 
             <div class="game-description glass-card fade-in">
