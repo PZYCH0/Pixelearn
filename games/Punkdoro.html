@@ -1,0 +1,1214 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punkdoro - Cyberpunk Pomodoro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(180deg, rgba(10,10,35,0.85) 0%, rgba(26,26,58,0.85) 100%), url('../assets/fzUl.gif') center/cover fixed no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Press Start 2P', monospace;
+            color: #00ffcc;
+        }
+
+        .container {
+            background: rgba(10, 10, 35, 0.8);
+            border: 4px solid #ff00ff;
+            box-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffcc;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 360px;
+            position: relative;
+            animation: glitch 2s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            2% { transform: translate(-2px, 2px); }
+            4% { transform: translate(2px, -2px); }
+            6% { transform: translate(0); }
+        }
+
+        h1 {
+            font-size: 20px;
+            text-shadow: 0 0 10px #ff00ff;
+            margin-bottom: 10px;
+        }
+
+        #timer {
+            font-size: 36px;
+            margin: 20px 0;
+            text-shadow: 0 0 15px #00ffcc;
+        }
+
+        #task {
+            font-size: 14px;
+            color: #ff00ff;
+            margin: 10px 0;
+            min-height: 20px;
+        }
+
+        .task-input-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        #task-input {
+            background: #0a0a23;
+            border: 1px solid #00ffcc;
+            color: #00ffcc;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            padding: 5px;
+            width: 75%;
+            margin-right: 5px;
+        }
+
+        #add-task-btn {
+            background: none;
+            border: 2px solid #00ffcc;
+            color: #00ffcc;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            width: 30px;
+            height: 30px;
+            line-height: 26px;
+            text-align: center;
+            cursor: pointer;
+            text-shadow: 0 0 5px #00ffcc;
+            border-radius: 5px;
+        }
+
+        #add-task-btn:hover {
+            background: #00ffcc;
+            color: #0a0a23;
+            box-shadow: 0 0 10px #00ffcc;
+        }
+
+        #task-select {
+            background: #0a0a23;
+            border: 1px solid #00ffcc;
+            color: #00ffcc;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            padding: 5px;
+            width: 85%;
+            margin-bottom: 10px;
+        }
+
+        .progress-container {
+            margin: 10px 0;
+        }
+
+        progress {
+            width: 100%;
+            height: 12px;
+            border: 1px solid #ff00ff;
+            background: #0a0a23;
+        }
+
+        progress::-webkit-progress-bar {
+            background: #0a0a23;
+        }
+
+        progress::-webkit-progress-value {
+            background: #00ffcc;
+            box-shadow: 0 0 10px #00ffcc;
+        }
+
+        /* Controls container positioning */
+        .controls {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Dropdown menu */
+        .dropdown {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 10, 35, 0.9);
+            border: 2px solid #00ffcc;
+            padding: 10px;
+            z-index: 2000;
+            max-height: 30vh; /* prevent overflow on small screens */
+            overflow-y: auto;  /* enable scrolling within menu */
+        }
+        .dropdown .btn {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        progress::-moz-progress-bar {
+            background: #00ffcc;
+            box-shadow: 0 0 10px #00ffcc;
+        }
+
+        /* Shared button style */
+        .btn, .controls button, #info-btn, #settings-btn, #help-btn, #export-btn, #badges-btn {
+            background: none;
+            border: 2px solid #00ffcc;
+            color: #00ffcc;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 11px;
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px #00ffcc;
+        }
+
+        .btn:hover, .controls button:hover, #info-btn:hover, #settings-btn:hover, #help-btn:hover, #export-btn:hover, #badges-btn:hover {
+            background: #00ffcc;
+            color: #0a0a23;
+            box-shadow: 0 0 10px #00ffcc;
+        }
+
+        #status {
+            font-size: 14px;
+            margin: 10px 0;
+            color: #ff00ff;
+            text-shadow: 0 0 5px #ff00ff;
+        }
+
+        #sessions, #points {
+            font-size: 14px;
+            margin: 10px 0;
+            color: #00ffcc;
+        }
+
+        #message {
+            font-size: 12px;
+            color: #ff00ff;
+            margin: 10px 0;
+            min-height: 24px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: rgba(10, 10, 35, 0.9);
+            border: 4px solid #ff00ff;
+            box-shadow: 0 0 20px #ff00ff;
+            padding: 20px;
+            width: 80%;
+            max-width: 400px;
+            text-align: left;
+            color: #00ffcc;
+            font-size: 12px;
+        }
+
+        .modal-content h2 {
+            font-size: 16px;
+            color: #ff00ff;
+            margin-bottom: 10px;
+        }
+
+        .modal-content button {
+            margin-top: 10px;
+            float: right;
+        }
+
+        .modal-content textarea, .modal-content input {
+            background: #0a0a23;
+            border: 1px solid #00ffcc;
+            color: #00ffcc;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            padding: 5px;
+            width: 100%;
+        }
+
+        .modal-content textarea {
+            height: 60px;
+            resize: none;
+        }
+
+        .task-list, .badge-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+
+        .task-item, .badge-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 5px 0;
+        }
+
+        .badge-item {
+            flex-direction: column;
+            align-items: flex-start;
+            border: 1px solid #ff00ff;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .badge-item.earned {
+            border-color: #00ffcc;
+            background: rgba(0, 255, 204, 0.1);
+        }
+
+        .badge-item.locked {
+            opacity: 0.5;
+        }
+
+        .badge-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px #00ffcc;
+        }
+
+        .badge-item.earned .badge-icon {
+            color: #00ffcc;
+            text-shadow: 0 0 10px #00ffcc;
+        }
+
+        .badge-item.locked .badge-icon {
+            color: #ff00ff;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+
+        .badge-tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 10px;
+        }
+
+        .badge-tabs button {
+            background: none;
+            border: 2px solid #00ffcc;
+            color: #00ffcc;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .badge-tabs button.active {
+            background: #00ffcc;
+            color: #0a0a23;
+        }
+
+        .badge-tabs button:hover {
+            background: #00ffcc;
+            color: #0a0a23;
+        }
+
+        .task-item button {
+            font-size: 10px;
+            padding: 5px;
+        }
+
+        .settings {
+            margin-top: 10px;
+        }
+
+        .settings label {
+            font-size: 12px;
+            margin-right: 5px;
+        }
+
+        .settings input {
+            width: 50px;
+        }
+
+        .neon-line {
+            position: absolute;
+            background: #ff00ff;
+            box-shadow: 0 0 10px #ff00ff;
+        }
+
+        .neon-line.top {
+            top: -4px;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+        }
+
+        .neon-line.bottom {
+            bottom: -4px;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+        }
+
+        .neon-line.left {
+            left: -4px;
+            top: 10%;
+            width: 2px;
+            height: 80%;
+        }
+
+        .neon-line.right {
+            right: -4px;
+            top: 10%;
+            width: 2px;
+            height: 80%;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 2px;
+            pointer-events: none;
+            animation: scan 0.1s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 2px; }
+        }
+    @keyframes popIn {
+            0%   {transform: scale(0) rotate(0deg);   filter: drop-shadow(0 0 0 #00ffcc);}
+            50%  {transform: scale(1.3) rotate(360deg);filter: drop-shadow(0 0 12px #ff00ff);}
+            100% {transform: scale(1) rotate(720deg); filter: drop-shadow(0 0 0 #00ffcc);}
+        }
+        .badge-animate {
+            animation: popIn 1.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    <div class="container">
+        <div class="neon-line top"></div>
+        <div class="neon-line bottom"></div>
+        <div class="neon-line left"></div>
+        <div class="neon-line right"></div>
+        <h1>Punkdoro</h1>
+        <div class="task-input-container">
+            <input type="text" id="task-input" placeholder="Enter new task...">
+            <button id="add-task-btn" onclick="addTask()">+</button>
+        </div>
+        <select id="task-select">
+            <option value="">Select a task...</option>
+        </select>
+        <div id="task"></div>
+        <div id="timer">25:00</div>
+        <div class="progress-container">
+            <progress id="progress" value="100" max="100"></progress>
+        </div>
+        <div id="status">Work Session</div>
+        <div id="sessions">Sessions: 0/4</div>
+        <div id="points">CyberPoints: 0</div>
+        <div id="message"></div>
+        <div class="controls">
+            <button class="btn" onclick="startTimer()">Start</button>
+            <button class="btn" onclick="pauseTimer()">Pause</button>
+            <button class="btn" onclick="resetTimer()">Reset</button>
+            <button id="menu-btn" class="btn" aria-label="Menu">&#9776;</button>
+            <div id="menu-dropdown" class="dropdown">
+                <button id="guide-btn" class="btn" onclick="showInfo()">Guide</button>
+                <button id="settings-btn" class="btn" onclick="showSettings()">Settings</button>
+                <button id="badges-btn" class="btn" onclick="showBadges()">Badges</button>
+                <button id="export-btn" class="btn" onclick="exportLog()">Export</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="info-modal" class="modal">
+        <div class="modal-content">
+            <h2>Pomodoro Instructions</h2>
+            <p>The Pomodoro Technique is a time management method to boost productivity:</p>
+            <ul>
+                <li>Work for 25 minutes (a "Pomodoro").</li>
+                <li>Take a 5-minute break.</li>
+                <li>Repeat 4 times, then take a longer break (15-30 minutes).</li>
+                <li>Use the timer to stay focused and track sessions.</li>
+            </ul>
+            <hr/>
+            <h3>Using Punkdoro</h3>
+            <p>Punkdoro helps you study better!</p>
+            <ul>
+                <li>Type a new task and click the + icon, or manage tasks in the Tasks menu.</li>
+                <li>Select a task from the dropdown to work on.</li>
+                <li>Click Start to work for 25 minutes, then take a 5-minute break.</li>
+                <li>Answer a reflection question after each study session.</li>
+                <li>Earn CyberPoints and unlock badge icons in the Badges menu!</li>
+            </ul>
+            <button class="btn" onclick="closeInfo()">Close</button>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <h2>Settings</h2>
+            <div class="settings">
+                <label for="work-duration">Work (min):</label>
+                <input type="number" id="work-duration" value="25" min="1">
+            </div>
+            <div class="settings">
+                <label for="break-duration">Break (min):</label>
+                <input type="number" id="break-duration" value="5" min="1">
+            </div>
+            <div class="settings">
+                <label for="session-goal">Session Goal:</label>
+                <input type="number" id="session-goal" value="4" min="1">
+            </div>
+            <button class="btn" onclick="saveSettings()">Save</button>
+            <button class="btn" onclick="closeSettings()">Cancel</button>
+        </div>
+    </div>
+
+    <div id="tasks-modal" class="modal">
+        <div class="modal-content">
+            <h2>Manage Tasks</h2>
+            <div class="settings">
+                <input type="text" id="new-task" placeholder="Add new task...">
+                <button onclick="addTask()">Add</button>
+            </div>
+            <div class="task-list" id="task-list"></div>
+            <button onclick="closeTasks()">Close</button>
+        </div>
+    </div>
+
+    <div id="badges-modal" class="modal">
+        <div class="modal-content">
+            <h2>Badges</h2>
+            <div class="badge-tabs">
+                <button id="earned-tab" onclick="showBadgeTab('earned')" class="active">Earned</button>
+                <button id="locked-tab" onclick="showBadgeTab('locked')">Locked</button>
+            </div>
+            <div class="badge-list" id="badge-list"></div>
+            <button class="btn" onclick="closeBadges()">Close</button>
+        </div>
+    </div>
+
+    <div id="reflection-modal" class="modal">
+        <div class="modal-content">
+            <h2>Reflect on Your Session</h2>
+            <p id="reflection-question"></p>
+            <textarea id="reflection-answer" placeholder="Type your thoughts..."></textarea>
+            <button onclick="saveReflection()">Save</button>
+            <button onclick="closeReflection()">Skip</button>
+        </div>
+    </div>
+
+    <audio id="sound" src="https://cdn.pixabay.com/sound/2024/08/27/audio_6eabf0aabd.mp3"></audio>
+    <audio id="goal-sound" src="https://cdn.pixabay.com/sound/2024/08/27/audio_6eabf0aabd.mp3"></audio>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        let workDuration = parseInt(localStorage.getItem('workDuration')) || 25 * 60;
+        let breakDuration = parseInt(localStorage.getItem('breakDuration')) || 5 * 60;
+        let sessionGoal = parseInt(localStorage.getItem('sessionGoal')) || 4;
+        let time = workDuration;
+        let isRunning = false;
+        let isWorkSession = true;
+        let sessionCount = 0;
+        let totalSessions = parseInt(localStorage.getItem('totalSessions')) || 0;
+        let totalGoals = parseInt(localStorage.getItem('totalGoals')) || 0;
+        let totalReflections = parseInt(localStorage.getItem('totalReflections')) || 0;
+        let totalTasks = parseInt(localStorage.getItem('totalTasks')) || 0;
+        let totalDeletedTasks = parseInt(localStorage.getItem('totalDeletedTasks')) || 0;
+        let tasksInSession = parseInt(localStorage.getItem('tasksInSession')) || 0;
+        let reflectionStreak = parseInt(localStorage.getItem('reflectionStreak')) || 0;
+        let sessionsWithReflections = parseInt(localStorage.getItem('sessionsWithReflections')) || 0;
+        let sessionsToday = parseInt(localStorage.getItem('sessionsToday')) || 0;
+        let lastSessionDate = localStorage.getItem('lastSessionDate') || '';
+        let goalStartTime = null;
+        let sessionStartTime = null;
+        let sessionStreak = parseInt(localStorage.getItem('sessionStreak')) || 0;
+        let uniqueTasks = JSON.parse(localStorage.getItem('uniqueTasks')) || [];
+        let wordyReflections = parseInt(localStorage.getItem('wordyReflections')) || 0;
+        let totalExports = parseInt(localStorage.getItem('totalExports')) || 0;
+        let sessionsInDay = parseInt(localStorage.getItem('sessionsInDay')) || 0;
+        let goalStreak = parseInt(localStorage.getItem('goalStreak')) || 0;
+        let reflectionTasks = JSON.parse(localStorage.getItem('reflectionTasks')) || [];
+        let pointsInSession = parseInt(localStorage.getItem('pointsInSession')) || 0;
+        let pointsToday = parseInt(localStorage.getItem('pointsToday')) || 0;
+        let lastGoalDate = localStorage.getItem('lastGoalDate') || '';
+        let dailySessions = JSON.parse(localStorage.getItem('dailySessions')) || [];
+        let cyberPoints = parseInt(localStorage.getItem('cyberPoints')) || 0;
+        let currentTask = '';
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        let reflections = JSON.parse(localStorage.getItem('reflections')) || [];
+        let badges = JSON.parse(localStorage.getItem('badges')) || {
+            focusHacker: false,
+            reflectionGuru: false,
+            goalCrusher: false,
+            taskMaster: false,
+            cyberPointCollector: false,
+            earlyBird: false,
+            nightOwl: false,
+            marathonRunner: false,
+            taskSprinter: false,
+            reflectionStreak: false,
+            longHaul: false,
+            pointMogul: false,
+            taskCleaner: false,
+            goalSprinter: false,
+            studySage: false,
+            sessionStarter: false,
+            doubleDown: false,
+            tripleThreat: false,
+            sessionStreak: false,
+            marathonMaster: false,
+            centuryScholar: false,
+            earlyRiser: false,
+            midnightCoder: false,
+            weekendWarrior: false,
+            dailyDevotee: false,
+            taskInitiator: false,
+            taskBlitz: false,
+            taskTitan: false,
+            cleanSweep: false,
+            taskVariety: false,
+            quickAdd: false,
+            taskFinisher: false,
+            taskHoarder: false,
+            firstThought: false,
+            deepDiver: false,
+            reflectionMaster: false,
+            streakKing: false,
+            insightfulScholar: false,
+            quickReflector: false,
+            reflectivePair: false,
+            wordWeaver: false,
+            goalGetter: false,
+            doubleGoal: false,
+            goalStreak: false,
+            fastFinisher: false,
+            goalVeteran: false,
+            marathonGoal: false,
+            pointStarter: false,
+            pointPro: false,
+            pointTycoon: false,
+            pointSurge: false,
+            pointSaver: false,
+            pointSpender: false,
+            settingsTweaker: false,
+            logExporter: false
+        };
+        let interval;
+        let currentTab = 'earned';
+        const badgeDefinitions = [
+            { id: 'focusHacker', icon: '💻', name: 'Focus Hacker', description: 'Mastered the art of focused study!', criteria: 'Complete 10 work sessions', points: 100, check: () => totalSessions >= 10, progress: () => `${totalSessions}/10 sessions` },
+            { id: 'reflectionGuru', icon: '🧠', name: 'Reflection Guru', description: 'Deep thinker who reflects on learning!', criteria: 'Submit 5 reflections', points: 50, check: () => totalReflections >= 5, progress: () => `${totalReflections}/5 reflections` },
+            { id: 'goalCrusher', icon: '🏆', name: 'Goal Crusher', description: 'Consistently smashes study goals!', criteria: 'Achieve 3 session goals', points: 75, check: () => totalGoals >= 3, progress: () => `${totalGoals}/3 goals` },
+            { id: 'taskMaster', icon: '📋', name: 'Task Master', description: 'Organized and ready with a full task list!', criteria: 'Add 10 tasks', points: 50, check: () => totalTasks >= 10, progress: () => `${totalTasks}/10 tasks` },
+            { id: 'cyberPointCollector', icon: '💰', name: 'CyberPoint Collector', description: 'Amassed a fortune in CyberPoints!', criteria: 'Earn 500 CyberPoints', points: 100, check: () => cyberPoints >= 500, progress: () => `${cyberPoints}/500 points` },
+            { id: 'earlyBird', icon: '🌅', name: 'Early Bird', description: 'Rise and grind with early study sessions!', criteria: 'Start a session before 8 AM', points: 50, check: () => badges.earlyBird, progress: () => 'Start before 8 AM: Not yet achieved' },
+            { id: 'nightOwl', icon: '🌙', name: 'Night Owl', description: 'Burning the midnight oil for knowledge!', criteria: 'Start a session after 10 PM', points: 50, check: () => badges.nightOwl, progress: () => 'Start after 10 PM: Not yet achieved' },
+            { id: 'marathonRunner', icon: '🏃', name: 'Marathon Runner', description: 'Pushing through a full day of focus!', criteria: 'Complete 5 sessions in one day', points: 100, check: () => sessionsToday >= 5, progress: () => `${sessionsToday}/5 sessions today` },
+            { id: 'taskSprinter', icon: '⚡', name: 'Task Sprinter', description: 'Quickly building your task arsenal!', criteria: 'Add 3 tasks in one session', points: 50, check: () => tasksInSession >= 3, progress: () => `${tasksInSession}/3 tasks in session` },
+            { id: 'reflectionStreak', icon: '🔥', name: 'Reflection Streak', description: 'Consistently reflecting on your progress!', criteria: 'Submit reflections for 3 consecutive sessions', points: 75, check: () => reflectionStreak >= 3, progress: () => `${reflectionStreak}/3 consecutive reflections` },
+            { id: 'longHaul', icon: '🛤️', name: 'Long Haul', description: 'A true Pomodoro veteran!', criteria: 'Complete 50 total sessions', points: 150, check: () => totalSessions >= 50, progress: () => `${totalSessions}/50 sessions` },
+            { id: 'pointMogul', icon: '💎', name: 'Point Mogul', description: 'A powerhouse of productivity points!', criteria: 'Earn 1000 CyberPoints', points: 200, check: () => cyberPoints >= 1000, progress: () => `${cyberPoints}/1000 points` },
+            { id: 'taskCleaner', icon: '🗑️', name: 'Task Cleaner', description: 'Keeping your task list lean and mean!', criteria: 'Delete 5 tasks', points: 50, check: () => totalDeletedTasks >= 5, progress: () => `${totalDeletedTasks}/5 tasks deleted` },
+            { id: 'goalSprinter', icon: '🚀', name: 'Goal Sprinter', description: 'Blazing through your goals at lightspeed!', criteria: 'Achieve a session goal in under 2 hours', points: 75, check: () => badges.goalSprinter, progress: () => 'Complete goal in <2 hours: Not yet achieved' },
+            { id: 'studySage', icon: '📚', name: 'Study Sage', description: 'Mastering both focus and reflection!', criteria: 'Complete 10 sessions with reflections', points: 100, check: () => sessionsWithReflections >= 10, progress: () => `${sessionsWithReflections}/10 sessions with reflections` },
+            { id: 'sessionStarter', icon: '🚀', name: 'Session Starter', description: 'Kicked off your Pomodoro journey!', criteria: 'Start 1 session', points: 25, check: () => totalSessions >= 1, progress: () => `${totalSessions}/1 session` },
+            { id: 'doubleDown', icon: '🔢', name: 'Double Down', description: 'Doubling up on focus!', criteria: 'Complete 2 sessions in one day', points: 50, check: () => sessionsInDay >= 2, progress: () => `${sessionsInDay}/2 sessions today` },
+            { id: 'tripleThreat', icon: '3️⃣', name: 'Triple Threat', description: 'A triple dose of productivity!', criteria: 'Complete 3 sessions in one day', points: 75, check: () => sessionsInDay >= 3, progress: () => `${sessionsInDay}/3 sessions today` },
+            { id: 'sessionStreak', icon: '🔗', name: 'Session Streak', description: 'Unbroken focus chain!', criteria: 'Complete 3 sessions without pausing', points: 75, check: () => sessionStreak >= 3, progress: () => `${sessionStreak}/3 sessions` },
+            { id: 'marathonMaster', icon: '🏅', name: 'Marathon Master', description: 'A legendary day of focus!', criteria: 'Complete 10 sessions in one day', points: 150, check: () => sessionsInDay >= 10, progress: () => `${sessionsInDay}/10 sessions today` },
+            { id: 'centuryScholar', icon: '🎓', name: 'Century Scholar', description: 'A century of study mastery!', criteria: 'Complete 100 total sessions', points: 200, check: () => totalSessions >= 100, progress: () => `${totalSessions}/100 sessions` },
+            { id: 'earlyRiser', icon: '☀️', name: 'Early Riser', description: 'Mastering the morning grind!', criteria: 'Start 5 sessions before 9 AM', points: 75, check: () => badges.earlyRiser, progress: () => 'Start 5 sessions before 9 AM: Not yet achieved' },
+            { id: 'midnightCoder', icon: '🌌', name: 'Midnight Coder', description: 'Coding through the night!', criteria: 'Start 5 sessions after 11 PM', points: 75, check: () => badges.midnightCoder, progress: () => 'Start 5 sessions after 11 PM: Not yet achieved' },
+            { id: 'weekendWarrior', icon: '⚔️', name: 'Weekend Warrior', description: 'Conquering the weekend!', criteria: 'Complete 5 sessions on a weekend', points: 100, check: () => badges.weekendWarrior, progress: () => 'Complete 5 sessions on a weekend: Not yet achieved' },
+            { id: 'dailyDevotee', icon: '📅', name: 'Daily Devotee', description: 'A week of dedication!', criteria: 'Complete 1 session daily for 7 days', points: 150, check: () => dailySessions.length >= 7, progress: () => `${dailySessions.length}/7 days` },
+            { id: 'taskInitiator', icon: '➕', name: 'Task Initiator', description: 'Starting your task list!', criteria: 'Add 1 task', points: 25, check: () => totalTasks >= 1, progress: () => `${totalTasks}/1 task` },
+            { id: 'taskBlitz', icon: '🌩️', name: 'Task Blitz', description: 'A storm of tasks!', criteria: 'Add 5 tasks in one session', points: 75, check: () => tasksInSession >= 5, progress: () => `${tasksInSession}/5 tasks in session` },
+            { id: 'taskTitan', icon: '🗃️', name: 'Task Titan', description: 'Building a task empire!', criteria: 'Add 25 total tasks', points: 100, check: () => totalTasks >= 25, progress: () => `${totalTasks}/25 tasks` },
+            { id: 'cleanSweep', icon: '🧹', name: 'Clean Sweep', description: 'Clearing the deck like a pro!', criteria: 'Delete 10 tasks', points: 50, check: () => totalDeletedTasks >= 10, progress: () => `${totalDeletedTasks}/10 tasks deleted` },
+            { id: 'taskVariety', icon: '🌈', name: 'Task Variety', description: 'Tackling a diverse workload!', criteria: 'Work on 5 unique tasks', points: 75, check: () => uniqueTasks.length >= 5, progress: () => `${uniqueTasks.length}/5 unique tasks` },
+            { id: 'quickAdd', icon: '⏩', name: 'Quick Add', description: 'Lightning-fast task entry!', criteria: 'Add a task in under 10 seconds', points: 50, check: () => badges.quickAdd, progress: () => 'Add task in <10s: Not yet achieved' },
+            { id: 'taskFinisher', icon: '✅', name: 'Task Finisher', description: 'Seeing a task through!', criteria: 'Complete 5 sessions with the same task', points: 75, check: () => Object.values(taskSessions).some(count => count >= 5), progress: () => `${Math.max(...Object.values(taskSessions), 0)}/5 sessions` },
+            { id: 'taskHoarder', icon: '🗄️', name: 'Task Hoarder', description: 'Stockpiling tasks!', criteria: 'Have 10 tasks in list', points: 100, check: () => tasks.length >= 10, progress: () => `${tasks.length}/10 tasks` },
+            { id: 'firstThought', icon: '💭', name: 'First Thought', description: 'Starting your reflective journey!', criteria: 'Submit 1 reflection', points: 25, check: () => totalReflections >= 1, progress: () => `${totalReflections}/1 reflection` },
+            { id: 'deepDiver', icon: '🌊', name: 'Deep Diver', description: 'Diving deep into your thoughts!', criteria: 'Submit a reflection with 50+ words', points: 50, check: () => badges.deepDiver, progress: () => 'Submit 50+ word reflection: Not yet achieved' },
+            { id: 'reflectionMaster', icon: '🧘', name: 'Reflection Master', description: 'A master of self-reflection!', criteria: 'Submit 10 reflections', points: 75, check: () => totalReflections >= 10, progress: () => `${totalReflections}/10 reflections` },
+            { id: 'streakKing', icon: '👑', name: 'Streak King', description: 'Royal reflection streak!', criteria: 'Submit reflections for 5 consecutive sessions', points: 100, check: () => reflectionStreak >= 5, progress: () => `${reflectionStreak}/5 consecutive reflections` },
+            { id: 'insightfulScholar', icon: '🔍', name: 'Insightful Scholar', description: 'Uncovering deep insights!', criteria: 'Submit 25 reflections', points: 150, check: () => totalReflections >= 25, progress: () => `${totalReflections}/25 reflections` },
+            { id: 'quickReflector', icon: '⏱️', name: 'Quick Reflector', description: 'Swift and thoughtful!', criteria: 'Submit a reflection in under 30 seconds', points: 50, check: () => badges.quickReflector, progress: () => 'Submit reflection in <30s: Not yet achieved' },
+            { id: 'reflectivePair', icon: '👥', name: 'Reflective Pair', description: 'Reflecting across tasks!', criteria: 'Submit reflections for 2 different tasks', points: 50, check: () => reflectionTasks.length >= 2, progress: () => `${reflectionTasks.length}/2 tasks` },
+            { id: 'wordWeaver', icon: '✍️', name: 'Word Weaver', description: 'Crafting detailed reflections!', criteria: 'Submit 5 reflections with 30+ words', points: 75, check: () => wordyReflections >= 5, progress: () => `${wordyReflections}/5 reflections` },
+            { id: 'goalGetter', icon: '🎯', name: 'Goal Getter', description: 'Hitting your first target!', criteria: 'Achieve 1 session goal', points: 50, check: () => totalGoals >= 1, progress: () => `${totalGoals}/1 goal` },
+            { id: 'doubleGoal', icon: '🎯🎯', name: 'Double Goal', description: 'Double the goals, double the glory!', criteria: 'Achieve 2 session goals in one day', points: 100, check: () => goalsInDay >= 2, progress: () => `${goalsInDay}/2 goals today` },
+            { id: 'goalStreak', icon: '🔥🔥', name: 'Goal Streak', description: 'A blazing goal streak!', criteria: 'Achieve 3 consecutive session goals', points: 150, check: () => goalStreak >= 3, progress: () => `${goalStreak}/3 consecutive goals` },
+            { id: 'fastFinisher', icon: '🏁', name: 'Fast Finisher', description: 'Speedy goal completion!', criteria: 'Achieve a goal in under 1 hour', points: 75, check: () => badges.fastFinisher, progress: () => 'Complete goal in <1 hour: Not yet achieved' },
+            { id: 'goalVeteran', icon: '🛡️', name: 'Goal Veteran', description: 'A seasoned goal conqueror!', criteria: 'Achieve 10 total goals', points: 150, check: () => totalGoals >= 10, progress: () => `${totalGoals}/10 goals` },
+            { id: 'marathonGoal', icon: '🏔️', name: 'Marathon Goal', description: 'Scaling epic goals!', criteria: 'Achieve a goal with 8+ sessions', points: 100, check: () => badges.marathonGoal, progress: () => 'Achieve goal with 8+ sessions: Not yet achieved' },
+            { id: 'pointStarter', icon: '💸', name: 'Point Starter', description: 'Starting your point collection!', criteria: 'Earn 100 CyberPoints', points: 50, check: () => cyberPoints >= 100, progress: () => `${cyberPoints}/100 points` },
+            { id: 'pointPro', icon: '💵', name: 'Point Pro', description: 'A professional point earner!', criteria: 'Earn 2500 CyberPoints', points: 200, check: () => cyberPoints >= 2500, progress: () => `${cyberPoints}/2500 points` },
+            { id: 'pointTycoon', icon: '💲', name: 'Point Tycoon', description: 'A CyberPoint empire builder!', criteria: 'Earn 5000 CyberPoints', points: 300, check: () => cyberPoints >= 5000, progress: () => `${cyberPoints}/5000 points` },
+            { id: 'pointSurge', icon: '⚡💰', name: 'Point Surge', description: 'A surge of points!', criteria: 'Earn 100 points in one session', points: 75, check: () => pointsInSession >= 100, progress: () => `${pointsInSession}/100 points in session` },
+            { id: 'pointSaver', icon: '🏦', name: 'Point Saver', description: 'Saving up for greatness!', criteria: 'Earn 1000 points without resetting', points: 150, check: () => cyberPoints >= 1000, progress: () => `${cyberPoints}/1000 points` },
+            { id: 'pointSpender', icon: '🛒', name: 'Point Spender', description: 'Spending points like a cyberpunk!', criteria: 'Earn 500 points in one day', points: 100, check: () => pointsToday >= 500, progress: () => `${pointsToday}/500 points today` },
+            { id: 'settingsTweaker', icon: '⚙️', name: 'Settings Tweaker', description: 'Tuning Punkdoro to your style!', criteria: 'Save custom settings once', points: 50, check: () => badges.settingsTweaker, progress: () => 'Save settings: Not yet achieved' },
+            { id: 'logExporter', icon: '📤', name: 'Log Exporter', description: 'Sharing your progress with the world!', criteria: 'Export study log 3 times', points: 75, check: () => totalExports >= 3, progress: () => `${totalExports}/3 exports` }
+        ];
+        const messages = [
+            "Nice focus! Keep it up!",
+            "Great job! You're killing it!",
+            "Awesome work! Time to recharge!",
+            "Well done! Stay in the zone!",
+            "Solid effort! Take a breather!"
+        ];
+        const studyTips = [
+            "Summarize what you studied in one sentence.",
+            "Try teaching the topic to an imaginary friend.",
+            "Take notes in your own words to remember better.",
+            "Use flashcards to test your memory.",
+            "Break big tasks into smaller steps."
+        ];
+        const reflectionQuestions = [
+            "What did you learn during this session?",
+            "What was one challenge you faced?",
+            "How can you improve next session?",
+            "What’s one thing you’re proud of?",
+            "What’s the next step for this task?"
+        ];
+        const goalMessage = "Goal Achieved! Cyberpunk Master!";
+        let taskSessions = JSON.parse(localStorage.getItem('taskSessions')) || {};
+        let appStartTime = Date.now();
+
+        function formatTime(seconds) {
+            let mins = Math.floor(seconds / 60);
+            let secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function updateProgress() {
+            const maxTime = isWorkSession ? workDuration : breakDuration;
+            const progress = (time / maxTime) * 100;
+            const progressElement = document.getElementById('progress');
+            progressElement.setAttribute('value', progress);
+        }
+
+        function playSound(soundId) {
+            const audio = document.getElementById(soundId);
+            audio.play().catch(() => {}); // Handle autoplay restrictions
+        }
+
+        function showMessage(msg, duration = 5000) {
+            document.getElementById('message').textContent = msg;
+            setTimeout(() => document.getElementById('message').textContent = '', duration);
+        }
+
+        function updateTaskDisplay() {
+            currentTask = document.getElementById('task-select').value;
+            document.getElementById('task').textContent = currentTask ? `Task: ${currentTask}` : '';
+        }
+
+        function populateTaskSelect() {
+            const select = document.getElementById('task-select');
+            select.innerHTML = '<option value="">Select a task...</option>';
+            tasks.forEach(task => {
+                const option = document.createElement('option');
+                option.value = task;
+                option.textContent = task;
+                select.appendChild(option);
+            });
+        }
+
+        function addTask() {
+            const newTask = (document.getElementById('task-input') || document.getElementById('new-task')).value.trim();
+            if (newTask && !tasks.includes(newTask)) {
+                tasks.push(newTask);
+                totalTasks++;
+                tasksInSession++;
+                if (!uniqueTasks.includes(newTask)) uniqueTasks.push(newTask);
+                if ((Date.now() - appStartTime) / 1000 < 10 && !badges.quickAdd) {
+                    badges.quickAdd = true;
+                }
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                localStorage.setItem('totalTasks', totalTasks);
+                localStorage.setItem('tasksInSession', tasksInSession);
+                localStorage.setItem('uniqueTasks', JSON.stringify(uniqueTasks));
+                localStorage.setItem('badges', JSON.stringify(badges));
+                (document.getElementById('task-input') || document.getElementById('new-task')).value = '';
+                updateTaskList();
+                populateTaskSelect();
+                document.getElementById('task-select').value = newTask;
+                updateTaskDisplay();
+                checkBadges('task');
+            } else if (!newTask) {
+                showMessage('Please enter a task!', 5000);
+            } else {
+                showMessage('Task already exists!', 5000);
+            }
+        }
+
+        function deleteTask(task) {
+            tasks = tasks.filter(t => t !== task);
+            totalDeletedTasks++;
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            localStorage.setItem('totalDeletedTasks', totalDeletedTasks);
+            updateTaskList();
+            populateTaskSelect();
+            if (currentTask === task) {
+                currentTask = '';
+                document.getElementById('task').textContent = '';
+                document.getElementById('task-select').value = '';
+            }
+            checkBadges('task');
+        }
+
+        function updateTaskList() {
+            const taskList = document.getElementById('task-list');
+            taskList.innerHTML = '';
+            tasks.forEach(task => {
+                const div = document.createElement('div');
+                div.className = 'task-item';
+                div.innerHTML = `<span>${task}</span><button onclick="deleteTask('${task}')">Delete</button>`;
+                taskList.appendChild(div);
+            });
+        }
+
+        function checkBadges(type) {
+            const relevantBadges = {
+                session: ['sessionStarter', 'doubleDown', 'tripleThreat', 'sessionStreak', 'marathonMaster', 'centuryScholar', 'earlyRiser', 'midnightCoder', 'weekendWarrior', 'dailyDevotee', 'taskFinisher'],
+                task: ['taskInitiator', 'taskBlitz', 'taskTitan', 'cleanSweep', 'taskVariety', 'quickAdd', 'taskHoarder'],
+                reflection: ['firstThought', 'deepDiver', 'reflectionMaster', 'streakKing', 'insightfulScholar', 'quickReflector', 'reflectivePair', 'wordWeaver', 'studySage'],
+                goal: ['goalGetter', 'doubleGoal', 'goalStreak', 'fastFinisher', 'goalVeteran', 'marathonGoal', 'goalCrusher', 'goalSprinter'],
+                points: ['pointStarter', 'pointPro', 'pointTycoon', 'pointSurge', 'pointSaver', 'pointSpender', 'cyberPointCollector', 'pointMogul'],
+                misc: ['settingsTweaker', 'logExporter']
+            }[type] || badgeDefinitions.map(b => b.id);
+            badgeDefinitions.forEach(badge => {
+                if (relevantBadges.includes(badge.id) && !badges[badge.id] && badge.check()) {
+                    badges[badge.id] = true;
+                    cyberPoints += badge.points;
+                    pointsInSession += badge.points;
+                    pointsToday += badge.points;
+                    localStorage.setItem('badges', JSON.stringify(badges));
+                    localStorage.setItem('pointsInSession', pointsInSession);
+                    localStorage.setItem('pointsToday', pointsToday);
+                    updatePoints();
+                    showMessage(`Badge Unlocked: ${badge.name}! +${badge.points} Points`, 10000);
+            celebrateBadge(badge.id);
+                }
+            });
+            updateBadgeList();
+        }
+
+        function showBadgeTab(tab) {
+            currentTab = tab;
+            document.getElementById('earned-tab').classList.toggle('active', tab === 'earned');
+            document.getElementById('locked-tab').classList.toggle('active', tab === 'locked');
+            updateBadgeList();
+        }
+
+        function updateBadgeList() {
+            const badgeList = document.getElementById('badge-list');
+            badgeList.innerHTML = '';
+            badgeDefinitions
+                .filter(badge => (currentTab === 'earned' && badges[badge.id]) || (currentTab === 'locked' && !badges[badge.id]))
+                .forEach(badge => {
+                    const div = document.createElement('div');
+            div.className = `badge-item ${badges[badge.id] ? 'earned' : 'locked'}`;
+            div.setAttribute('data-id', badge.id);
+                    div.innerHTML = `
+                        <div class="badge-icon" title="${badge.name}">${badge.icon}</div>
+                        <strong>${badge.name}</strong>
+                        <p>${badge.description}</p>
+                        <p>Criteria: ${badge.criteria}</p>
+                        <p>Progress: ${badge.progress()}</p>
+                        <p>Reward: ${badge.points} CyberPoints</p>
+                    `;
+                    badgeList.appendChild(div);
+                });
+        }
+
+        function showBadges() {
+            updateBadgeList();
+            document.getElementById('badges-modal').style.display = 'flex';
+        }
+
+        function closeBadges() {
+            document.getElementById('badges-modal').style.display = 'none';
+        }
+
+        function showTasks() {
+            updateTaskList();
+            document.getElementById('tasks-modal').style.display = 'flex';
+        }
+
+        function closeTasks() {
+            document.getElementById('tasks-modal').style.display = 'none';
+        }
+
+        function showReflection() {
+            const question = reflectionQuestions[Math.floor(Math.random() * reflectionQuestions.length)];
+            document.getElementById('reflection-question').textContent = question;
+            document.getElementById('reflection-answer').value = '';
+            document.getElementById('reflection-modal').style.display = 'flex';
+            sessionStartTime = Date.now();
+        }
+
+        function saveReflection() {
+            const answer = document.getElementById('reflection-answer').value.trim();
+            if (answer && currentTask) {
+                reflections.push({
+                    task: currentTask,
+                    question: document.getElementById('reflection-question').textContent,
+                    answer: answer,
+                    timestamp: new Date().toLocaleString()
+                });
+                totalReflections++;
+                reflectionStreak++;
+                sessionsWithReflections++;
+                if (!reflectionTasks.includes(currentTask)) reflectionTasks.push(currentTask);
+                const wordCount = answer.split(/\s+/).length;
+                if (wordCount >= 50 && !badges.deepDiver) badges.deepDiver = true;
+                if (wordCount >= 30) wordyReflections++;
+                if ((Date.now() - sessionStartTime) / 1000 < 30 && !badges.quickReflector) badges.quickReflector = true;
+                localStorage.setItem('reflections', JSON.stringify(reflections));
+                localStorage.setItem('totalReflections', totalReflections);
+                localStorage.setItem('reflectionStreak', reflectionStreak);
+                localStorage.setItem('sessionsWithReflections', sessionsWithReflections);
+                localStorage.setItem('reflectionTasks', JSON.stringify(reflectionTasks));
+                localStorage.setItem('wordyReflections', wordyReflections);
+                localStorage.setItem('badges', JSON.stringify(badges));
+                cyberPoints += 5;
+                pointsInSession += 5;
+                pointsToday += 5;
+                updatePoints();
+                checkBadges('reflection');
+            }
+            closeReflection();
+        }
+
+        function closeReflection() {
+            if (!document.getElementById('reflection-answer').value.trim()) {
+                reflectionStreak = 0;
+                localStorage.setItem('reflectionStreak', reflectionStreak);
+            }
+            document.getElementById('reflection-modal').style.display = 'none';
+            checkBadges('reflection');
+        }
+
+        function updatePoints() {
+            localStorage.setItem('cyberPoints', cyberPoints);
+            localStorage.setItem('pointsInSession', pointsInSession);
+            localStorage.setItem('pointsToday', pointsToday);
+            document.getElementById('points').textContent = `CyberPoints: ${cyberPoints}`;
+            checkBadges('points');
+        }
+
+        function exportLog() {
+            const log = reflections.map((r, i) => 
+                `Session ${i + 1} (${r.timestamp})\nTask: ${r.task}\nQuestion: ${r.question}\nAnswer: ${r.answer}\n`
+            ).join('\n');
+            const earnedBadges = badgeDefinitions.filter(b => badges[b.id]).map(b => b.name).join(', ');
+            const summary = `Punkdoro Study Log\n\nTotal Sessions: ${totalSessions}\nCyberPoints: ${cyberPoints}\nTasks: ${tasks.join(', ')}\nBadges: ${earnedBadges || 'None'}\n\n${log}`;
+            const blob = new Blob([summary], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Punkdoro_Study_Log.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+            totalExports++;
+            localStorage.setItem('totalExports', totalExports);
+            checkBadges('misc');
+        }
+
+        function triggerConfetti() {
+    if (typeof confetti === 'function') {
+        confetti({ particleCount: 160, spread: 80, origin: { y: 0.6 } });
+    }
+}
+function celebrateBadge(id) {
+    triggerConfetti();
+    setTimeout(() => {
+        const icon = document.querySelector(`.badge-item[data-id='${id}'] .badge-icon`);
+        if (icon) {
+            icon.classList.add('badge-animate');
+            setTimeout(() => icon.classList.remove('badge-animate'), 2000);
+        }
+    }, 150);
+}
+
+function updateTimer() {
+            if (time <= 0) {
+                isWorkSession = !isWorkSession;
+                if (isWorkSession) {
+                    sessionCount++;
+                    totalSessions++;
+                    sessionStreak++;
+                    const today = new Date().toDateString();
+                    if (lastSessionDate !== today) {
+                        sessionsToday = 0;
+                        sessionsInDay = 0;
+                        pointsToday = 0;
+                        goalsInDay = 0;
+                        lastSessionDate = today;
+                        localStorage.setItem('lastSessionDate', lastSessionDate);
+                        localStorage.setItem('pointsToday', pointsToday);
+                    }
+                    sessionsToday++;
+                    sessionsInDay++;
+                    taskSessions[currentTask] = (taskSessions[currentTask] || 0) + 1;
+                    const now = new Date();
+                    if (now.getDay() === 0 || now.getDay() === 6) {
+                        weekendSessions++;
+                        if (weekendSessions >= 5 && !badges.weekendWarrior) badges.weekendWarrior = true;
+                    }
+                    if (!dailySessions.includes(today)) dailySessions.push(today);
+                    if (dailySessions.length > 7) dailySessions.shift();
+                    localStorage.setItem('dailySessions', JSON.stringify(dailySessions));
+                    localStorage.setItem('weekendSessions', weekendSessions);
+                    localStorage.setItem('sessionsToday', sessionsToday);
+                    localStorage.setItem('sessionsInDay', sessionsInDay);
+                    localStorage.setItem('taskSessions', JSON.stringify(taskSessions));
+                    cyberPoints += 10;
+                    pointsInSession += 10;
+                    pointsToday += 10;
+                    localStorage.setItem('totalSessions', totalSessions);
+                    localStorage.setItem('sessionStreak', sessionStreak);
+                    document.getElementById('sessions').textContent = `Sessions: ${sessionCount}/${sessionGoal}`;
+                    updatePoints();
+                    checkBadges('session');
+                    if (sessionCount >= sessionGoal) {
+                        pauseTimer();
+                        totalGoals++;
+                        goalStreak++;
+                        if (lastGoalDate !== today) {
+                            goalsInDay = 0;
+                            lastGoalDate = today;
+                            localStorage.setItem('lastGoalDate', lastGoalDate);
+                        }
+                        goalsInDay++;
+                        localStorage.setItem('goalsInDay', goalsInDay);
+                        localStorage.setItem('totalGoals', totalGoals);
+                        localStorage.setItem('goalStreak', goalStreak);
+                        if (goalStartTime) {
+                            const elapsed = (Date.now() - goalStartTime) / 1000 / 60 / 60; // Hours
+                            if (elapsed < 2 && !badges.goalSprinter) badges.goalSprinter = true;
+                            if (elapsed < 1 && !badges.fastFinisher) badges.fastFinisher = true;
+                            if (sessionCount >= 8 && !badges.marathonGoal) badges.marathonGoal = true;
+                        }
+                        localStorage.setItem('badges', JSON.stringify(badges));
+                        showMessage(goalMessage, 10000);
+                        playSound('goal-sound');
+                        cyberPoints += 50;
+                        pointsInSession += 50;
+                        pointsToday += 50;
+                        updatePoints();
+                        checkBadges('goal');
+                        return;
+                    }
+                    playSound('sound');
+                    showReflection();
+                } else {
+                    playSound('sound');
+                    showMessage(studyTips[Math.floor(Math.random() * studyTips.length)]);
+                }
+                time = isWorkSession ? workDuration : breakDuration;
+                document.getElementById('status').textContent = isWorkSession ? 'Work Session' : 'Break Session';
+                document.getElementById('status').style.color = isWorkSession ? '#ff00ff' : '#00ffcc';
+            }
+            document.getElementById('timer').textContent = formatTime(time);
+            updateProgress();
+            time--;
+        }
+
+        function startTimer() {
+            if (!isRunning) {
+                updateTaskDisplay();
+                if (!currentTask && isWorkSession) {
+                    showMessage('Please select a task!', 5000);
+                    return;
+                }
+                const now = new Date();
+                const hour = now.getHours();
+                if (hour < 8 && !badges.earlyBird) badges.earlyBird = true;
+                if (hour < 9 && !badges.earlyRiser) {
+                    earlyRiserCount++;
+                    if (earlyRiserCount >= 5) badges.earlyRiser = true;
+                }
+                if (hour >= 22 && !badges.nightOwl) badges.nightOwl = true;
+                if (hour >= 23 && !badges.midnightCoder) {
+                    midnightCoderCount++;
+                    if (midnightCoderCount >= 5) badges.midnightCoder = true;
+                }
+                localStorage.setItem('badges', JSON.stringify(badges));
+                localStorage.setItem('earlyRiserCount', earlyRiserCount);
+                localStorage.setItem('midnightCoderCount', midnightCoderCount);
+                if (sessionCount === 0) {
+                    goalStartTime = Date.now();
+                    tasksInSession = 0;
+                    pointsInSession = 0;
+                    localStorage.setItem('tasksInSession', tasksInSession);
+                    localStorage.setItem('pointsInSession', pointsInSession);
+                }
+                isRunning = true;
+                interval = setInterval(updateTimer, 1000);
+                playSound('sound');
+                checkBadges('session');
+            }
+        }
+
+        function pauseTimer() {
+            if (isRunning) {
+                isRunning = false;
+                clearInterval(interval);
+                sessionStreak = 0;
+                localStorage.setItem('sessionStreak', sessionStreak);
+                checkBadges('session');
+            }
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            time = workDuration;
+            isWorkSession = true;
+            sessionCount = 0;
+            goalStartTime = null;
+            tasksInSession = 0;
+            pointsInSession = 0;
+            goalStreak = 0;
+            localStorage.setItem('tasksInSession', tasksInSession);
+            localStorage.setItem('pointsInSession', pointsInSession);
+            localStorage.setItem('goalStreak', goalStreak);
+            document.getElementById('timer').textContent = formatTime(time);
+            document.getElementById('status').textContent = 'Work Session';
+            document.getElementById('status').style.color = '#ff00ff';
+            document.getElementById('sessions').textContent = `Sessions: ${sessionCount}/${sessionGoal}`;
+            document.getElementById('task').textContent = '';
+            document.getElementById('task-select').value = '';
+            document.getElementById('message').textContent = '';
+            updateProgress();
+        }
+
+        function showInfo() {
+            document.getElementById('info-modal').style.display = 'flex';
+        }
+
+        function closeInfo() {
+            document.getElementById('info-modal').style.display = 'none';
+        }
+
+
+
+        function showSettings() {
+            document.getElementById('work-duration').value = workDuration / 60;
+            document.getElementById('break-duration').value = breakDuration / 60;
+            document.getElementById('session-goal').value = sessionGoal;
+            document.getElementById('settings-modal').style.display = 'flex';
+        }
+
+        function saveSettings() {
+            workDuration = parseInt(document.getElementById('work-duration').value) * 60 || 25 * 60;
+            breakDuration = parseInt(document.getElementById('break-duration').value) * 60 || 5 * 60;
+            sessionGoal = parseInt(document.getElementById('session-goal').value) || 4;
+            localStorage.setItem('workDuration', workDuration);
+            localStorage.setItem('breakDuration', breakDuration);
+            localStorage.setItem('sessionGoal', sessionGoal);
+            time = isWorkSession ? workDuration : breakDuration;
+            document.getElementById('timer').textContent = formatTime(time);
+            document.getElementById('sessions').textContent = `Sessions: ${sessionCount}/${sessionGoal}`;
+            updateProgress();
+            if (!badges.settingsTweaker) badges.settingsTweaker = true;
+            localStorage.setItem('badges', JSON.stringify(badges));
+            closeSettings();
+            checkBadges('misc');
+        }
+
+        function closeSettings() {
+            document.getElementById('settings-modal').style.display = 'none';
+        }
+
+        // Initialize
+        let earlyRiserCount = parseInt(localStorage.getItem('earlyRiserCount')) || 0;
+        let midnightCoderCount = parseInt(localStorage.getItem('midnightCoderCount')) || 0;
+        let weekendSessions = parseInt(localStorage.getItem('weekendSessions')) || 0;
+        let goalsInDay = parseInt(localStorage.getItem('goalsInDay')) || 0;
+        document.getElementById('timer').textContent = formatTime(time);
+        document.getElementById('sessions').textContent = `Sessions: ${sessionCount}/${sessionGoal}`;
+        document.getElementById('points').textContent = `CyberPoints: ${cyberPoints}`;
+        populateTaskSelect();
+        updateProgress();
+        checkBadges('all');
+
+    /* Menu toggle */
+    const menuBtn = document.getElementById('menu-btn');
+    const menuDropdown = document.getElementById('menu-dropdown');
+    if (menuBtn) {
+        menuBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            menuDropdown.style.display = menuDropdown.style.display === 'block' ? 'none' : 'block';
+        });
+        document.addEventListener('click', function (e) {
+            if (!menuDropdown.contains(e.target) && e.target !== menuBtn) {
+                menuDropdown.style.display = 'none';
+            }
+        });
+    }
+    </script>
+</body>
+</html>
