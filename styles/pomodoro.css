@@ -1,0 +1,807 @@
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap'); /* New cyberpunk fonts */
+    /* Add a subtle scanline effect for CRT/pixelated feel */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.1) 0px,
+            rgba(0, 0, 0, 0.1) 1px,
+            transparent 1px,
+            transparent 2px
+        );
+        pointer-events: none;
+        z-index: 9999;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        /* Pixelated edges for everything */
+        image-rendering: optimizeSpeed; /* Older versions of FF */
+        image-rendering: -moz-crisp-edges; /* FF 6.0+ */
+        image-rendering: -webkit-optimize-contrast; /* Safari */
+        image-rendering: -o-crisp-edges; /* Opera 12.0+ */
+        image-rendering: pixelated; /* Modern */
+        -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
+    }
+
+    :root {
+        /* Cyberpunk Neon Pink and Violet-Red Palette */
+        --primary-neon: #FF1493; /* Deep Pink */
+        --secondary-neon: #9400D3; /* Dark Violet */
+        --accent-neon: #FF00FF; /* Fuchsia for highlights */
+        --text-neon-light: #00FFFF; /* Aqua for main text contrast */
+        --text-neon-dark: #FFD700; /* Gold for subtle accents */
+
+        --bg-dark-cyber: #0A0A0E; /* Dark almost black background */
+        --bg-light-cyber: #1A0F2B; /* Deep violet for "light" mode */
+        --card-dark-cyber: #1F0D36; /* Darker violet for cards */
+        --card-light-cyber: #2F1A4F; /* Slightly lighter violet for cards */
+
+        --border-cyber: #FF1493; /* Pink border */
+        --glow-strength: 0 0 8px var(--primary-neon), 0 0 20px var(--accent-neon);
+        --text-shadow-neon: 0 0 5px var(--text-neon-light), 0 0 10px var(--text-neon-light);
+    }
+
+    body {
+        font-family: 'Share Tech Mono', monospace; /* Monospaced, techy font */
+        background-color: var(--bg-dark-cyber);
+        color: var(--text-neon-light);
+        transition: all 0.3s ease;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden; /* Prevent scroll for the static background elements */
+        position: relative; /* For the glitch effect */
+    }
+
+    body.dark {
+        background-color: var(--bg-dark-cyber);
+        color: var(--text-neon-light);
+    }
+
+    /* Glitch Effect (Optional, but very cyberpunk) */
+    body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        pointer-events: none;
+        z-index: 10000;
+        animation: glitch-effect 10s infinite alternate;
+    }
+
+    @keyframes glitch-effect {
+        0% { transform: translate(0, 0); }
+        2% { transform: translate(-2px, 2px); opacity: 0.8; }
+        4% { transform: translate(2px, -2px); opacity: 0.8; }
+        6% { transform: translate(-1px, 1px); opacity: 1; }
+        8% { transform: translate(1px, -1px); }
+        10% { transform: translate(0, 0); }
+        /* Add more steps for varied glitching */
+        20% { opacity: 1; }
+        20.1% { opacity: 0.7; transform: translate(5px, 0); }
+        20.2% { opacity: 1; transform: translate(-5px, 0); }
+        20.3% { opacity: 0.7; transform: translate(3px, 0); }
+        20.4% { opacity: 1; transform: translate(-3px, 0); }
+    }
+
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+        background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+        border: 2px solid var(--border-cyber);
+        box-shadow: var(--glow-strength);
+        border-radius: 8px; /* Slightly rounded for a tech look */
+        position: relative;
+        z-index: 10; /* Ensure it's above background effects */
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .header h1 {
+        font-family: 'Press Start 2P', cursive; /* Pixelated font for title */
+        font-size: 2.5rem; /* Larger, more impactful */
+        font-weight: 400; /* Pixel fonts are often not bold */
+        margin-bottom: 0.5rem;
+        color: var(--accent-neon); /* Bright accent color */
+        text-shadow: var(--glow-strength); /* Neon glow effect */
+    }
+
+    .header p {
+        color: var(--text-neon-dark); /* Secondary text color */
+        font-size: 0.9rem; /* Slightly smaller */
+        text-shadow: 0 0 3px var(--text-neon-dark);
+    }
+
+    body.dark .header p {
+        color: var(--text-neon-dark);
+    }
+
+    .layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    @media (min-width: 1024px) {
+        .layout {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .session-type {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .session-badge {
+        display: inline-block;
+        padding: 0.6rem 1.2rem; /* Slightly more padding */
+        border-radius: 4px; /* More angular, less rounded */
+        font-size: 0.8rem; /* Smaller, punchier text */
+        font-weight: 700;
+        background-color: var(--primary-neon);
+        color: var(--text-neon-light);
+        text-shadow: var(--glow-strength);
+        box-shadow: var(--glow-strength);
+        border: 1px solid var(--accent-neon);
+        text-transform: uppercase; /* Cyberpunk often uses uppercase */
+        letter-spacing: 1px; /* Spaced out letters */
+    }
+
+    .session-badge.break {
+        background-color: var(--secondary-neon); /* Violet for breaks */
+        border-color: var(--primary-neon);
+        box-shadow: 0 0 8px var(--secondary-neon), 0 0 20px var(--primary-neon);
+    }
+
+    .session-badge.long-break {
+        background-color: #00FF00; /* Green for long breaks, like a "system online" status */
+        border-color: var(--accent-neon);
+        box-shadow: 0 0 8px #00FF00, 0 0 20px var(--accent-neon);
+    }
+
+    .timer-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    .pulse-ring {
+        position: absolute;
+        width: 288px;
+        height: 288px;
+        border: 2px solid var(--accent-neon); /* Accent color for the pulse */
+        border-radius: 50%;
+        opacity: 0;
+        animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+        box-shadow: var(--glow-strength);
+    }
+
+    @keyframes pulse-ring {
+        0% { transform: scale(0.8); opacity: 1; border-width: 4px; }
+        80% { transform: scale(1.2); opacity: 0; border-width: 0px;} /* Fade out and shrink border */
+        100% { transform: scale(1.2); opacity: 0; border-width: 0px;}
+    }
+
+    .timer-circle {
+        width: 256px;
+        height: 256px;
+        border: 8px solid var(--border-cyber); /* Cyberpunk border */
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--card-dark-cyber); /* Darker background for the timer */
+        box-shadow: var(--glow-strength), 0 25px 50px -12px rgba(0, 0, 0, 0.5); /* Stronger shadow with glow */
+        position: relative;
+    }
+
+    body.dark .timer-circle {
+        border-color: var(--border-cyber);
+        background-color: var(--card-dark-cyber);
+    }
+
+    @media (min-width: 1024px) {
+        .timer-circle {
+            width: 288px;
+            height: 288px;
+        }
+    }
+
+    .timer-glow {
+        animation: timer-glow 2s infinite;
+        box-shadow: var(--glow-strength); /* Apply the glow variable */
+    }
+
+    @keyframes timer-glow {
+        0% { box-shadow: var(--glow-strength); }
+        70% { box-shadow: 0 0 0 20px rgba(255, 20, 147, 0), 0 25px 50px -12px rgba(0, 0, 0, 0.25); } /* Pink/Violet alpha fade */
+        100% { box-shadow: 0 0 0 0 rgba(255, 20, 147, 0), 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+    }
+
+    .timer-display {
+        text-align: center;
+    }
+
+    .timer-time {
+        font-family: 'Press Start 2P', cursive; /* Pixelated font for time */
+        font-size: 3rem; /* Very large and impactful */
+        font-weight: 400;
+        margin-bottom: 0.5rem;
+        color: var(--text-neon-light);
+        text-shadow: var(--glow-strength);
+    }
+
+    @media (min-width: 1024px) {
+        .timer-time {
+            font-size: 4.5rem; /* Even larger on desktop */
+        }
+    }
+
+    .timer-session {
+        font-size: 1rem;
+        color: var(--text-neon-dark);
+        text-shadow: 0 0 3px var(--text-neon-dark);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    @media (min-width: 1024px) {
+        .timer-session {
+            font-size: 1.25rem;
+        }
+    }
+
+    body.dark .timer-session {
+        color: var(--text-neon-dark);
+    }
+
+    .current-task {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .current-task.hidden {
+        display: none;
+    }
+
+    .current-task-card {
+        background-color: rgba(var(--primary-neon-rgb), 0.15); /* Slightly more opaque */
+        border: 1px solid var(--primary-neon);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        box-shadow: 0 0 5px var(--primary-neon);
+    }
+
+    body.dark .current-task-card {
+        background-color: rgba(var(--primary-neon-rgb), 0.25);
+    }
+
+    .current-task-label {
+        font-size: 0.875rem;
+        color: var(--text-neon-dark);
+        margin-bottom: 0.25rem;
+        text-shadow: 0 0 3px var(--text-neon-dark);
+    }
+
+    body.dark .current-task-label {
+        color: var(--text-neon-dark);
+    }
+
+    .current-task-text {
+        font-weight: 500;
+        color: var(--text-neon-light);
+        text-shadow: 0 0 5px var(--text-neon-light);
+    }
+
+    .controls {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem; /* More space between buttons */
+        margin-bottom: 2rem;
+    }
+
+    .control-btn {
+        width: 4.5rem; /* Slightly larger buttons */
+        height: 4.5rem;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--glow-strength); /* Always glowing */
+        transition: all 0.2s ease;
+        background-color: rgba(0, 0, 0, 0.4); /* Transparent dark background */
+        border: 2px solid var(--border-cyber);
+    }
+
+    .control-btn:hover {
+        transform: scale(1.1); /* More pronounced hover */
+        box-shadow: 0 0 12px var(--primary-neon), 0 0 30px var(--accent-neon); /* Stronger glow on hover */
+    }
+
+    .control-btn:active {
+        transform: scale(0.9); /* Squish on active */
+    }
+
+    .control-btn.primary {
+        background-color: var(--primary-neon);
+        color: var(--text-neon-light);
+        text-shadow: var(--glow-strength);
+    }
+
+    .control-btn.primary:hover {
+        background-color: var(--primary-neon); /* Keep color consistent */
+    }
+
+    .control-btn.secondary {
+        background-color: var(--card-dark-cyber); /* Darker background */
+        color: var(--text-neon-light);
+        border-color: var(--secondary-neon);
+    }
+
+    .control-btn.secondary:hover {
+        background-color: var(--secondary-neon); /* Change to violet on hover */
+        color: white;
+        text-shadow: 0 0 5px white, 0 0 10px white;
+    }
+
+    body.dark .control-btn.secondary {
+        background-color: var(--card-dark-cyber);
+        color: var(--text-neon-light);
+        border-color: var(--secondary-neon);
+    }
+
+    body.dark .control-btn.secondary:hover {
+        background-color: var(--secondary-neon);
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .settings {
+        background-color: var(--card-light-cyber);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid var(--border-cyber);
+        box-shadow: 0 0 10px var(--secondary-neon);
+    }
+
+    body.dark .settings {
+        background-color: var(--card-dark-cyber);
+    }
+
+    .settings h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--accent-neon);
+        text-shadow: var(--glow-strength);
+    }
+
+    .setting-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .setting-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .setting-label {
+        font-weight: 500;
+        color: var(--text-neon-light);
+        text-shadow: 0 0 3px var(--text-neon-light);
+    }
+
+    body.dark .setting-label {
+        color: var(--text-neon-light);
+    }
+
+    .setting-select {
+        padding: 0.5rem 0.75rem;
+        font-size: 1rem;
+        background-color: var(--bg-dark-cyber);
+        border: 1px solid var(--secondary-neon);
+        border-radius: 4px; /* More angular */
+        color: var(--text-neon-light);
+        text-shadow: 0 0 3px var(--text-neon-light);
+        box-shadow: 0 0 5px var(--secondary-neon);
+        appearance: none; /* Remove default select arrow */
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5"><path fill="%23FF1493" d="M0 0l5 5 5-5z"/></svg>'); /* Custom neon arrow */
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 10px 5px;
+    }
+
+    .setting-select:focus {
+        outline: none;
+        border-color: var(--primary-neon);
+        box-shadow: var(--glow-strength);
+    }
+
+    body.dark .setting-select {
+        background-color: var(--card-dark-cyber);
+        border-color: var(--secondary-neon);
+        color: var(--text-neon-light);
+    }
+
+    .stats {
+        text-align: center;
+        padding: 1rem;
+        background-color: var(--card-light-cyber);
+        border-radius: 0.75rem;
+        border: 1px solid var(--border-cyber);
+        box-shadow: 0 0 10px var(--secondary-neon);
+    }
+
+    .stats-text {
+        font-size: 0.875rem;
+        color: var(--text-neon-dark);
+        text-shadow: 0 0 3px var(--text-neon-dark);
+    }
+
+    body.dark .stats-text {
+        color: var(--text-neon-dark);
+    }
+
+    .stats-number {
+        font-weight: 600;
+        color: var(--accent-neon);
+        text-shadow: var(--glow-strength);
+    }
+
+    .task-card {
+        background-color: var(--card-light-cyber);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        border: 1px solid var(--border-cyber);
+        box-shadow: 0 0 10px var(--primary-neon);
+    }
+
+    body.dark .task-card {
+        background-color: var(--card-dark-cyber);
+    }
+
+    .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .task-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--accent-neon);
+        text-shadow: var(--glow-strength);
+    }
+
+    .task-counter {
+        font-size: 0.875rem;
+        color: var(--text-neon-dark);
+        text-shadow: 0 0 3px var(--text-neon-dark);
+    }
+
+    body.dark .task-counter {
+        color: var(--text-neon-dark);
+    }
+
+    .add-task {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .task-input {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        background-color: var(--bg-dark-cyber);
+        border: 1px solid var(--secondary-neon);
+        border-radius: 4px;
+        color: var(--text-neon-light);
+        text-shadow: 0 0 3px var(--text-neon-light);
+        box-shadow: 0 0 5px var(--secondary-neon);
+    }
+
+    .task-input::placeholder {
+        color: var(--text-neon-dark);
+    }
+
+    .task-input:focus {
+        outline: none;
+        border-color: var(--primary-neon);
+        box-shadow: var(--glow-strength);
+    }
+
+    body.dark .task-input {
+        background-color: var(--card-dark-cyber);
+        border-color: var(--secondary-neon);
+        color: var(--text-neon-light);
+    }
+
+    body.dark .task-input::placeholder {
+        color: var(--text-neon-dark);
+    }
+
+    .add-task-btn {
+        padding: 0.75rem 1.5rem;
+        background-color: var(--primary-neon);
+        color: var(--text-neon-light);
+        border: none;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        box-shadow: var(--glow-strength);
+    }
+
+    .add-task-btn:hover {
+        background-color: var(--primary-neon);
+        transform: scale(1.05);
+        box-shadow: 0 0 12px var(--primary-neon), 0 0 30px var(--accent-neon);
+    }
+
+    .add-task-btn:active {
+        transform: scale(0.95);
+    }
+
+    .task-list {
+        max-height: 400px;
+        overflow-y: auto;
+        /* Scrollbar styling for cyberpunk feel */
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary-neon) var(--bg-dark-cyber);
+    }
+
+    .task-list::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .task-list::-webkit-scrollbar-track {
+        background: var(--bg-dark-cyber);
+    }
+
+    .task-list::-webkit-scrollbar-thumb {
+        background-color: var(--primary-neon);
+        border-radius: 10px;
+        border: 2px solid var(--card-dark-cyber);
+    }
+
+    .task-item {
+        background-color: var(--card-light-cyber);
+        border: 1px solid var(--border-cyber);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        animation: slideIn 0.3s ease-out;
+        box-shadow: 0 0 5px rgba(255, 20, 147, 0.5); /* Subtle item glow */
+    }
+
+    .task-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .task-item.current {
+        border-color: var(--primary-neon);
+        background-color: rgba(var(--primary-neon-rgb), 0.15);
+        box-shadow: var(--glow-strength);
+    }
+
+    .task-item.completed {
+        opacity: 0.7; /* Slightly faded */
+        border-color: #00FF00; /* Green for completed */
+        box-shadow: 0 0 5px #00FF00;
+    }
+
+    body.dark .task-item {
+        background-color: var(--card-dark-cyber);
+        border-color: var(--border-cyber);
+    }
+
+    body.dark .task-item.current {
+        background-color: rgba(var(--primary-neon-rgb), 0.25);
+    }
+
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(-15px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .task-content {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .task-complete-btn {
+        width: 1.8rem; /* Slightly larger checkbox */
+        height: 1.8rem;
+        border-radius: 4px; /* Square checkboxes */
+        border: 2px solid var(--secondary-neon);
+        background: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+        box-shadow: 0 0 3px var(--secondary-neon);
+    }
+
+    .task-complete-btn:hover {
+        border-color: var(--accent-neon);
+        box-shadow: 0 0 8px var(--accent-neon);
+    }
+
+    .task-complete-btn.completed {
+        background-color: #00FF00; /* Neon green check */
+        border-color: #00FF00;
+        color: var(--bg-dark-cyber); /* Dark text on bright green */
+        box-shadow: 0 0 8px #00FF00;
+    }
+
+    body.dark .task-complete-btn {
+        border-color: var(--secondary-neon);
+    }
+
+    .task-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .task-text {
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+        color: var(--text-neon-light);
+        text-shadow: 0 0 5px var(--text-neon-light);
+    }
+
+    .task-text.completed {
+        text-decoration: line-through;
+        color: var(--text-neon-dark);
+        text-shadow: none; /* No glow when completed */
+    }
+
+    .task-pomodoros {
+        font-size: 0.875rem;
+        color: var(--text-neon-dark);
+        text-shadow: 0 0 3px var(--text-neon-dark);
+    }
+
+    body.dark .task-pomodoros {
+        color: var(--text-neon-dark);
+    }
+
+    .task-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .task-work-btn {
+        padding: 0.3rem 0.8rem;
+        font-size: 0.8rem;
+        border: none;
+        border-radius: 4px; /* Angular buttons */
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+    }
+
+    .task-work-btn.active {
+        background-color: var(--primary-neon);
+        color: var(--text-neon-light);
+        box-shadow: var(--glow-strength);
+    }
+
+    .task-work-btn.inactive {
+        background-color: var(--card-dark-cyber);
+        color: var(--text-neon-dark);
+        border: 1px solid var(--border-cyber);
+        box-shadow: 0 0 3px var(--border-cyber);
+    }
+
+    .task-work-btn.inactive:hover {
+        background-color: var(--primary-neon);
+        color: var(--text-neon-light);
+        box-shadow: var(--glow-strength);
+    }
+
+    body.dark .task-work-btn.inactive {
+        background-color: var(--card-dark-cyber);
+        color: var(--text-neon-dark);
+    }
+
+    .task-delete-btn {
+        width: 2.2rem; /* Slightly larger delete icon */
+        height: 2.2rem;
+        border: none;
+        background: none;
+        color: var(--text-neon-dark);
+        cursor: pointer;
+        border-radius: 0.25rem;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .task-delete-btn:hover {
+        color: #FF0000; /* Bright red for delete */
+        text-shadow: 0 0 8px #FF0000;
+        transform: scale(1.1);
+    }
+
+    body.dark .task-delete-btn {
+        color: var(--text-neon-dark);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2rem 0;
+        color: var(--text-neon-dark);
+        text-shadow: 0 0 3px var(--text-neon-dark);
+    }
+
+    body.dark .empty-state {
+        color: var(--text-neon-dark);
+    }
+
+    .empty-state svg {
+        width: 4.5rem; /* Larger icon */
+        height: 4.5rem;
+        margin: 0 auto 1rem;
+        opacity: 0.7; /* Slightly faded */
+        fill: var(--secondary-neon); /* Violet for the empty state icon */
+        filter: drop-shadow(0 0 5px var(--secondary-neon)); /* Neon shadow for icon */
+    }
+
+    .empty-state p {
+        font-size: 0.9rem;
+    }
+
+    .icon {
+        width: 1.5rem; /* Larger icons generally */
+        height: 1.5rem;
+        fill: currentColor;
+        filter: drop-shadow(0 0 5px currentColor); /* Neon icon glow */
+    }
+
+    .icon-lg {
+        width: 2.5rem; /* Larger control icons */
+        height: 2.5rem;
+        fill: currentColor;
+        filter: drop-shadow(0 0 8px currentColor);
+    }
+</style>

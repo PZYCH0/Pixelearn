@@ -429,13 +429,101 @@
             0% { background-position: 0 0; }
             100% { background-position: 0 2px; }
         }
-    @keyframes popIn {
+        
+        @keyframes popIn {
             0%   {transform: scale(0) rotate(0deg);   filter: drop-shadow(0 0 0 #00ffcc);}
             50%  {transform: scale(1.3) rotate(360deg);filter: drop-shadow(0 0 12px #ff00ff);}
             100% {transform: scale(1) rotate(720deg); filter: drop-shadow(0 0 0 #00ffcc);}
         }
         .badge-animate {
             animation: popIn 1.5s ease-out forwards;
+        }
+        
+        /* Badge Notification Modal */
+        #badge-notification {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #badge-notification .modal-content {
+            background: rgba(10, 10, 35, 0.95);
+            border: 3px solid #ff00ff;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 320px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: badgeGlow 2s infinite;
+        }
+        
+        @keyframes badgeGlow {
+            0% { box-shadow: 0 0 10px #ff00ff; }
+            50% { box-shadow: 0 0 20px #00ffcc, 0 0 30px #ff00ff; }
+            100% { box-shadow: 0 0 10px #ff00ff; }
+        }
+        
+        #badge-notification .modal-content::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(0, 255, 204, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        
+        #badge-notification h3 {
+            color: #ff00ff;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        #badge-notification .badge-icon {
+            font-size: 3em;
+            margin: 0 auto 10px;
+            display: block;
+        }
+        
+        #badge-notification h4 {
+            color: #00ffcc;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        
+        #badge-notification p {
+            margin: 10px 0 20px;
+            font-size: 12px;
+            color: #fff;
+            line-height: 1.4;
+        }
+        
+        #badge-notification .points {
+            color: #ff00ff;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: block;
         }
     </style>
 </head>
@@ -545,6 +633,18 @@
         </div>
     </div>
 
+    <!-- Badge Unlock Notification -->
+    <div id="badge-notification" class="modal">
+        <div class="modal-content">
+            <h3>🎉 Badge Unlocked! 🎉</h3>
+            <div id="badge-notification-icon" class="badge-icon"></div>
+            <h4 id="badge-notification-name"></h4>
+            <p id="badge-notification-desc"></p>
+            <span class="points">+<span id="badge-points">0</span> CyberPoints</span>
+            <button class="btn" onclick="document.getElementById('badge-notification').style.display='none'">Awesome!</button>
+        </div>
+    </div>
+    
     <div id="reflection-modal" class="modal">
         <div class="modal-content">
             <h2>Reflect on Your Session</h2>
@@ -983,15 +1083,41 @@
     }
 }
 function celebrateBadge(id) {
-    triggerConfetti();
-    setTimeout(() => {
-        const icon = document.querySelector(`.badge-item[data-id='${id}'] .badge-icon`);
-        if (icon) {
-            icon.classList.add('badge-animate');
-            setTimeout(() => icon.classList.remove('badge-animate'), 2000);
-        }
-    }, 150);
-}
+        triggerConfetti();
+        setTimeout(() => {
+            const icon = document.querySelector(`.badge-item[data-id='${id}'] .badge-icon`);
+            if (icon) {
+                icon.classList.add('badge-animate');
+                setTimeout(() => icon.classList.remove('badge-animate'), 2000);
+                
+                // Show badge notification
+                const badge = badgeDefinitions.find(b => b.id === id);
+                if (badge) {
+                    const notification = document.getElementById('badge-notification');
+                    const notificationIcon = document.getElementById('badge-notification-icon');
+                    const notificationName = document.getElementById('badge-notification-name');
+                    const notificationDesc = document.getElementById('badge-notification-desc');
+                    const notificationPoints = document.getElementById('badge-points');
+                    
+                    // Update notification content
+                    notificationIcon.innerHTML = badge.icon;
+                    notificationName.textContent = badge.name;
+                    notificationDesc.textContent = badge.description;
+                    notificationPoints.textContent = badge.points;
+                    
+                    // Show notification
+                    notification.style.display = 'flex';
+                    
+                    // Auto-close after 5 seconds
+                    setTimeout(() => {
+                        if (notification.style.display === 'flex') {
+                            notification.style.display = 'none';
+                        }
+                    }, 5000);
+                }
+            }
+        }, 150);
+    }
 
 function updateTimer() {
             if (time <= 0) {

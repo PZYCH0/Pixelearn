@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom Activity Timer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .current-activity-display {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .current-activity-name {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .time-displays {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .time-display {
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .time-label {
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+
+        .time-value {
+            font-size: 2.2em;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 25px;
+            padding: 30px;
+        }
+
+        .student-view {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .progress-section {
+            margin-bottom: 30px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .progress-bar-container {
+            background: #e0e0e0;
+            border-radius: 25px;
+            height: 20px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #81C784);
+            border-radius: 25px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-bar.warning {
+            background: linear-gradient(90deg, #ff9800, #ffb74d);
+        }
+
+        .progress-bar.danger {
+            background: linear-gradient(90deg, #f44336, #e57373);
+        }
+
+        .progress-text {
+            text-align: center;
+            font-weight: bold;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .activities-schedule {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .schedule-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-left: 5px solid #ddd;
+            background: #f9f9f9;
+            transition: all 0.3s;
+        }
+
+        .activity-item.current {
+            background: linear-gradient(135deg, #fff3e0, #ffffff);
+            border-left-color: #ff9800;
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.2);
+        }
+
+        .activity-item.completed {
+            background: #e8f5e8;
+            border-left-color: #4CAF50;
+            opacity: 0.8;
+        }
+
+        .activity-item.brain-break {
+            background: linear-gradient(135deg, #f3e5f5, #ffffff);
+            border-left-color: #9c27b0;
+        }
+
+        .activity-item.transition {
+            background: linear-gradient(135deg, #e8f5e8, #ffffff);
+            border-left-color: #4caf50;
+        }
+
+        .activity-item.check-in {
+            background: linear-gradient(135deg, #e3f2fd, #ffffff);
+            border-left-color: #2196f3;
+        }
+
+        .activity-item.reflection {
+            background: linear-gradient(135deg, #fff3e0, #ffffff);
+            border-left-color: #ff9800;
+        }
+
+        .affective-alerts {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ff9800წ
+
+        .alert-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .alert-suggestion {
+            background: #fff3e0;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #e65100;
+            font-weight: bold;
+        }
+
+        .brain-break-timer {
+            background: linear-gradient(135deg, #9c27b0, #e1bee7);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        .brain-break-timer.active {
+            display: block;
+            animation: breathe 3s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .activity-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ddd;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .activity-item.current .activity-number {
+            background: #ff9800;
+            animation: pulse 2s infinite;
+        }
+
+        .activity-item.completed .activity-number {
+            background: #4CAF50;
+        }
+
+        .activity-item.upcoming .activity-number {
+            background: #2196F3;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .activity-duration {
+            color: #666;
+            font-size: 1em;
+        }
+
+        .activity-controls {
+            display: flex;
+            gap: 8px;
+            margin-left: 10px;
+        }
+
+        .activity-controls button {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .activity-controls .btn-up {
+            background: #2196f3;
+            color: white;
+        }
+
+        .activity-controls .btn-up:hover {
+            background: #1976d2;
+            transform: translateY(-1px);
+        }
+
+        .activity-controls .btn-down {
+            background: #ff9800;
+            color: white;
+        }
+
+        .activity-controls .btn-down:hover {
+            background: #f57c00;
+            transform: translateY(-1px);
+        }
+
+        .activity-controls .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .activity-controls .btn-delete:hover {
+            background: #d32f2f;
+            transform: translateY(-1px);
+        }
+
+        .activity-controls button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .teacher-controls {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .controls-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .add-activity-form {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .duration-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #f57c00;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+            transform: translateY(-2px);
+        }
+
+        .control-buttons {
+            display: grid;
+            gap: 10px;
+        }
+
+        .session-summary {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .summary-value {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .no-activities {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px;
+            background: white;
+            border-radius: 15px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .time-displays {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .current-activity-name {
+                font-size: 1.8em;
+            }
+            
+            .time-displays {
+                grid-template-columns: 1fr;
+            }
+            
+            .duration-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🕐 Classroom Timer</h1>
+            <div class="current-activity-display" id="currentActivityDisplay">
+                <div class="current-activity-name" id="currentActivityName">
+                    No activity running
+                </div>
+                <div class="time-displays">
+                    <div class="time-display">
+                        <div class="time-label">Time Remaining</div>
+                        <div class="time-value" id="timeRemaining">--:--</div>
+                    </div>
+                    <div class="time-display">
+                        <div class="time-label">Time Elapsed</div>
+                        <div class="time-value" id="timeElapsed">00:00</div>
+                    </div>
+                    <div class="time-display">
+                        <div class="time-label">Total Session</div>
+                        <div class="time-value" id="sessionTime">00:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="student-view">
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <div class="progress-title">Current Activity Progress</div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="activityProgress"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Waiting to start...</div>
+                </div>
+
+                <div class="activities-schedule">
+                    <div class="schedule-title">📋 Today's Schedule</div>
+                    <div id="activitiesList">
+                        <div class="no-activities">
+                            <h3>No activities scheduled</h3>
+                            <p>The teacher will add activities to the schedule.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="teacher-controls">
+                <div class="controls-title">🎯 Teacher Controls</div>
+                
+                <div class="add-activity-form">
+                    <div class="form-group">
+                        <label class="form-label">Activity Name</label>
+                        <input type="text" id="activityInput" placeholder="e.g., Math Lesson, Group Work..." maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Duration</label>
+                        <div class="duration-inputs">
+                            <input type="number" id="minutesInput" placeholder="Minutes" min="1" max="180" value="15">
+                            <input type="number" id="secondsInput" placeholder="Seconds" min="0" max="59" value="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Activity Type</label>
+                        <select id="activityTypeSelect" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+                            <option value="work">Work Time</option>
+                            <option value="brain-break">Brain Break</option>
+                            <option value="transition">Transition</option>
+                            <option value="check-in">Check-in/Greeting</option>
+                            <option value="reflection">Reflection</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="addActivity()">➕ Add Activity</button>
+                </div>
+
+                <div class="quick-templates" style="background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
+                    <div style="font-weight: bold; margin-bottom: 10px; color: #333;">🚀 Quick Templates</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <button class="btn" style="padding: 8px; font-size: 12px; background: #e3f2fd; color: #1976d2;" onclick="addQuickActivity('Check-in', 2, 'check-in')">2min Check-in</button>
+                        <button class="btn" style="padding: 8px; font-size: 12px; background: #f3e5f5; color: #7b1fa2;" onclick="addQuickActivity('Brain Break', 3, 'brain-break')">3min Brain Break</button>
+                        <button class="btn" style="padding: 8px; font-size: 12px; background: #e8f5e8; color: #388e3c;" onclick="addQuickActivity('Transition', 2, 'transition')">2min Transition</button>
+                        <button class="btn" style="padding: 8px; font-size: 12px; background: #fff3e0; color: #f57c00;" onclick="addQuickActivity('Reflection', 5, 'reflection')">5min Reflection</button>
+                    </div>
+                </div>
+
+                <div class="control-buttons">
+                    <button class="btn btn-primary" id="startStopBtn" onclick="toggleCurrentActivity()">
+                        ▶️ Start First Activity
+                    </button>
+                    <button class="btn btn-warning" onclick="nextActivity()">
+                        ⏭️ Next Activity
+                    </button>
+                    <button class="btn btn-secondary" onclick="pauseActivity()">
+                        ⏸️ Pause
+                    </button>
+                    <button class="btn btn-danger" onclick="resetSession()">
+                        🔄 Reset Session
+                    </button>
+                </div>
+
+                <div class="session-summary">
+                    <div class="summary-item">
+                        <span>Total Activities:</span>
+                        <span class="summary-value" id="totalActivitiesCount">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Completed:</span>
+                        <span class="summary-value" id="completedCount">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Remaining:</span>
+                        <span class="summary-value" id="remainingCount">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class ClassroomTimer {
+            constructor() {
+                this.activities = [];
+                this.currentActivityIndex = -1;
+                this.isRunning = false;
+                this.isPaused = false;
+                this.sessionStartTime = null;
+                this.currentActivityStartTime = null;
+                this.currentActivityElapsed = 0;
+                this.updateInterval = null;
+                this.activityIdCounter = 0;
+                
+                this.updateDisplay();
+            }
+
+            addActivity() {
+                const nameInput = document.getElementById('activityInput');
+                const minutesInput = document.getElementById('minutesInput');
+                const secondsInput = document.getElementById('secondsInput');
+                const typeSelect = document.getElementById('activityTypeSelect');
+                
+                const name = nameInput.value.trim();
+                const minutes = parseInt(minutesInput.value) || 0;
+                const seconds = parseInt(secondsInput.value) || 0;
+                const type = typeSelect.value;
+                
+                if (!name || (minutes === 0 && seconds === 0)) {
+                    alert('Please enter an activity name and duration.');
+                    return;
+                }
+
+                const totalSeconds = (minutes * 60) + seconds;
+                
+                const activity = {
+                    id: ++this.activityIdCounter,
+                    name,
+                    duration: totalSeconds * 1000,
+                    elapsed: 0,
+                    completed: false,
+                    type: type
+                };
+
+                this.activities.push(activity);
+                nameInput.value = '';
+                minutesInput.value = '15';
+                secondsInput.value = '0';
+                typeSelect.value = 'work';
+                
+                this.updateDisplay();
+                this.checkAffectiveAlerts();
+            }
+
+            addQuickActivity(name, minutes, type) {
+                const activity = {
+                    id: ++this.activityIdCounter,
+                    name,
+                    duration: minutes * 60 * 1000,
+                    elapsed: 0,
+                    completed: false,
+                    type: type
+                };
+
+                this.activities.push(activity);
+                this.updateDisplay();
+                this.checkAffectiveAlerts();
+            }
+
+            moveActivityUp(id) {
+                const index = this.activities.findIndex(a => a.id === id);
+                if (index <= 0) return; // Can't move up if at the top
+
+                // Swap activities
+                [this.activities[index], this.activities[index - 1]] = 
+                    [this.activities[index - 1], this.activities[index]];
+                
+                // Update current activity index
+                if (this.currentActivityIndex === index) {
+                    this.currentActivityIndex--;
+                } else if (this.currentActivityIndex === index - 1) {
+                    this.currentActivityIndex++;
+                }
+
+                this.updateDisplay();
+                this.checkAffectiveAlerts();
+            }
+
+            moveActivityDown(id) {
+                const index = this.activities.findIndex(a => a.id === id);
+                if (index >= this.activities.length - 1) return; // Can't move down if at the bottom
+
+                // Swap activities
+                [this.activities[index], this.activities[index + 1]] = 
+                    [this.activities[index + 1], this.activities[index]];
+                
+                // Update current activity index
+                if (this.currentActivityIndex === index) {
+                    this.currentActivityIndex++;
+                } else if (this.currentActivityIndex === index + 1) {
+                    this.currentActivityIndex--;
+                }
+
+                this.updateDisplay();
+                this.checkAffectiveAlerts();
+            }
+
+            deleteActivity(id) {
+                const index = this.activities.findIndex(a => a.id === id);
+                if (index === -1) return;
+
+                // If deleting the current activity, stop it
+                if (index === this.currentActivityIndex && this.isRunning) {
+                    if (this.updateInterval) {
+                        clearInterval(this.updateInterval);
+                        this.updateInterval = null;
+                    }
+                    this.isRunning = false;
+                    this.isPaused = false;
+                    this.currentActivityStartTime = null;
+                    this.currentActivityElapsed = 0;
+                }
+
+                // Remove the activity
+                this.activities.splice(index, 1);
+
+                // Adjust current activity index
+                if (this.currentActivityIndex > index) {
+                    this.currentActivityIndex--;
+                } else if (this.currentActivityIndex === index) {
+                    this.currentActivityIndex = -1;
+                    if (this.activities.length > 0 && index < this.activities.length) {
+                        this.currentActivityIndex = index;
+                    }
+                }
+
+                this.updateDisplay();
+                this.checkAffectiveAlerts();
+            }
+
+            checkAffectiveAlerts() {
+                const workActivities = this.activities.filter(a => a.type === 'work');
+                const brainBreaks = this.activities.filter(a => a.type === 'brain-break');
+                const checkIns = this.activities.filter(a => a.type === 'check-in');
+                
+                let alerts = [];
+                
+                // Check for long work periods without breaks
+                for (let i = 0; i < workActivities.length; i++) {
+                    if (workActivities[i].duration > 25 * 60 * 1000) { // More than 25 minutes
+                        alerts.push("🧠 Consider adding a brain break after long work sessions (25+ min) to boost focus and retention.");
+                        break;
+                    }
+                }
+                
+                // Check for missing check-ins
+                if (this.activities.length > 3 && checkIns.length === 0) {
+                    alerts.push("💙 Consider adding a 2-minute check-in to build relationships and create emotional safety.");
+                }
+                
+                // Check work-to-break ratio
+                if (workActivities.length > 2 && brainBreaks.length === 0) {
+                    alerts.push("⚡ Research shows 3-5 minute brain breaks every 20-25 minutes improve task efficiency.");
+                }
+                
+                this.displayAffectiveAlerts(alerts);
+            }
+
+            displayAffectiveAlerts(alerts) {
+                const existingAlert = document.querySelector('.affective-alerts');
+                if (existingAlert) {
+                    existingAlert.remove();
+                }
+                
+                if (alerts.length === 0) return;
+                
+                const alertHTML = `
+                    <div class="affective-alerts">
+                        <div style="font-weight: bold; margin-bottom: 10px; color: #333;">💡 Affective Strategy Suggestions</div>
+                        ${alerts.map(alert => `<div class="alert-suggestion">${alert}</div>`).join('')}
+                    </div>
+                `;
+                
+                const controlsSection = document.querySelector('.teacher-controls');
+                const firstChild = controlsSection.firstElementChild.nextElementSibling;
+                firstChild.insertAdjacentHTML('afterend', alertHTML);
+            }
+
+            startSession() {
+                if (this.activities.length === 0) {
+                    alert('Please add at least one activity before starting.');
+                    return;
+                }
+
+                this.sessionStartTime = Date.now();
+                this.currentActivityIndex = 0;
+                this.startCurrentActivity();
+            }
+
+            startCurrentActivity() {
+                if (this.currentActivityIndex < 0 || this.currentActivityIndex >= this.activities.length) {
+                    return;
+                }
+
+                this.isRunning = true;
+                this.isPaused = false;
+                this.currentActivityStartTime = Date.now();
+                
+                this.updateInterval = setInterval(() => {
+                    this.updateTimers();
+                }, 100);
+
+                this.updateDisplay();
+            }
+
+            pauseActivity() {
+                if (!this.isRunning || this.isPaused) return;
+
+                this.isPaused = true;
+                const activity = this.activities[this.currentActivityIndex];
+                if (activity) {
+                    activity.elapsed += Date.now() - this.currentActivityStartTime;
+                }
+                
+                if (this.updateInterval) {
+                    clearInterval(this.updateInterval);
+                    this.updateInterval = null;
+                }
+                
+                this.updateDisplay();
+            }
+
+            resumeActivity() {
+                if (!this.isRunning || !this.isPaused) return;
+
+                this.isPaused = false;
+                this.currentActivityStartTime = Date.now();
+                
+                this.updateInterval = setInterval(() => {
+                    this.updateTimers();
+                }, 100);
+                
+                this.updateDisplay();
+            }
+
+            toggleCurrentActivity() {
+                if (!this.isRunning && !this.sessionStartTime) {
+                    this.startSession();
+                } else if (this.isPaused) {
+                    this.resumeActivity();
+                } else if (this.isRunning) {
+                    this.pauseActivity();
+                }
+            }
+
+            nextActivity() {
+                if (this.currentActivityIndex >= 0 && this.currentActivityIndex < this.activities.length) {
+                    this.activities[this.currentActivityIndex].completed = true;
+                }
+
+                this.currentActivityIndex++;
+                
+                if (this.currentActivityIndex >= this.activities.length) {
+                    this.endSession();
+                    return;
+                }
+
+                if (this.updateInterval) {
+                    clearInterval(this.updateInterval);
+                }
+
+                this.startCurrentActivity();
+            }
+
+            endSession() {
+                this.isRunning = false;
+                this.isPaused = false;
+                
+                if (this.updateInterval) {
+                    clearInterval(this.updateInterval);
+                    this.updateInterval = null;
+                }
+
+                // Mark current activity as completed if it exists
+                if (this.currentActivityIndex >= 0 && this.currentActivityIndex < this.activities.length) {
+                    this.activities[this.currentActivityIndex].completed = true;
+                }
+
+                this.currentActivityIndex = -1;
+                this.updateDisplay();
+                
+                alert('🎉 Session completed! Great work everyone!');
+            }
+
+            resetSession() {
+                if (confirm('Are you sure you want to reset the entire session? This will clear all activities.')) {
+                    if (this.updateInterval) {
+                        clearInterval(this.updateInterval);
+                        this.updateInterval = null;
+                    }
+                    
+                    this.activities = [];
+                    this.currentActivityIndex = -1;
+                    this.isRunning = false;
+                    this.isPaused = false;
+                    this.sessionStartTime = null;
+                    this.currentActivityStartTime = null;
+                    this.currentActivityElapsed = 0;
+                    this.activityIdCounter = 0;
+                    
+                    this.updateDisplay();
+                }
+            }
+
+            updateTimers() {
+                if (!this.isRunning || this.isPaused) return;
+
+                const now = Date.now();
+                const activity = this.activities[this.currentActivityIndex];
+                
+                if (activity) {
+                    const totalElapsed = activity.elapsed + (now - this.currentActivityStartTime);
+                    
+                    if (totalElapsed >= activity.duration) {
+                        // Activity time is up
+                        activity.elapsed = activity.duration;
+                        this.nextActivity();
+                        return;
+                    }
+                }
+
+                this.updateDisplay();
+            }
+
+            updateDisplay() {
+                this.updateCurrentActivityDisplay();
+                this.updateProgressBar();
+                this.updateActivitiesList();
+                this.updateControlButtons();
+                this.updateSummary();
+            }
+
+            updateCurrentActivityDisplay() {
+                const nameEl = document.getElementById('currentActivityName');
+                const remainingEl = document.getElementById('timeRemaining');
+                const elapsedEl = document.getElementById('timeElapsed');
+                const sessionEl = document.getElementById('sessionTime');
+
+                if (this.currentActivityIndex >= 0 && this.currentActivityIndex < this.activities.length) {
+                    const activity = this.activities[this.currentActivityIndex];
+                    const now = Date.now();
+                    const totalElapsed = this.isPaused ? activity.elapsed : 
+                        activity.elapsed + (this.isRunning ? now - this.currentActivityStartTime : 0);
+                    const remaining = Math.max(0, activity.duration - totalElapsed);
+
+                    nameEl.textContent = activity.name;
+                    remainingEl.textContent = this.formatTime(remaining);
+                    elapsedEl.textContent = this.formatTime(totalElapsed);
+                } else {
+                    nameEl.textContent = this.activities.length > 0 ? 'Ready to start' : 'No activity running';
+                    remainingEl.textContent = '--:--';
+                    elapsedEl.textContent = '00:00';
+                }
+
+                // Session time
+                if (this.sessionStartTime) {
+                    const sessionElapsed = Date.now() - this.sessionStartTime;
+                    sessionEl.textContent = this.formatTime(sessionElapsed);
+                } else {
+                    sessionEl.textContent = '00:00';
+                }
+            }
+
+            updateProgressBar() {
+                const progressBar = document.getElementById('activityProgress');
+                const progressText = document.getElementById('progressText');
+
+                if (this.currentActivityIndex >= 0 && this.currentActivityIndex < this.activities.length) {
+                    const activity = this.activities[this.currentActivityIndex];
+                    const now = Date.now();
+                    const totalElapsed = this.isPaused ? activity.elapsed : 
+                        activity.elapsed + (this.isRunning ? now - this.currentActivityStartTime : 0);
+                    const progress = Math.min(100, (totalElapsed / activity.duration) * 100);
+
+                    progressBar.style.width = `${progress}%`;
+                    
+                    // Change color based on progress
+                    if (progress > 80) {
+                        progressBar.className = 'progress-bar danger';
+                    } else if (progress > 60) {
+                        progressBar.className = 'progress-bar warning';
+                    } else {
+                        progressBar.className = 'progress-bar';
+                    }
+
+                    const remaining = Math.max(0, activity.duration - totalElapsed);
+                    progressText.textContent = `${Math.round(progress)}% complete • ${this.formatTime(remaining)} remaining`;
+                } else {
+                    progressBar.style.width = '0%';
+                    progressBar.className = 'progress-bar';
+                    progressText.textContent = this.activities.length > 0 ? 'Ready to start first activity' : 'Waiting to start...';
+                }
+            }
+
+            updateActivitiesList() {
+                const container = document.getElementById('activitiesList');
+                
+                if (this.activities.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-activities">
+                            <h3>No activities scheduled</h3>
+                            <p>Add activities using the research-backed templates for better emotional engagement!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const activitiesHTML = this.activities.map((activity, index) => {
+                    let statusClass = 'upcoming';
+                    if (index < this.currentActivityIndex) {
+                        statusClass = 'completed';
+                    } else if (index === this.currentActivityIndex) {
+                        statusClass = 'current';
+                    }
+
+                    // Add activity type classes
+                    const typeClass = activity.type || 'work';
+                    
+                    // Get activity type emoji
+                    const typeEmojis = {
+                        'work': '📚',
+                        'brain-break': '🧠',
+                        'transition': '🔄',
+                        'check-in': '💙',
+                        'reflection': '🤔'
+                    };
+                    
+                    const emoji = typeEmojis[activity.type] || '📚';
+
+                    return `
+                        <div class="activity-item ${statusClass} ${typeClass}">
+                            <div class="activity-number">${index + 1}</div>
+                            <div class="activity-details">
+                                <div class="activity-name">${emoji} ${activity.name}</div>
+                                <div class="activity-duration">${this.formatTime(activity.duration)} • ${this.getActivityTypeLabel(activity.type)}</div>
+                            </div>
+                            <div class="activity-controls">
+                                <button class="btn-up" onclick="timer.moveActivityUp(${activity.id})" ${index === 0 ? 'disabled' : ''}>↑</button>
+                                <button class="btn-down" onclick="timer.moveActivityDown(${activity.id})" ${index === this.activities.length - 1 ? 'disabled' : ''}>↓</button>
+                                <button class="btn-delete" onclick="timer.deleteActivity(${activity.id})">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                container.innerHTML = activitiesHTML;
+                
+                // Show brain break animation if current activity is a brain break
+                this.updateBrainBreakDisplay();
+            }
+
+            getActivityTypeLabel(type) {
+                const labels = {
+                    'work': 'Focus Time',
+                    'brain-break': 'Brain Break',
+                    'transition': 'Transition',
+                    'check-in': 'Check-in',
+                    'reflection': 'Reflection'
+                };
+                return labels[type] || 'Activity';
+            }
+
+            updateBrainBreakDisplay() {
+                // Remove existing brain break timer
+                const existing = document.querySelector('.brain-break-timer');
+                if (existing) existing.remove();
+                
+                if (this.currentActivityIndex >= 0 && this.currentActivityIndex < this.activities.length) {
+                    const currentActivity = this.activities[this.currentActivityIndex];
+                    if (currentActivity.type === 'brain-break' && this.isRunning && !this.isPaused) {
+                        const brainBreakHTML = `
+                            <div class="brain-break-timer active">
+                                <div style="font-size: 1.5em; margin-bottom: 10px;">🧠 Brain Break Time!</div>
+                                <div style="font-size: 1.1em;">Take deep breaths • Stretch • Move around</div>
+                                <div style="font-size: 0.9em; margin-top: 8px; opacity: 0.9;">Recharging your focus...</div>
+                            </div>
+                        `;
+                        document.querySelector('.current-activity-display').insertAdjacentHTML('beforeend', brainBreakHTML);
+                    }
+                }
+            }
+
+            updateControlButtons() {
+                const startStopBtn = document.getElementById('startStopBtn');
+                
+                if (!this.sessionStartTime) {
+                    startStopBtn.textContent = '▶️ Start Session';
+                    startStopBtn.className = 'btn btn-primary';
+                    startStopBtn.disabled = false;
+                } else if (this.isPaused) {
+                    startStopBtn.textContent = '▶️ Resume';
+                    startStopBtn.className = 'btn btn-primary';
+                    startStopBtn.disabled = false;
+                } else if (this.isRunning) {
+                    startStopBtn.textContent = '⏸️ Pause';
+                    startStopBtn.className = 'btn btn-warning';
+                    startStopBtn.disabled = false;
+                } else {
+                    startStopBtn.textContent = '✅ Session Complete';
+                    startStopBtn.className = 'btn btn-secondary';
+                    startStopBtn.disabled = true;
+                }
+            }
+
+            updateSummary() {
+                const totalEl = document.getElementById('totalActivitiesCount');
+                const completedEl = document.getElementById('completedCount');
+                const remainingEl = document.getElementById('remainingCount');
+
+                const total = this.activities.length;
+                const completed = this.activities.filter(a => a.completed).length;
+                const remaining = total - completed;
+
+                totalEl.textContent = total;
+                completedEl.textContent = completed;
+                remainingEl.textContent = remaining;
+            }
+
+            formatTime(ms) {
+                const totalSeconds = Math.floor(ms / 1000);
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                
+                return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        // Global functions for HTML onclick handlers
+        let timer;
+
+        function addActivity() {
+            timer.addActivity();
+        }
+
+        function addQuickActivity(name, minutes, type) {
+            timer.addQuickActivity(name, minutes, type);
+        }
+
+        function toggleCurrentActivity() {
+            timer.toggleCurrentActivity();
+        }
+
+        function nextActivity() {
+            timer.nextActivity();
+        }
+
+        function pauseActivity() {
+            timer.pauseActivity();
+        }
+
+        function resetSession() {
+            timer.resetSession();
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            timer = new ClassroomTimer();
+            
+            // Add Enter key support for adding activities
+            document.getElementById('activityInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    addActivity();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
