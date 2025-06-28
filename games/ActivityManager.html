@@ -44,6 +44,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classroom Activity Timer</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --bg-primary: #0a0a0f;
@@ -65,12 +66,48 @@
             box-sizing: border-box;
         }
 
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            transition: all 0.2s ease;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.3);
+            border: 2px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        ::-webkit-scrollbar-thumb:active {
+            background: var(--cyan);
+        }
+        
+        /* Firefox scrollbar */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.1) rgba(255, 255, 255, 0.03);
+        }
+        
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
             color: var(--text-primary);
             min-height: 100vh;
             overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.1) rgba(255, 255, 255, 0.03);
         }
 
         .glass-card {
@@ -186,14 +223,69 @@
             flex-direction: column;
             gap: 1rem;
             margin-bottom: 2rem;
+            position: relative;
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+            margin-right: -10px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+        }
+        
+        .activity-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .activity-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        
+        .activity-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.3);
+        }
+        
+        .activity-item {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .activity-item.moving {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease, box-shadow 0.3s ease !important;
+            z-index: 10;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important;
         }
 
         .activity-item {
             padding: 1rem;
             border-radius: 12px;
             border: 2px solid transparent;
-            transition: all 0.3s ease;
             position: relative;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+            transform-origin: top;
+            will-change: transform, max-height, opacity, box-shadow;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .activity-item .activity-details {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transform: translateY(-10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: max-height, opacity, transform;
+            padding-left: 5px;
+            border-left: 2px solid transparent;
+        }
+        
+        .activity-item.expanded .activity-details {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 0.75rem;
+            transform: translateY(0);
+            border-left-color: var(--cyan);
         }
 
         .activity-item.active {
@@ -209,8 +301,173 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 0.5rem;
+            cursor: pointer;
+            padding: 8px 0;
+        }
+
+        .activity-header {
+            position: relative;
+            padding-left: 40px; /* Add padding for the position number */
+        }
+
+        .activity-header h4 {
+            margin: 0;
+            flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-right: 10px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            padding: 8px 0; /* Move padding from activity-header to h4 */
+        }
+        
+        .activity-position {
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .activity-type {
+            margin-right: 10px; /* Add some spacing between type and controls */
+        }
+        
+        .activity-header h4:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%) rotate(0deg);
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid var(--text-secondary);
+            transition: transform 0.3s ease;
+        }
+        
+        .activity-item.expanded .activity-header h4:before {
+            transform: translateY(-50%) rotate(180deg);
+        }
+        
+        .activity-header h4:hover {
+            color: var(--cyan);
+        }
+        
+        .activity-header-controls {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .move-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-left: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 4px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 32px;
+        }
+        
+        .move-buttons button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            border-radius: 4px;
+        }
+        
+        .move-divider {
+            width: 16px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 2px 0;
+        }
+        
+        .move-buttons button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--cyan), var(--purple));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+            border-radius: 4px;
+        }
+        
+        .move-buttons button:hover::before {
+            opacity: 0.1;
+        }
+        
+        .move-buttons button i {
+            position: relative;
+            z-index: 1;
+            font-size: 12px;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+        }
+        
+        .move-buttons button:hover i {
+            color: var(--cyan);
+            transform: scale(1.2);
+        }
+        
+        .move-buttons button:active i {
+            transform: scale(0.9);
+        }
+        
+        .move-buttons button:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .move-buttons button:disabled i {
+            color: var(--text-secondary) !important;
+            transform: none !important;
+        }
+
+        .toggle-collapse {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 5px;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .activity-item.collapsed .toggle-collapse {
+            transform: rotate(-90deg);
         }
 
         .activity-title {
@@ -684,22 +941,66 @@
                 this.showToast('Activity deleted', true);
             }
 
-            moveActivity(index, direction) {
-                if ((direction === -1 && index === 0) || (direction === 1 && index === this.activities.length - 1)) {
+            async moveActivity(index, direction) {
+                const newIndex = index + direction;
+                if (newIndex < 0 || newIndex >= this.activities.length) {
                     return;
                 }
 
-                const newIndex = index + direction;
-                [this.activities[index], this.activities[newIndex]] = [this.activities[newIndex], this.activities[index]];
-
+                // Get DOM elements
+                const listElement = document.getElementById('activityList');
+                const items = Array.from(listElement.children);
+                const item = items[index];
+                const targetItem = items[newIndex];
+                
+                // Add moving class for visual feedback
+                item.classList.add('moving');
+                
+                // Calculate the distance to move
+                const itemRect = item.getBoundingClientRect();
+                const targetRect = targetItem.getBoundingClientRect();
+                const distance = direction > 0 ? 
+                    targetRect.bottom - itemRect.top + 16 :  // 16px for gap
+                    targetRect.top - itemRect.bottom - 16;
+                
+                // Prepare for animation
+                item.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
+                item.style.transform = `translateY(${distance}px)`;
+                
+                // If moving down, the item below needs to move up
+                if (direction > 0 && items[newIndex + 1]) {
+                    items[newIndex + 1].style.transition = 'transform 0.3s ease';
+                    items[newIndex + 1].style.transform = 'translateY(-100%)';
+                }
+                
+                // Wait for the animation to complete
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // Update the data
+                const activity = this.activities[index];
+                this.activities.splice(index, 1);
+                this.activities.splice(newIndex, 0, activity);
+                
+                // Update the display
+                this.updateDisplay();
+                this.updateActivityList();
+                this.saveToStorage();
+                
+                // Remove moving class and reset transforms
+                item.classList.remove('moving');
+                item.style.transform = '';
+                item.style.transition = '';
+                if (direction > 0 && items[newIndex + 1]) {
+                    items[newIndex + 1].style.transform = '';
+                    items[newIndex + 1].style.transition = '';
+                }
+                
+                // Update current activity index if needed
                 if (this.currentActivityIndex === index) {
                     this.currentActivityIndex = newIndex;
                 } else if (this.currentActivityIndex === newIndex) {
                     this.currentActivityIndex = index;
                 }
-
-                this.updateActivityList();
-                this.saveToStorage();
             }
 
             editActivity(index, field, value) {
@@ -769,32 +1070,46 @@
 
                 this.activities.forEach((activity, index) => {
                     const item = document.createElement('div');
-                    item.className = `activity-item ${activity.type}`;
+                    item.className = `activity-item ${activity.type} ${index === 0 ? 'expanded' : ''}`;
                     if (index === this.currentActivityIndex) {
                         item.classList.add('active');
+                        item.classList.remove('collapsed');
                     }
 
                     item.innerHTML = `
-                        <div class="activity-header">
-                            <input type="text" class="activity-title inline-edit" value="${activity.title}" 
-                                   onchange="timer.editActivity(${index}, 'title', this.value)">
-                            <span class="activity-type type-${activity.type}">${activity.type}</span>
+                    <div class="activity-header" onclick="this.parentElement.classList.toggle('expanded'); event.stopPropagation();">
+                        <span class="activity-position">${index + 1}</span>
+                        <h4>${activity.title}</h4>
+                        <span class="activity-type type-${activity.type}">${activity.type}</span>
+                        <div class="activity-header-controls" onclick="event.stopPropagation()">
+                            <div class="move-buttons" onclick="event.stopPropagation()">
+                                <button class="move-up" onclick="timer.moveActivity(${index}, -1)" ${index === 0 ? 'disabled' : ''}>
+                                    <i class="fas fa-chevron-up"></i>
+                                </button>
+                                <div class="move-divider"></div>
+                                <button class="move-down" onclick="timer.moveActivity(${index}, 1)" ${index === this.activities.length - 1 ? 'disabled' : ''}>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                            </div>
                         </div>
-                        <div class="activity-duration">
-                            <input type="number" class="inline-edit" value="${activity.duration}" min="1" 
-                                   onchange="timer.editActivity(${index}, 'duration', this.value)"> minutes
+                    </div>
+                        <div class="activity-details">
+                            <div class="activity-duration">
+                                <label>Duration: </label>
+                                <input type="number" class="inline-edit" value="${activity.duration}" min="1" 
+                                       onchange="timer.editActivity(${index}, 'duration', this.value)"> minutes
+                            </div>
+                            <div class="activity-controls">
+                                <select class="form-select" onchange="timer.editActivity(${index}, 'type', this.value)">
+                                    <option value="work" ${activity.type === 'work' ? 'selected' : ''}>Work</option>
+                                    <option value="break" ${activity.type === 'break' ? 'selected' : ''}>Break</option>
+                                    <option value="transition" ${activity.type === 'transition' ? 'selected' : ''}>Transition</option>
+                                </select>
+                                <!-- Move buttons have been moved to the header -->
+                                <button class="btn btn-small btn-danger" onclick="event.stopPropagation(); timer.deleteActivity(${index})">Delete</button>
+                            </div>
                         </div>
-                        <div class="activity-controls">
-                            <select class="form-select" onchange="timer.editActivity(${index}, 'type', this.value)">
-                                <option value="work" ${activity.type === 'work' ? 'selected' : ''}>Work</option>
-                                <option value="break" ${activity.type === 'break' ? 'selected' : ''}>Break</option>
-                                <option value="transition" ${activity.type === 'transition' ? 'selected' : ''}>Transition</option>
-                            </select>
-                            <button class="btn btn-small" onclick="timer.moveActivity(${index}, -1)" ${index === 0 ? 'disabled' : ''}>↑</button>
-                            <button class="btn btn-small" onclick="timer.moveActivity(${index}, 1)" ${index === this.activities.length - 1 ? 'disabled' : ''}>↓</button>
-                            <button class="btn btn-small btn-danger" onclick="timer.deleteActivity(${index})">Delete</button>
-                        </div>
-                    `;
+                    </div>`;
 
                     listElement.appendChild(item);
                 });
