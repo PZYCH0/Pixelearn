@@ -46,6 +46,92 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* Pulse effect for low time */
+        .pulse-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            width: 100%;
+            min-height: 120px;
+        }
+
+        .pulse {
+            animation: pulse 1.5s infinite;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.1);
+            z-index: 0;
+            pointer-events: none;
+            max-width: 300px;
+            max-height: 300px;
+            opacity: 0;
+        }
+        
+        .student-timer {
+            position: relative;
+            z-index: 1;
+            font-size: 3.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .time-warning {
+            color: #ff4444 !important;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.7) !important;
+            animation: pulseText 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0.9);
+                opacity: 0.8;
+            }
+            70% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(0.9);
+                opacity: 0;
+            }
+        }
+
+        .time-warning {
+            animation: timeWarning 1s infinite alternate;
+        }
+
+        @keyframes pulseText {
+            from {
+                transform: scale(1);
+                opacity: 1;
+            }
+            to {
+                transform: scale(1.05);
+                opacity: 0.9;
+            }
+        }
+        
+        @keyframes timeWarning {
+            from {
+                color: var(--text-primary);
+                text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+            }
+            to {
+                color: #ff6b6b;
+                text-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+            }
+        }
         :root {
             --bg-primary: #0a0a0f;
             --bg-secondary: #1a1a2e;
@@ -649,6 +735,14 @@
     </style>
 </head>
 <body>
+    <!-- Audio elements for sound effects -->
+    <audio id="warningSound" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" type="audio/mp3">
+    </audio>
+    <audio id="timesUpSound" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2588/2588-preview.mp3" type="audio/mp3">
+    </audio>
+
     <div class="container">
         <header class="header">
             <h1 class="retro-title">Classroom Timer</h1>
@@ -715,7 +809,9 @@
 
         <main class="student-view hidden" id="studentView">
             <div class="student-activity-title" id="studentActivityTitle">No Activity</div>
-            <div class="timer-display student-timer" id="studentTimerDisplay">00:00</div>
+            <div class="pulse-container" id="pulseEffect">
+                <div class="timer-display student-timer" id="studentTimerDisplay">00:00</div>
+            </div>
             <div class="progress-bar">
                 <div class="progress-fill" id="studentProgressFill"></div>
             </div>
@@ -860,7 +956,47 @@
                 this.timeRemaining--;
                 this.updateDisplay();
 
+                // Play warning sound and show visual feedback when time is running low
+                if (this.timeRemaining === 10) {
+                    const warningSound = document.getElementById('warningSound');
+                    if (warningSound) {
+                        warningSound.volume = 0.5;
+                        warningSound.play().catch(e => console.log('Could not play warning sound:', e));
+                    }
+                    
+                    // Add pulse effect
+                    const pulseEffect = document.getElementById('pulseEffect');
+                    if (pulseEffect) {
+                        const pulse = document.createElement('div');
+                        pulse.className = 'pulse';
+                        pulseEffect.appendChild(pulse);
+                        
+                        // Remove pulse element after animation completes
+                        setTimeout(() => {
+                            if (pulseEffect.contains(pulse)) {
+                                pulseEffect.removeChild(pulse);
+                            }
+                        }, 1500);
+                    }
+                }
+                
+                // Add time warning class when time is critical (last 10 seconds)
+                const timerDisplay = document.getElementById('studentTimerDisplay');
+                if (timerDisplay) {
+                    if (this.timeRemaining <= 10) {
+                        timerDisplay.classList.add('time-warning');
+                    } else {
+                        timerDisplay.classList.remove('time-warning');
+                    }
+                }
+
                 if (this.timeRemaining <= 0) {
+                    // Play time's up sound
+                    const timesUpSound = document.getElementById('timesUpSound');
+                    if (timesUpSound) {
+                        timesUpSound.volume = 0.5;
+                        timesUpSound.play().catch(e => console.log('Could not play time up sound:', e));
+                    }
                     this.nextActivity();
                 }
 
@@ -1031,28 +1167,43 @@
 
                 document.getElementById('currentActivityTitle').textContent = title;
                 document.getElementById('timerDisplay').textContent = timeStr;
-                document.getElementById('activityProgress').textContent = `${this.currentActivityIndex + 1}/${this.activities.length}`;
-
                 document.getElementById('studentActivityTitle').textContent = title;
-                document.getElementById('studentTimerDisplay').textContent = timeStr;
-                document.getElementById('studentActivityProgress').textContent = `${this.currentActivityIndex + 1} of ${this.activities.length}`;
-
+                
+                // Update student timer display with time warning class if needed
+                const studentTimer = document.getElementById('studentTimerDisplay');
+                studentTimer.textContent = timeStr;
+                
+                // Update progress bar
                 let progress = 0;
-                if (currentActivity) {
-                    const totalSeconds = currentActivity.duration * 60;
-                    progress = ((totalSeconds - this.timeRemaining) / totalSeconds) * 100;
+                if (currentActivity && currentActivity.duration > 0) {
+                    progress = ((currentActivity.duration * 60 - this.timeRemaining) / (currentActivity.duration * 60)) * 100;
                 }
-                document.getElementById('progressFill').style.width = `${progress}%`;
-                document.getElementById('studentProgressFill').style.width = `${progress}%`;
+                
+                const progressFill = document.getElementById('studentProgressFill');
+                progressFill.style.width = `${progress}%`;
+                
+                // Update progress bar color based on time remaining
+                if (this.timeRemaining <= 10) {
+                    progressFill.style.background = 'linear-gradient(90deg, #ff6b6b 0%, #ff1a1a 100%)';
+                    progressFill.style.boxShadow = '0 0 15px rgba(255, 0, 0, 0.5)';
+                } else {
+                    progressFill.style.background = 'linear-gradient(90deg, #00d4ff 0%, #0077ff 100%)';
+                    progressFill.style.boxShadow = '0 0 10px rgba(0, 212, 255, 0.5)';
+                }
 
-                const timerElements = [document.getElementById('timerDisplay'), document.getElementById('studentTimerDisplay')];
-                timerElements.forEach(el => {
-                    el.classList.toggle('timer-paused', this.isPaused);
-                });
+                // Update activity progress
+                const progressText = this.activities.length > 0 ? 
+                    `${this.currentActivityIndex + 1} of ${this.activities.length}` : '0 of 0';
+                document.getElementById('studentActivityProgress').textContent = progressText;
 
-                document.getElementById('startBtn').textContent = this.isRunning && !this.isPaused ? 'Running' : 'Start';
+                // Update buttons
+                document.getElementById('startBtn').disabled = this.isRunning || this.activities.length === 0;
+                document.getElementById('pauseBtn').disabled = !this.isRunning || this.activities.length === 0;
+                document.getElementById('skipBtn').disabled = !this.isRunning || this.activities.length === 0;
+                document.getElementById('resetBtn').disabled = !this.isRunning && !this.isPaused && this.currentActivityIndex === 0;
                 document.getElementById('pauseBtn').textContent = this.isPaused ? 'Resume' : 'Pause';
 
+                // Update background gradient based on activity type
                 if (currentActivity && this.currentView === 'student') {
                     const colors = {
                         work: 'rgba(0, 212, 255, 0.1)',
