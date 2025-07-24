@@ -1,77 +1,321 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Lesson: Job Interview Practice</title>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Job Interview Practice - Pixelearn</title>
+    <link href="../../assets/15.png" rel="icon"/>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+    <link href="../../styles/portfolio.css" rel="stylesheet"/>
+    <link href="../../styles/navbar-font-styles.css" rel="stylesheet"/>
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background: #f4f6f8; color: #333; }
-        header { background: #2c3e50; color: #fff; padding: 20px; text-align: center; }
-        h1, h2 { margin: 0 0 15px; }
-        section { background: #fff; margin: 20px; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        ul { margin-left: 20px; }
-        iframe { width: 100%; height: 315px; border-radius: 8px; margin-top: 10px; }
-        .activity { background: #ecf5ff; padding: 10px; border-left: 4px solid #3498db; margin: 10px 0; }
-        .button { display: inline-block; background: #3498db; color: #fff; padding: 10px 15px; text-decoration: none; border-radius: 5px; margin-top: 10px; }
-        .button:hover { background: #2980b9; }
+        :root {
+            --primary-color: #ff00ff;
+            --secondary-color: #800080;
+            --accent-color: #00ffff;
+            --text-color: #ffffff;
+            --bg-color: #1a1a1a;
+            --border-radius: 8px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            color: var(--text-color);
+            background: var(--bg-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-image: 
+                linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)),
+                url('../../assets/cyber-grid.png');
+            background-attachment: fixed;
+        }
+
+        .article-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(249, 83, 198, 0.2);
+            border: 1px solid var(--primary-color);
+        }
+
+        h1, h2, h3 {
+            color: var(--accent-color);
+            font-family: 'Press Start 2P', cursive;
+            margin-top: 2rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 10px var(--accent-color);
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        p, li {
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        ul, ol {
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .meta {
+            text-align: center;
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .activity {
+            background: rgba(0, 255, 255, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .button {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+        }
+
+        iframe {
+            width: 100%;
+            height: 450px;
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+        }
+
+        .table-of-contents {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin: 2rem 0;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .table-of-contents h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .table-of-contents ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .table-of-contents li {
+            margin-bottom: 0.5rem;
+        }
+
+        .table-of-contents a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s;
+        }
+
+        .table-of-contents a:hover {
+            color: var(--accent-color);
+        }
+
+        .table-of-contents a::before {
+            content: "→";
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+            transition: transform 0.3s;
+        }
+
+        .table-of-contents a:hover::before {
+            transform: translateX(5px);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            justify-content: center;
+        }
+
+        .share-button, .print-button, .back-to-articles {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            font-family: 'Courier New', monospace;
+        }
+
+        .share-button:hover, .print-button:hover, .back-to-articles:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .article-container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.2rem;
+            }
+
+            iframe {
+                height: 300px;
+            }
+        }
     </style>
 </head>
 <body>
-    <header>
+    <div class="article-container">
         <h1>Job Interview English Practice</h1>
-        <p>A2–B1 | 60–75 min | Online Lesson</p>
-    </header>
+        <div class="meta">A2–B1 | 60–75 min | Online Lesson</div>
 
-    <section>
-        <h2>Lesson Objectives</h2>
-        <ul>
-            <li>Answer 5 common job interview questions in simple English.</li>
-            <li>Use polite and structured responses for interviews.</li>
-            <li>Practice real-time speaking with a partner.</li>
-        </ul>
-    </section>
-
-    <section>
-        <h2>Watch & Learn</h2>
-        <p>Watch this video and write down any interview questions you hear:</p>
-        <iframe src="https://www.youtube.com/embed/Qc7HmhrgTuQ" title="Job Interview Questions"></iframe>
-    </section>
-
-    <section>
-        <h2>Key Vocabulary</h2>
-        <div class="activity">
-            Match the words with their meanings: <strong>Describe yourself, Strengths, Weaknesses, Motivated, Achievement, Goals</strong>.
+        <div class="table-of-contents">
+            <h3>Table of Contents</h3>
+            <ul>
+                <li><a href="#objectives">Lesson Objectives</a></li>
+                <li><a href="#watch">Watch & Learn</a></li>
+                <li><a href="#vocabulary">Key Vocabulary</a></li>
+                <li><a href="#practice">Practice Questions</a></li>
+                <li><a href="#roleplay">Role-Play: Mock Interview</a></li>
+                <li><a href="#game">Hot Seat Game</a></li>
+                <li><a href="#homework">Homework</a></li>
+            </ul>
         </div>
-    </section>
 
-    <section>
-        <h2>Practice Questions</h2>
-        <p>Common Interview Questions:</p>
-        <ul>
-            <li>Tell us about yourself.</li>
-            <li>Why do you want this job?</li>
-            <li>Why should we hire you?</li>
-            <li>Where do you see yourself in 5 years?</li>
-            <li>What motivates you?</li>
-        </ul>
-    </section>
+        <section id="objectives">
+            <h2>Lesson Objectives</h2>
+            <ul>
+                <li>Answer 5 common job interview questions in simple English.</li>
+                <li>Use polite and structured responses for interviews.</li>
+                <li>Practice real-time speaking with a partner.</li>
+            </ul>
+        </section>
 
-    <section>
-        <h2>Role-Play: Mock Interview</h2>
-        <div class="activity">
-            Work in pairs: One is the interviewer, one is the interviewee. Use at least 3 questions. Switch roles after 5 minutes.
+        <section id="watch">
+            <h2>Watch & Learn</h2>
+            <p>Watch this video and write down any interview questions you hear:</p>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/-AOQl94ZYn8?si=EA7wPFAoImTW3eqd" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </section>
+
+        <section id="vocabulary">
+            <h2>Key Vocabulary</h2>
+            <div class="activity">
+                <p>Match the words with their meanings: <strong>Describe yourself, Strengths, Weaknesses, Motivated, Achievement, Goals</strong>.</p>
+            </div>
+        </section>
+
+        <section id="practice">
+            <h2>Practice Questions</h2>
+            <p>Common Interview Questions:</p>
+            <ul>
+                <li>Tell us about yourself.</li>
+                <li>Why do you want this job?</li>
+                <li>Why should we hire you?</li>
+                <li>Where do you see yourself in 5 years?</li>
+                <li>What motivates you?</li>
+            </ul>
+        </section>
+
+        <section id="roleplay">
+            <h2>Role-Play: Mock Interview</h2>
+            <div class="activity">
+                <p>Work in pairs: One is the interviewer, one is the interviewee. Use at least 3 questions. Switch roles after 5 minutes.</p>
+            </div>
+            <a class="button" href="#">
+                <i class="fas fa-download"></i> Download Cheat Sheet
+            </a>
+        </section>
+
+        <section id="game">
+            <h2>Hot Seat Game</h2>
+            <p>One student sits in the "hot seat." Rapid-fire answer 5 questions (mix interview + fun ones like "What's your favorite food?").</p>
+        </section>
+
+        <section id="homework">
+            <h2>Homework</h2>
+            <p>Write and record yourself answering 5 interview questions. Practice pronunciation and timing.</p>
+        </section>
+
+        <div class="action-buttons">
+            <button class="share-button" onclick="shareArticle()">
+                <i class="fas fa-share-alt"></i> Share
+            </button>
+            <button class="print-button" onclick="window.print()">
+                <i class="fas fa-print"></i> Print
+            </button>
+            <a href="../../index.html#articles" class="back-to-articles">
+                <i class="fas fa-arrow-left"></i> Back to Articles
+            </a>
         </div>
-        <a class="button" href="#">Download Cheat Sheet</a>
-    </section>
+    </div>
 
-    <section>
-        <h2>Hot Seat Game</h2>
-        <p>One student sits in the “hot seat.” Rapid-fire answer 5 questions (mix interview + fun ones like “What’s your favorite food?”).</p>
-    </section>
-
-    <section>
-        <h2>Homework</h2>
-        <p>Write and record yourself answering 5 interview questions. Practice pronunciation and timing.</p>
-    </section>
+    <script>
+        function shareArticle() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Job Interview English Practice - Pixelearn',
+                    text: 'Check out this interactive lesson on job interview practice!',
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                alert('Web Share API not supported in your browser');
+            }
+        }
+    </script>
 </body>
 </html>
