@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classroom Wheel of Names</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+  <style>
+    :root {
+      --primary: #4a00e0;        /* Main purple color */
+      --secondary: #8e2de2;      /* Secondary purple shade */
+      --accent: #f953c6;         /* Pink accent color for highlights */
+      --dark: #1a1a2e;           /* Dark background color */
+      --light: #ffffff;          /* Light text color */
+      --glass: rgba(255, 255, 255, 0.1);  /* Transparent glass effect */
+      --glass-dark: rgba(0, 0, 0, 0.3);  /* Semi-transparent dark background */
+      --border-radius: 15px;     /* Rounded corners for elements */
+      --pixel-size: 2px;         /* Size for pixel effects */
+    }
+    
+    body {
+      font-family: 'Press Start 2P', cursive;
+      text-align: center;
+      background-color: var(--dark);
+      background-image: 
+        /* Pixel Grid - creates a subtle grid pattern */ 
+        linear-gradient(
+          to right,
+          rgba(74, 0, 224, 0.1) 1px,
+          transparent 1px
+        ),
+        linear-gradient(to bottom, rgba(74, 0, 224, 0.1) 1px, transparent 1px);
+      background-size: 20px 20px, 20px 20px;
+      color: var(--light);
+      padding: 20px;
+      line-height: 1.6;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+    
+    .main-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .left-panel {
+      flex: 1;
+      max-width: 400px;
+    }
+    
+    .right-panel {
+      flex: 1;
+    }
+    
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    @media (max-width: 900px) {
+      .main-container {
+        flex-direction: column-reverse;
+        align-items: center;
+      }
+      
+      .left-panel, .right-panel {
+        width: 100%;
+      }
+    }
+    
+    canvas {
+      margin: 10px auto;
+      display: block;
+      border: 3px solid var(--accent);
+      border-radius: var(--border-radius);
+      box-shadow: 0 0 15px var(--accent);
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      width: 320px;
+      height: 320px;
+    }
+    
+    textarea {
+      width: 100%;
+      max-width: 380px;
+      height: 80px;
+      background: var(--glass);
+      border: 2px solid var(--accent);
+      border-radius: var(--border-radius);
+      color: var(--light);
+      font-family: 'Press Start 2P', cursive;
+      font-size: 11px;
+      padding: 8px;
+    }
+    
+    button, select {
+      margin: 6px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-family: 'Press Start 2P', cursive;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: var(--light);
+      border: 2px solid var(--accent);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(249, 83, 198, 0.3);
+    }
+    
+    button:hover, select:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px var(--accent);
+    }
+    
+    #winner {
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 20px;
+      color: var(--light);
+      background: linear-gradient(45deg, rgba(74, 0, 224, 0.7), rgba(249, 83, 198, 0.7));
+      padding: 15px 25px;
+      border-radius: var(--border-radius);
+      border: 2px solid var(--accent);
+      display: inline-block;
+      box-shadow: 0 0 15px var(--accent);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    #options {
+      margin-top: 15px;
+      background: var(--glass);
+      padding: 15px;
+      border-radius: var(--border-radius);
+      border: 2px solid var(--accent);
+      display: inline-block;
+    }
+    
+    #options label {
+      font-size: 12px;
+      margin: 5px 0;
+      display: block;
+      color: var(--light);
+    }
+    
+    #history {
+      margin-top: 15px;
+      font-size: 12px;
+      color: var(--light);
+      background: var(--glass);
+      padding: 12px;
+      border-radius: var(--border-radius);
+      border: 2px solid var(--accent);
+      max-width: 100%;
+      height: 120px;
+      overflow-y: auto;
+      box-shadow: 0 0 15px rgba(249, 83, 198, 0.3);
+    }
+    
+    .history-item {
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(249, 83, 198, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-align: left;
+    }
+    
+    .history-item:last-child {
+      border-bottom: none;
+    }
+    
+    .history-icon {
+      margin-right: 10px;
+      font-size: 18px;
+    }
+    
+    .history-name {
+      flex: 1;
+    }
+    
+    .history-time {
+      opacity: 0.7;
+      font-size: 12px;
+    }
+    
+    .pixelated-text {
+      font-size: 22px;
+      color: var(--accent);
+      text-shadow: 2px 2px 0 var(--primary), 
+                 -1px -1px 0 var(--primary), 
+                 1px -1px 0 var(--primary), 
+                 -1px 1px 0 var(--primary), 
+                 1px 1px 0 var(--primary);
+      margin-bottom: 15px;
+      letter-spacing: 2px;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { text-shadow: 3px 3px 0 var(--primary); }
+      50% { text-shadow: 3px 3px 0 var(--primary), 0 0 10px var(--accent); }
+      100% { text-shadow: 3px 3px 0 var(--primary); }
+    }
+    
+    .pixel-icon {
+      font-size: 20px;
+      display: inline-block;
+      margin: 0 5px;
+      animation: bounce 1s infinite alternate;
+    }
+    
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-5px); }
+    }
+    
+    /* Wheel pointer styling */
+    #wheel-pointer {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-bottom: 24px solid var(--accent);
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      filter: drop-shadow(0 0 10px var(--accent));
+      z-index: 10;
+    }
+    
+    /* Pixelated effect for pointer */
+    #wheel-pointer::after {
+      content: '';
+      position: absolute;
+      top: 24px;
+      left: -15px;
+      width: 30px;
+      height: 30px;
+      background-image: 
+        linear-gradient(45deg, var(--accent) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--accent) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--accent) 75%),
+        linear-gradient(-45deg, transparent 75%, var(--accent) 75%);
+      background-size: 6px 6px;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      opacity: 0.5;
+    }
+    
+    /* Confetti container */
+    #confetti-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+      display: none;
+    }
+    
+    /* Wheel container for positioning */
+    .wheel-container {
+      position: relative;
+      width: 400px;
+      height: 400px;
+      margin: 20px auto;
+    }
+    
+    /* Particle effects */
+    .particle {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: var(--accent);
+      pointer-events: none;
+      opacity: 0;
+    }
+    
+    /* Segment hover effect */
+    .segment-hover {
+      cursor: pointer;
+      transition: filter 0.3s;
+    }
+    
+    .segment-hover:hover {
+      filter: brightness(1.2);
+    }
+    
+    /* Spinning animation */
+    @keyframes spinGlow {
+      0% { box-shadow: 0 0 10px var(--accent); filter: brightness(1); }
+      50% { box-shadow: 0 0 30px var(--accent), 0 0 50px var(--primary); filter: brightness(1.3); }
+      100% { box-shadow: 0 0 10px var(--accent); filter: brightness(1); }
+    }
+    
+    .spinning {
+      animation: spinGlow 1s infinite;
+    }
+    
+    /* Spin button animation */
+    .spin-button {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: var(--light);
+      border: 2px solid var(--accent);
+      border-radius: var(--border-radius);
+      padding: 10px 20px;
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(249, 83, 198, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .spin-button:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 0 20px var(--accent);
+      animation: buttonPulse 1.5s infinite;
+    }
+    
+    .spin-button:active {
+      transform: translateY(2px);
+      box-shadow: 0 0 10px var(--accent);
+    }
+    
+    .spin-button::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      transform: rotate(45deg);
+      animation: shineEffect 3s infinite;
+    }
+    
+    @keyframes shineEffect {
+      0% { left: -50%; top: -50%; }
+      100% { left: 150%; top: 150%; }
+    }
+    
+    @keyframes buttonPulse {
+      0% { box-shadow: 0 0 10px var(--accent); }
+      50% { box-shadow: 0 0 20px var(--accent), 0 0 30px var(--primary); }
+      100% { box-shadow: 0 0 10px var(--accent); }
+    }
+  </style>
+    <link rel="stylesheet" href="../styles/loading-screen.css">
+
+
+    <script src="../scripts/loading-handler.js" defer></script>
+</head>
+<body>
+    <!-- Loading screen will be inserted here by loading-handler.js -->
+
+
+    
+    </div>
+  <h1 class="pixelated-text">Classroom Wheel of Names</h1>
+  
+  <div class="main-container">
+    <div class="left-panel">
+      <textarea id="nameInput" placeholder="Enter names separated by commas..."></textarea><br>
+      <div class="button-row">
+        <button onclick="generateWheel()">Generate Wheel</button>
+        <button class="spin-button" onclick="spinWheel()">Spin</button>
+        <button onclick="saveList()">Save List</button>
+        <button onclick="loadList()">Load List</button>
+      </div>
+      <div id="options">
+        <label><input type="checkbox" id="removeWinner"> Remove winner after selection</label><br>
+        <label><input type="checkbox" id="noRepeatWinner"> Prevent repeating winners</label><br>
+        <label><input type="checkbox" id="soundEnabled" checked> Enable sound effects</label><br>
+        <label for="speedControl">Spin Speed:</label>
+        <select id="speedControl">
+          <option value="slow">Slow</option>
+          <option value="medium" selected>Medium</option>
+          <option value="fast">Fast</option>
+        </select>
+      </div>
+      <div id="history">
+        <h3 style="margin-top: 0; margin-bottom: 10px; text-align: left;">Results History</h3>
+        <div id="history-list"></div>
+      </div>
+    </div>
+    
+    <div class="right-panel">
+      <div class="wheel-container">
+        <canvas id="wheelCanvas" width="320" height="320" class="pixelated"></canvas>
+        <div id="wheel-pointer"></div>
+      </div>
+      <div id="winner"></div>
+    </div>
+  </div>
+  
+  <div id="confetti-container"></div>
+
+  <script>
+    let names = [];
+    let nameHistory = [];
+    let startAngle = 0;
+    let arc = 0;
+    let spinTimeout = null;
+    let spinAngleStart = 0;
+    let spinTime = 0;
+    let spinTimeTotal = 0;
+    let ctx;
+    let winnerIndex = -1;
+    let particles = [];
+    let confetti = [];
+    let segmentHovered = -1;
+
+    document.addEventListener("DOMContentLoaded", function () {
+      ctx = document.getElementById("wheelCanvas").getContext("2d");
+      ctx.font = '14px "Press Start 2P"';  // Set pixelated retro font
+      
+      // Create audio elements
+      createAudioElements();
+      
+      // Add mouse move event for hover effects
+      document.getElementById("wheelCanvas").addEventListener("mousemove", handleMouseHover);
+      
+      // Add tilt effect on mouse move
+      document.querySelector(".wheel-container").addEventListener("mousemove", handleWheelTilt);
+      document.querySelector(".wheel-container").addEventListener("mouseleave", resetWheelTilt);
+      
+      // Add vibration support for mobile
+      if ("vibrate" in navigator) {
+        document.querySelector(".spin-button").addEventListener("click", function() {
+          navigator.vibrate(50);
+        });
+      }
+      
+      // Add swipe functionality to spin the wheel
+      setupSwipeToSpin();
+    });
+    
+    // Variables for swipe detection
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    
+    function setupSwipeToSpin() {
+      const wheelCanvas = document.getElementById("wheelCanvas");
+      
+      // Touch events for mobile
+      wheelCanvas.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+      }, false);
+      
+      wheelCanvas.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+        handleSwipe();
+      }, false);
+      
+      // Mouse events for desktop (simulating swipe with drag)
+      let isDragging = false;
+      
+      wheelCanvas.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        touchStartX = e.screenX;
+        touchStartY = e.screenY;
+      });
+      
+      wheelCanvas.addEventListener('mouseup', function(e) {
+        if (isDragging) {
+          touchEndX = e.screenX;
+          touchEndY = e.screenY;
+          handleSwipe();
+          isDragging = false;
+        }
+      });
+      
+      // Prevent dragging issues
+      wheelCanvas.addEventListener('mouseleave', function() {
+        isDragging = false;
+      });
+    }
+    
+    function handleSwipe() {
+      const swipeThreshold = 50; // Minimum distance for a swipe
+      const horizontalDistance = touchEndX - touchStartX;
+      const verticalDistance = touchEndY - touchStartY;
+      
+      // Calculate swipe speed based on distance
+      const swipeSpeed = Math.sqrt(horizontalDistance * horizontalDistance + verticalDistance * verticalDistance);
+      
+      // Check if swipe is significant enough
+      if (swipeSpeed > swipeThreshold) {
+        // Determine swipe direction for potential future enhancements
+        const isHorizontalSwipe = Math.abs(horizontalDistance) > Math.abs(verticalDistance);
+        const direction = isHorizontalSwipe 
+          ? (horizontalDistance > 0 ? 'right' : 'left')
+          : (verticalDistance > 0 ? 'down' : 'up');
+        
+        // Set spin speed based on swipe speed
+        const normalizedSpeed = Math.min(swipeSpeed / 300, 1); // Normalize between 0 and 1
+        setSwipeSpinSpeed(normalizedSpeed);
+        
+        // Spin the wheel
+        spinWheel();
+        
+        // Vibrate on swipe if supported
+        if ("vibrate" in navigator) {
+          navigator.vibrate(30);
+        }
+      }
+    }
+    
+    function setSwipeSpinSpeed(speedFactor) {
+      // Store the swipe speed factor to use in getSpinDuration
+      window.swipeSpeedFactor = speedFactor;
+    }
+    
+    function handleWheelTilt(event) {
+      const rect = this.getBoundingClientRect();
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      
+      // Calculate mouse position relative to center
+      const mouseX = event.clientX - rect.left - centerX;
+      const mouseY = event.clientY - rect.top - centerY;
+      
+      // Calculate tilt angle (limited to small values for subtle effect)
+      const tiltX = (mouseY / centerY) * 5; // Max 5 degrees tilt
+      const tiltY = -(mouseX / centerX) * 5; // Negative for correct direction
+      
+      // Apply transform to wheel container
+      this.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+    }
+    
+    function resetWheelTilt() {
+      // Smoothly reset tilt when mouse leaves
+      this.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg)";
+    }
+    
+    function createAudioElements() {
+      // Create audio elements for sound effects
+      const spinSound = document.createElement("audio");
+      spinSound.id = "spinSound";
+      spinSound.src = "https://assets.mixkit.co/active_storage/sfx/212/212-preview.mp3"; // Replace with actual path
+      spinSound.preload = "auto";
+      
+      const winSound = document.createElement("audio");
+      winSound.id = "winSound";
+      winSound.src = "https://assets.mixkit.co/active_storage/sfx/270/270-preview.mp3"; // Replace with actual path
+      winSound.preload = "auto";
+      
+      const clickSound = document.createElement("audio");
+      clickSound.id = "clickSound";
+      clickSound.src = "https://assets.mixkit.co/active_storage/sfx/270/270-preview.mp3"; // Replace with actual path
+      clickSound.preload = "auto";
+      
+      document.body.appendChild(spinSound);
+      document.body.appendChild(winSound);
+      document.body.appendChild(clickSound);
+    }
+    
+    function playSound(id) {
+      if (document.getElementById("soundEnabled").checked) {
+        const sound = document.getElementById(id);
+        if (sound) {
+          sound.currentTime = 0;
+          sound.play();
+        }
+      }
+    }
+    
+    function generateWheel() {
+      if (!ctx) return;
+      const input = document.getElementById("nameInput").value;
+      names = input.split(",").map(n => n.trim()).filter(n => n);
+      
+      if (names.length === 0) {
+        alert("Please enter at least one name!");
+        return;
+      }
+      
+      arc = Math.PI * 2 / names.length;
+      winnerIndex = -1;
+      drawWheel();
+      document.getElementById("winner").textContent = "";
+      document.getElementById("history-list").innerHTML = "";
+      nameHistory = [];
+      
+      // Play click sound
+      playSound("clickSound");
+    }
+
+    function drawWheel() {
+      const outsideRadius = 120;
+      const textRadius = 95;
+      const centerX = 160;
+      const centerY = 160;
+      
+      // Clear the canvas
+      ctx.clearRect(0, 0, 400, 400);
+      
+      // Draw outer glow effect
+      const gradient = ctx.createRadialGradient(centerX, centerY, outsideRadius - 10, centerX, centerY, outsideRadius + 20);
+      gradient.addColorStop(0, 'rgba(249, 83, 198, 0.7)');
+      gradient.addColorStop(1, 'rgba(249, 83, 198, 0)');
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, outsideRadius + 20, 0, Math.PI * 2, false);
+      ctx.fill();
+      
+      // Draw 3D outer ring
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, outsideRadius + 10, 0, Math.PI * 2, false);
+      const ringGradient = ctx.createLinearGradient(
+        centerX - outsideRadius - 10, 
+        centerY - outsideRadius - 10,
+        centerX + outsideRadius + 10,
+        centerY + outsideRadius + 10
+      );
+      ringGradient.addColorStop(0, '#4a00e0');
+      ringGradient.addColorStop(0.5, '#8e2de2');
+      ringGradient.addColorStop(1, '#4a00e0');
+      ctx.strokeStyle = ringGradient;
+      ctx.lineWidth = 8;
+      ctx.stroke();
+      
+      // Draw wheel segments
+      for (let i = 0; i < names.length; i++) {
+        const angle = startAngle + i * arc;
+        
+        // Use project color scheme with more depth
+        const colorIndex = i % 5;
+        let segmentColor, segmentHighlight, segmentShadow;
+        
+        switch(colorIndex) {
+          case 0:
+            segmentColor = '#4a00e0'; // primary
+            segmentHighlight = '#5b11f1';
+            segmentShadow = '#3900b3';
+            break;
+          case 1:
+            segmentColor = '#8e2de2'; // secondary
+            segmentHighlight = '#9f3ef3';
+            segmentShadow = '#7d1cd1';
+            break;
+          case 2:
+            segmentColor = '#f953c6'; // accent
+            segmentHighlight = '#ff64d7';
+            segmentShadow = '#e842b5';
+            break;
+          case 3:
+            segmentColor = '#7a1ab5'; // darker purple
+            segmentHighlight = '#8b2bc6';
+            segmentShadow = '#6909a4';
+            break;
+          case 4:
+            segmentColor = '#b429cc'; // medium purple
+            segmentHighlight = '#c53add';
+            segmentShadow = '#a318bb';
+            break;
+        }
+        
+        // Create 3D segment effect with gradient
+        const segmentGradient = ctx.createRadialGradient(
+          centerX, centerY, 0,
+          centerX, centerY, outsideRadius
+        );
+        segmentGradient.addColorStop(0, segmentHighlight);
+        segmentGradient.addColorStop(0.7, segmentColor);
+        segmentGradient.addColorStop(1, segmentShadow);
+        
+        // Draw segment
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, outsideRadius, angle, angle + arc, false);
+        ctx.lineTo(centerX, centerY);
+        ctx.fillStyle = segmentGradient;
+        
+        // Apply hover effect if this segment is hovered
+        if (i === segmentHovered) {
+          ctx.globalAlpha = 1.2; // Brighten the segment
+          // Add glow effect on hover
+          ctx.shadowColor = segmentHighlight;
+          ctx.shadowBlur = 15;
+        }
+        
+        ctx.fill();
+        ctx.globalAlpha = 1.0; // Reset alpha
+        ctx.shadowBlur = 0; // Reset shadow
+        
+        // Add segment border with 3D effect
+        ctx.strokeStyle = segmentHighlight;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, outsideRadius, angle, angle + arc, false);
+        ctx.lineTo(centerX, centerY);
+        ctx.stroke();
+        
+        // Add inner segment border for depth
+        ctx.strokeStyle = segmentShadow;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, outsideRadius - 5, angle, angle + arc, false);
+        ctx.lineTo(centerX, centerY);
+        ctx.stroke();
+        
+        // Highlight winner with special border and glow
+        if (i === winnerIndex) {
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.moveTo(centerX, centerY);
+          ctx.arc(centerX, centerY, outsideRadius, angle, angle + arc, false);
+          ctx.lineTo(centerX, centerY);
+          ctx.stroke();
+          
+          // Add glow effect for winner
+          ctx.shadowColor = '#f953c6';
+          ctx.shadowBlur = 20;
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+          
+          // Add pulsing highlight
+          ctx.globalAlpha = 0.3 + Math.sin(Date.now() / 200) * 0.2;
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.moveTo(centerX, centerY);
+          ctx.arc(centerX, centerY, outsideRadius - 10, angle, angle + arc, false);
+          ctx.lineTo(centerX, centerY);
+          ctx.fill();
+          ctx.globalAlpha = 1.0;
+        }
+        
+        // Draw text
+        ctx.save();
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+        ctx.shadowBlur = 3;
+        ctx.font = '11px "Press Start 2P"';
+        
+        // Position text along the arc for better readability
+        const textAngle = angle + arc / 2;
+        ctx.translate(centerX + Math.cos(textAngle) * textRadius,
+                      centerY + Math.sin(textAngle) * textRadius);
+        ctx.rotate(textAngle + Math.PI / 2);
+        
+        // Shorten text if too long
+        let displayName = names[i];
+        if (ctx.measureText(displayName).width > 80) {
+          displayName = displayName.substring(0, 8) + '...';
+        }
+        
+        ctx.fillText(displayName, -ctx.measureText(displayName).width / 2, 0);
+        ctx.restore();
+      }
+      
+      // Draw center hub with 3D effect
+      const hubGradient = ctx.createRadialGradient(
+        centerX - 5, centerY - 5, 0,
+        centerX, centerY, 20
+      );
+      hubGradient.addColorStop(0, '#ff64d7');
+      hubGradient.addColorStop(0.7, '#f953c6');
+      hubGradient.addColorStop(1, '#e842b5');
+      
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 20, 0, Math.PI * 2, false);
+      ctx.fillStyle = hubGradient;
+      ctx.fill();
+      
+      // Add highlight to hub for 3D effect
+      ctx.beginPath();
+      ctx.arc(centerX - 5, centerY - 5, 8, 0, Math.PI * 2, false);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.fill();
+      
+      // Add outer ring to hub
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 20, 0, Math.PI * 2, false);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      // Draw pixelated pattern on hub
+      ctx.save();
+      ctx.clip();
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 20, 0, Math.PI * 2, false);
+      
+      // Draw pixel pattern
+      for (let x = centerX - 20; x < centerX + 20; x += 4) {
+        for (let y = centerY - 20; y < centerY + 20; y += 4) {
+          if (Math.random() > 0.7) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.fillRect(x, y, 3, 3);
+          }
+        }
+      }
+      ctx.restore();
+    }
+    
+    function handleMouseHover(event) {
+      if (names.length === 0) return;
+      
+      const rect = document.getElementById("wheelCanvas").getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+      const mouseY = event.clientY - rect.top;
+      
+      // Calculate distance from center
+      const centerX = 200;
+      const centerY = 200;
+      const dx = mouseX - centerX;
+      const dy = mouseY - centerY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      // Only process if mouse is within wheel radius
+      if (distance > 20 && distance < 150) {
+        // Calculate angle
+        let angle = Math.atan2(dy, dx);
+        if (angle < 0) angle += Math.PI * 2;
+        
+        // Adjust for wheel rotation
+        angle = (Math.PI * 2 - (angle - startAngle)) % (Math.PI * 2);
+        
+        // Determine segment
+        const hoveredIndex = Math.floor(angle / arc) % names.length;
+        
+        if (hoveredIndex !== segmentHovered) {
+          segmentHovered = hoveredIndex;
+          drawWheel();
+        }
+      } else if (segmentHovered !== -1) {
+        segmentHovered = -1;
+        drawWheel();
+      }
+    }
+    
+    function getSpinDuration() {
+      // If the wheel was spun by a swipe, use the swipe speed to determine duration
+      if (window.swipeSpeedFactor !== undefined) {
+        // Faster swipe = shorter spin duration
+        const baseDuration = 12000; // Base duration in milliseconds
+        const minDuration = 4000;  // Minimum duration even with fastest swipe
+        
+        // Calculate duration based on swipe speed (faster swipe = shorter duration)
+        const duration = baseDuration - (window.swipeSpeedFactor * (baseDuration - minDuration));
+        
+        // Reset swipe speed factor for next spin
+        window.swipeSpeedFactor = undefined;
+        
+        // Add some randomness
+        return duration + (Math.random() * 2000 - 1000);
+      }
+      
+      // Otherwise use the speed control value
+      const speed = document.getElementById("speedControl").value;
+      if (speed === "slow") return Math.random() * 5000 + 10000;
+      if (speed === "fast") return Math.random() * 2000 + 4000;
+      return Math.random() * 4000 + 8000; // medium
+    }
+
+    function spinWheel() {
+      if (!ctx || names.length === 0) {
+        alert("Please generate the wheel first!");
+        return;
+      }
+      if (spinTimeout !== null) {
+        clearTimeout(spinTimeout);  // Clear any existing spin
+      }
+      
+      // Add spinning class to canvas for glow animation
+      document.getElementById("wheelCanvas").classList.add("spinning");
+      
+      spinAngleStart = Math.random() * 10 + 10;
+      spinTime = 0;
+      spinTimeTotal = getSpinDuration();
+      
+      // Play spin sound
+      playSound("spinSound");
+      
+      // Create particles during spin
+      createParticles();
+      
+      rotateWheel();
+    }
+    
+    function createParticles() {
+      // Clear existing particles
+      particles = [];
+      
+      // Create new particles
+      const particleCount = 20;
+      const canvas = document.getElementById("wheelCanvas");
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement("div");
+        particle.className = "particle";
+        particle.style.left = `${centerX + Math.random() * 100 - 50}px`;
+        particle.style.top = `${centerY + Math.random() * 100 - 50}px`;
+        particle.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
+        document.querySelector(".wheel-container").appendChild(particle);
+        
+        // Animate the particle
+        setTimeout(() => {
+          particle.style.opacity = "1";
+          particle.style.transform = `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px) scale(${Math.random() * 2})`;
+          particle.style.transition = `all ${Math.random() * 2 + 1}s ease-out`;
+        }, Math.random() * 100);
+        
+        // Remove the particle after animation
+        setTimeout(() => {
+          particle.remove();
+        }, spinTimeTotal);
+        
+        particles.push(particle);
+      }
+    }
+    
+    function rotateWheel() {
+      spinTime += 30;
+      if (spinTime >= spinTimeTotal) {
+        stopRotateWheel();
+        return;
+      }
+      const spinAngle = spinAngleStart - easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
+      startAngle += (spinAngle * Math.PI / 180);
+      drawWheel();
+      spinTimeout = setTimeout(rotateWheel, 30);
+    }
+
+    function stopRotateWheel() {
+      // For a pointer at the top, we need to adjust the angle calculation
+      // The segment at the top is the winner
+      const degrees = startAngle * 180 / Math.PI;
+      const arcd = arc * 180 / Math.PI;
+      const index = Math.floor(degrees / arcd) % names.length;
+      const winnerName = names[index];
+
+      if (document.getElementById("noRepeatWinner").checked && nameHistory.includes(winnerName)) {
+        spinWheel();
+        return;
+      }
+
+      // Remove spinning class
+      document.getElementById("wheelCanvas").classList.remove("spinning");
+      
+      winnerIndex = index;
+      drawWheel();
+      
+      // Play win sound
+      playSound("winSound");
+      
+      // Create confetti explosion
+      createConfetti();
+
+      document.getElementById("winner").innerHTML = `<span class="pixel-icon">🎮</span> Winner: ${winnerName} <span class="pixel-icon">🎮</span>`;
+      
+      // Update history with timestamp
+      const now = new Date();
+      const timestamp = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      nameHistory.push({name: winnerName, time: timestamp});
+      updateHistoryPanel();
+
+      if (document.getElementById("removeWinner").checked) {
+        names.splice(index, 1);
+        winnerIndex = -1;
+        if (names.length > 0) {
+          arc = Math.PI * 2 / names.length;
+          drawWheel();
+        } else {
+          ctx.clearRect(0, 0, 400, 400);
+        }
+      }
+    }
+    
+    function createConfetti() {
+      const confettiContainer = document.getElementById("confetti-container");
+      confettiContainer.style.display = "block";
+      confettiContainer.innerHTML = "";
+      
+      const colors = ['#4a00e0', '#8e2de2', '#f953c6', '#ffffff', '#7a1ab5'];
+      const shapes = ['square', 'circle', 'triangle', 'star', 'diamond'];
+      
+      for (let i = 0; i < 150; i++) {
+        const confetti = document.createElement("div");
+        confetti.style.position = "absolute";
+        confetti.style.width = `${Math.random() * 12 + 5}px`;
+        confetti.style.height = `${Math.random() * 12 + 5}px`;
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.left = `${Math.random() * 100}%`;
+        confetti.style.top = `-20px`;
+        confetti.style.opacity = "1";
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+        confetti.style.boxShadow = "0 0 5px rgba(255, 255, 255, 0.3)";
+        
+        // Pixelated shape - choose between different shapes
+        const shapeType = shapes[Math.floor(Math.random() * shapes.length)];
+        if (shapeType === 'square') {
+          // Square (default)
+        } else if (shapeType === 'circle') {
+          // Circle
+          confetti.style.borderRadius = "50%";
+        } else if (shapeType === 'triangle') {
+          // Triangle
+          confetti.style.clipPath = "polygon(50% 0%, 0% 100%, 100% 100%)";
+        } else if (shapeType === 'star') {
+          // Star
+          confetti.style.clipPath = "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)";
+        } else if (shapeType === 'diamond') {
+          // Diamond
+          confetti.style.clipPath = "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)";
+        }
+        
+        confettiContainer.appendChild(confetti);
+        
+        // Animate the confetti with more realistic physics
+        const duration = Math.random() * 3 + 2;
+        const delay = Math.random() * 1;
+        const horizontalMovement = (Math.random() - 0.5) * 200; // Random left/right movement
+        
+        confetti.animate([
+          { transform: `translateY(0) translateX(0) rotate(0deg)`, opacity: 1 },
+          { transform: `translateY(${Math.random() * 300 + 300}px) translateX(${horizontalMovement}px) rotate(${Math.random() * 720 - 360}deg)`, opacity: 0.8, offset: 0.7 },
+          { transform: `translateY(${Math.random() * 500 + 500}px) translateX(${horizontalMovement * 1.5}px) rotate(${Math.random() * 720 - 360}deg)`, opacity: 0 }
+        ], {
+          duration: duration * 1000,
+          delay: delay * 1000,
+          easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+        });
+        
+        // Remove confetti after animation
+        setTimeout(() => {
+          confetti.remove();
+        }, (duration + delay) * 1000);
+      }
+      
+      // Hide container after all confetti are gone
+      setTimeout(() => {
+        confettiContainer.style.display = "none";
+      }, 6000);
+      
+      // Vibrate device if supported (for mobile)
+      if ("vibrate" in navigator) {
+        navigator.vibrate([100, 50, 100]);
+      }
+    }
+    
+    function updateHistoryPanel() {
+      const historyList = document.getElementById("history-list");
+      historyList.innerHTML = "";
+      
+      if (nameHistory.length === 0) {
+        historyList.innerHTML = "<div class='history-item'>No winners yet</div>";
+        return;
+      }
+      
+      // Display most recent winners first
+      const recentHistory = [...nameHistory].reverse();
+      
+      recentHistory.forEach((winner, index) => {
+        const historyItem = document.createElement("div");
+        historyItem.className = "history-item";
+        
+        // Add different icons based on position
+        let icon = "🎮";
+        if (index === 0) icon = "🏆"; // Most recent winner
+        else if (index === 1) icon = "🥈";
+        else if (index === 2) icon = "🥉";
+        
+        historyItem.innerHTML = `
+          <span class="history-icon">${icon}</span>
+          <span class="history-name">${winner.name}</span>
+          <span class="history-time">${winner.time}</span>
+        `;
+        
+        // Add special styling for most recent winner
+        if (index === 0) {
+          historyItem.style.color = "var(--accent)";
+          historyItem.style.fontWeight = "bold";
+        }
+        
+        historyList.appendChild(historyItem);
+      });
+    }
+    
+    function easeOut(t, b, c, d) {
+      return c * ((t = t / d - 1) * t * t + 1) + b;
+    }
+
+    function saveList() {
+      localStorage.setItem("wheelNames", document.getElementById("nameInput").value);
+      alert("Name list saved!");
+    }
+
+    function loadList() {
+      const saved = localStorage.getItem("wheelNames");
+      if (saved) {
+        document.getElementById("nameInput").value = saved;
+        generateWheel();
+      } else {
+        alert("No saved list found.");
+      }
+    }
+
+    // Make functions globally accessible
+    window.generateWheel = generateWheel;
+    window.spinWheel = spinWheel;
+    window.saveList = saveList;
+    window.loadList = loadList;
+  </script>
+</body>
+</html>

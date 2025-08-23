@@ -4,59 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coming Soon - Pixelearn</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Pixelearn offers interactive educational games, teaching resources, and articles with a fun pixel-art aesthetic.">
+    <meta name="keywords" content="educational games, teaching resources, learning platform, pixel art education, gamification, English learning">
+    <meta name="author" content="Zakaria Ghazali">
+    <meta property="og:title" content="Coming Soon - Pixelearn">
+    <meta property="og:description" content="This page is currently under construction. Please check back soon!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pixelearn.example.com/coming_soon.html">
+    <meta property="og:image" content="assets/4.jpg">
+    <meta name="theme-color" content="#4a00e0">
     <link rel="icon" href="assets/15.png">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles/portfolio.css">
+    <link rel="stylesheet" href="styles/top-nav.css">
+    <link rel="stylesheet" href="styles/enhancements.css">
+    <link rel="stylesheet" href="styles/coming-soon.css">
+    <link rel="stylesheet" href="styles/loading-screen.css">
     <script src="scripts/script.js" defer></script>
+    <script src="scripts/scroll.js" defer></script>
+    <script src="scripts/loading-handler.js" defer></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        
+        #background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0.3;
+        }
+    </style>
 </head>
 <body>
+    <div class="loading-screen">
+        <div class="loading-content">
+            <div class="heart-container">
+                <img src="assets/LoadingHeart.gif" alt="Loading..." class="heart-pulse">
+            </div>
+            <div class="loading-text-container">
+                <p class="loading-text">Loading Your Learning Experience</p>
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                </div>
+                <p class="loading-message">Preparing something amazing...</p>
+            </div>
+        </div>
+    </div>
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="top-nav-container">
+            <div class="nav-logo">
+                <a href="index.html" class="logo-link">
+                    <img src="assets/15.png" alt="Pixelearn Logo" class="logo-img">
+                    <span class="logo-text">Pixelearn</span>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#lessons" class="nav-link">Videos</a>
+                <a href="index.html#articles" class="nav-link">Articles</a>
+                <a href="index.html#games" class="nav-link">Toolkit</a>
+                <a href="index.html#about" class="nav-link">About</a>
+            </div>
+            <div class="nav-mobile-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content">
+            <a href="index.html" class="mobile-nav-link">Home</a>
+            <a href="index.html#lessons" class="mobile-nav-link">Videos</a>
+            <a href="index.html#articles" class="mobile-nav-link">Articles</a>
+            <a href="index.html#games" class="mobile-nav-link">Toolkit</a>
+            <a href="index.html#about" class="mobile-nav-link">About</a>
+        </div>
+    </div>
+
     <video id="background-video" autoplay muted loop>
         <source src="assets/9.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
+    
+    <!-- Loading screen will be inserted here by loading-handler.js -->
 
-    <div class="comming-soon">
-        <section id="contact" class="glass-card fade-in">
+    <div class="container py-4">
+        <div class="coming-soon glass-card fade-in">
             <h2>Coming Soon</h2>
-            <div class="contact-info">
+            <div class="coming-soon-content">
                 <p>This page is currently under construction. Please check back soon!</p>
+                <div class="construction-images">
+                    <img src="assets/6.png" alt="Construction" class="pixel-image">
+                    <img src="assets/7.png" alt="Construction" class="pixel-image">
+                    <img src="assets/8.png" alt="Construction" class="pixel-image">
+                </div>
+                <a href="index.html" class="btn btn-primary">Return to Home</a>
             </div>
-            <div class="construction-images" height="200" width="200">
-                <img src="assets/8.png" alt="Construction Image 3">
-                <img src="assets/8.png" alt="Construction Image 3">
-                <img src="assets/8.png" alt="Construction Image 3">
-                <img src="assets/8.png" alt="Construction Image 3">
-                <img src="assets/8.png" alt="Construction Image 3">
-                <img src="assets/7.png" alt="Construction Image 2">
-                <img src="assets/6.png" alt="Construction Image 1">
-                <img src="assets/7.png" alt="Construction Image 2">
-                <img src="assets/8.png" alt="Construction Image 3">
-                <img src="assets/8.png" alt="Construction Image 3">
-                <img src="assets/8.png" alt="Construction Image 3">
-                <img src="assets/8.png" alt="Construction Image 3">
-                <img src="assets/8.png" alt="Construction Image 3">
-            </div>
-        </section>
+        </div>
     </div>
 
-    <a href="index.html" id="scroll-to-top" class="scroll-to-top">
+    <a href="#" id="scroll-to-top" class="scroll-to-top">
         <img src="assets/uparrow.png" alt="Back to top" width="50" height="50">
     </a>
 
-    <div class="navbar">
-        <a href="index.html" class="logo">Pixelearn</a>
-        <button class="menu-toggle" aria-label="Toggle navigation menu">
-            <i class="fas fa-bars"></i>
-        </button>
-        <nav>
-            <a href="./index.html#games" class="btn ripple">Learning Games</a>
-            <a href="./index.html#lessons" class="btn ripple">Interactive Lessons</a>
-            <a href="./index.html#articles" class="btn ripple">Articles</a>
-            <a href="./index.html#contact" class="btn ripple">Contact</a>
-            <a href="./index.html#about" class="btn ripple">About Me</a>
-        </nav>
-    </div>
-   
+    <footer>
+        <p>&copy; 2024 Pixelearn. All rights reserved.</p>
+    </footer>
+
+    <script src="scripts/script.js" defer></script>
+    <script src="scripts/scroll.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

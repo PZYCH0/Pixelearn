@@ -44,6 +44,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Punkdoro - Cyberpunk Pomodoro</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
 <style>
     body {
         background: linear-gradient(180deg, rgba(10,10,35,0.85) 0%, rgba(26,26,58,0.85) 100%), url('../assets/fzUl.gif') center/cover fixed no-repeat;
@@ -526,8 +527,51 @@
         display: block;
     }
 </style>
+    <link rel="stylesheet" href="../styles/loading-screen.css">
+
+
+    <script src="../scripts/loading-handler.js" defer></script>
 </head>
 <body>
+    <!-- Loading screen will be inserted here by loading-handler.js -->
+
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="top-nav-container">
+            <div class="nav-logo">
+                <a href="index.html" class="logo-link">
+                    <img src="assets/15.png" alt="Pixelearn Logo" class="logo-img">
+                    <span class="logo-text">Pixelearn</span>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#lessons" class="nav-link">Videos</a>
+                <a href="index.html#articles" class="nav-link">Articles</a>
+                <a href="index.html#games" class="nav-link">Toolkit</a>
+                <a href="index.html#about" class="nav-link">About</a>
+            </div>
+            <div class="nav-mobile-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content">
+            <a href="index.html" class="mobile-nav-link">Home</a>
+            <a href="index.html#lessons" class="mobile-nav-link">Videos</a>
+            <a href="index.html#articles" class="mobile-nav-link">Articles</a>
+            <a href="index.html#games" class="mobile-nav-link">Toolkit</a>
+            <a href="index.html#about" class="mobile-nav-link">About</a>
+        </div>
+    </div>
+    
+    </div>
+
+    
+    </div>
 <div class="scanlines"></div>
 <div class="container">
     <div class="neon-line top"></div>

@@ -2,6 +2,11 @@
 
 <html lang="en">
 <head>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/portfolio.css">
+    <link rel="stylesheet" href="../styles/top-nav.css">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Gamification in Learning - Pixelearn</title>
@@ -444,6 +449,8 @@
             margin: 2rem 0;
           }
         </style>
+    <link rel="stylesheet" href="../styles/loading-screen.css">
+
 <script defer="" src="../scripts/script.js"></script>
 <script defer="" src="../scripts/scroll.js"></script>
 <script>
@@ -479,24 +486,53 @@
                 });
             }
         </script>
+
+    <script src="../scripts/loading-handler.js" defer></script>
 </head>
 <body>
+    <!-- Loading screen will be inserted here by loading-handler.js -->
+
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="top-nav-container">
+            <div class="nav-logo">
+                <a href="../index.html" class="logo-link">
+                    <img src="../assets/15.png" alt="Pixelearn Logo" class="logo-img">
+                    <span class="logo-text">Pixelearn</span>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="../index.html#games" class="nav-link">Games</a>
+                <a href="../index.html#portfolio" class="nav-link">Portfolio</a>
+                <a href="../index.html#articles" class="nav-link">Articles</a>
+                <a href="../index.html#about" class="nav-link">About</a>
+                <a href="../index.html#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="nav-mobile-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content">
+            <a href="../index.html" class="mobile-nav-link">Home</a>
+            <a href="../index.html#games" class="mobile-nav-link">Games</a>
+            <a href="../index.html#portfolio" class="mobile-nav-link">Portfolio</a>
+            <a href="../index.html#articles" class="mobile-nav-link">Articles</a>
+            <a href="../index.html#about" class="mobile-nav-link">About</a>
+            <a href="../index.html#contact" class="mobile-nav-link">Contact</a>
+        </div>
+    </div>
 <video autoplay="" id="background-video" loop="" muted="">
 <source src="../assets/9.mp4" type="video/mp4"/>
         Your browser does not support the video tag.
     </video>
 <div class="pixel-cloud"></div>
 <div class="container">
-<div class="navbar">
-<a class="logo" href="../index.html">Pixelearn</a>
-<nav>
-<a class="btn ripple" href="../index.html#games">Learning Games</a>
-<a class="btn ripple" href="../index.html#lessons">Interactive Lessons</a>
-<a class="btn ripple" href="../index.html#articles">Articles</a>
-<a class="btn ripple" href="../index.html#contact">Contact</a>
-<a class="btn ripple" href="../index.html#about">About Me</a>
-</nav>
-</div>
+
 <div class="reading-progress"></div>
 <div class="article-container glass-card slide-up"><h1>🎮 Leveling Up Learning: Classroom Management Strategies and the Power of Consequences in a Gamified Classroom</h1>
 
@@ -609,6 +645,9 @@
 <footer>
 <p>© 2024 English Teacher Portfolio. All rights reserved.</p>
 </footer>
+    <script src="../scripts/script.js" defer></script>
+    <script src="../scripts/scroll.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>  
 

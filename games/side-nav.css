@@ -1,0 +1,158 @@
+/* Side Navigation Styles */
+.side-nav-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.side-nav-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+    border-color: #00d4ff;
+}
+
+.side-nav-button button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pixel-nav-icon {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+}
+
+.side-nav-panel {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 280px;
+    height: 100vh;
+    background: rgba(10, 10, 15, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 999;
+    padding: 20px;
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease-in-out;
+    border-right: 2px solid #00d4ff;
+    overflow-y: auto;
+}
+
+.side-nav-panel.open {
+    transform: translateX(300px);
+}
+
+.close-side-nav {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.close-side-nav:hover {
+    color: #00d4ff;
+}
+
+.side-nav-content {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.side-nav-link {
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 2px solid transparent;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.side-nav-link:hover,
+.side-nav-link:focus {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: #00d4ff;
+    transform: translateX(5px);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+}
+
+/* Adjust body when side nav is open */
+body.side-nav-open {
+    overflow: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .side-nav-button {
+        top: 10px;
+        left: 10px;
+        width: 60px;
+        height: 60px;
+    }
+    
+    .pixel-nav-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .side-nav-panel {
+        width: 260px;
+        left: -260px;
+    }
+    
+    .side-nav-panel.open {
+        transform: translateX(260px);
+    }
+    
+    .side-nav-link {
+        font-size: 0.7rem;
+        padding: 10px 12px;
+    }
+}
+
+/* Game-specific adjustments */
+body {
+    transition: padding-left 0.3s ease;
+    padding-left: 80px; /* Space for the side nav button */
+}
+
+/* When side nav is open, shift content to the right */
+body.side-nav-open {
+    padding-left: 300px;
+}
+
+/* Ensure game content is properly positioned */
+.container {
+    position: relative;
+    z-index: 1;
+}

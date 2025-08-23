@@ -45,6 +45,8 @@
     <title>Classroom Activity Timer</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    
     <style>
         /* Pulse effect for low time */
         .pulse-container {
@@ -732,9 +734,70 @@
             font-weight: inherit;
             width: 100%;
         }
+        
+        body {
+            padding-left: 80px; /* Space for the side nav button */
+            transition: padding-left 0.3s ease;
+        }
+
+        /* Adjust when side nav is open */
+        body.side-nav-open {
+            padding-left: 280px;
+        }
+
+        /* Make sure the game content is properly positioned */
+        .container {
+            position: relative;
+            z-index: 1;
+        }
     </style>
+    <link rel="stylesheet" href="../styles/loading-screen.css">
+
+
+    <script src="../scripts/loading-handler.js" defer></script>
 </head>
 <body>
+    <!-- Loading screen will be inserted here by loading-handler.js -->
+
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="top-nav-container">
+            <div class="nav-logo">
+                <a href="index.html" class="logo-link">
+                    <img src="assets/15.png" alt="Pixelearn Logo" class="logo-img">
+                    <span class="logo-text">Pixelearn</span>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#lessons" class="nav-link">Videos</a>
+                <a href="index.html#articles" class="nav-link">Articles</a>
+                <a href="index.html#games" class="nav-link">Toolkit</a>
+                <a href="index.html#about" class="nav-link">About</a>
+            </div>
+            <div class="nav-mobile-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content">
+            <a href="index.html" class="mobile-nav-link">Home</a>
+            <a href="index.html#lessons" class="mobile-nav-link">Videos</a>
+            <a href="index.html#articles" class="mobile-nav-link">Articles</a>
+            <a href="index.html#games" class="mobile-nav-link">Toolkit</a>
+            <a href="index.html#about" class="mobile-nav-link">About</a>
+        </div>
+    </div>
+    
+    </div>
+    
+    </div>
+    
+    </div>
+    
     <!-- Audio elements for sound effects -->
     <audio id="warningSound" preload="auto">
         <source src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" type="audio/mp3">
@@ -1359,6 +1422,42 @@
                 }
             }
         }
+
+        // Initialize side navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButton = document.getElementById('toggleSideNav');
+            const sideNav = document.getElementById('sideNavPanel');
+            const closeButton = document.querySelector('.close-side-nav');
+            const body = document.body;
+
+            toggleButton.addEventListener('click', function() {
+                body.classList.toggle('side-nav-open');
+                sideNav.classList.toggle('open');
+            });
+
+            closeButton.addEventListener('click', function() {
+                body.classList.remove('side-nav-open');
+                sideNav.classList.remove('open');
+            });
+        });
+
+        // Initialize side navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButton = document.getElementById('toggleSideNav');
+            const sideNav = document.getElementById('sideNavPanel');
+            const closeButton = document.querySelector('.close-side-nav');
+            const body = document.body;
+
+            toggleButton.addEventListener('click', function() {
+                body.classList.toggle('side-nav-open');
+                sideNav.classList.toggle('open');
+            });
+
+            closeButton.addEventListener('click', function() {
+                body.classList.remove('side-nav-open');
+                sideNav.classList.remove('open');
+            });
+        });
 
         const timer = new ClassroomTimer();
 
