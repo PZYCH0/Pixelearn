@@ -3,13 +3,23 @@
  * This script handles the loading screen functionality across all pages
  */
 
+// Get the base URL
+function getBaseUrl() {
+    // Check if we're in a subdirectory
+    const pathParts = window.location.pathname.split('/');
+    const isInSubdir = pathParts.length > 2; // ['', 'Pixelearn', ...]
+    return isInSubdir ? '../' : '';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    const baseUrl = getBaseUrl();
+    
     // Create loading screen HTML
     const loadingScreenHTML = `
     <div class="loading-screen">
         <div class="loading-content">
             <div class="heart-container">
-                <img src="assets/LoadingHeart.gif" alt="Loading..." class="heart-pulse">
+                <img src="${baseUrl}assets/LoadingHeart.gif" alt="Loading..." class="heart-pulse">
             </div>
             <div class="loading-text-container">
                 <p class="loading-text">Loading Your Experience</p>
