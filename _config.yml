@@ -1,0 +1,21 @@
+# Site settings
+title: Pixelearn
+description: Interactive Learning Platform
+theme: jekyll-theme-cayman
+baseurl: "/Pixelearn" # the subpath of your site, e.g. /blog
+url: "https://pzych0.github.io" # the base hostname & protocol for your site
+timezone: Africa/Casablanca
+
+# Build settings
+markdown: kramdown
+plugins:
+  - jekyll-feed
+
+# Exclude from processing.
+# The following items will not be processed, by default. Create a custom list
+# to override the default setting.
+# exclude:
+#   - Gemfile
+#   - Gemfile.lock
+#   - node_modules
+#   - vendor
