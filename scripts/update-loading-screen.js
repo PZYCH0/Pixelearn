@@ -10,10 +10,10 @@ const directories = [
 ];
 
 // Loading screen CSS link
-const loadingCSS = '    <link rel="stylesheet" href="../styles/loading-screen.css">\n';
+const loadingCSS = '    <link rel="stylesheet" href="styles/loading-screen.css">\n';
 
 // Loading handler script
-const loadingScript = '    <script src="../scripts/loading-handler.js" defer></script>\n';
+const loadingScript = '    <script src="scripts/loading-handler.js" defer></script>\n';
 
 // Function to process a single HTML file
 function processFile(filePath) {
