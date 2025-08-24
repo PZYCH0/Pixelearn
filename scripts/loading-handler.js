@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="loading-screen">
         <div class="loading-content">
             <div class="heart-container">
-                <img src="../assets/LoadingHeart.gif" alt="Loading..." class="heart-pulse">
+                <img src="assets/LoadingHeart.gif" alt="Loading..." class="heart-pulse">
             </div>
             <div class="loading-text-container">
                 <p class="loading-text">Loading Your Experience</p>
