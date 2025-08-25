@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -972,7 +972,7 @@
       // Create confetti explosion
       createConfetti();
 
-      document.getElementById("winner").innerHTML = `<span class="pixel-icon">🎮</span> Winner: ${winnerName} <span class="pixel-icon">🎮</span>`;
+      document.getElementById("winner").innerHTML = `<span class="pixel-icon">ðŸŽ®</span> Winner: ${winnerName} <span class="pixel-icon">ðŸŽ®</span>`;
       
       // Update history with timestamp
       const now = new Date();
@@ -1081,10 +1081,10 @@
         historyItem.className = "history-item";
         
         // Add different icons based on position
-        let icon = "🎮";
-        if (index === 0) icon = "🏆"; // Most recent winner
-        else if (index === 1) icon = "🥈";
-        else if (index === 2) icon = "🥉";
+        let icon = "ðŸŽ®";
+        if (index === 0) icon = "ðŸ†"; // Most recent winner
+        else if (index === 1) icon = "ðŸ¥ˆ";
+        else if (index === 2) icon = "ðŸ¥‰";
         
         historyItem.innerHTML = `
           <span class="history-icon">${icon}</span>

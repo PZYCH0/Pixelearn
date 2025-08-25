@@ -1,4 +1,4 @@
-<script type="text/javascript">
+﻿<script type="text/javascript">
         var gk_isXlsx = false;
         var gk_xlsxFileLookup = {};
         var gk_fileData = {};
@@ -407,7 +407,7 @@
         }
 
         .task-checkbox.checked::after {
-            content: '✓';
+            content: 'âœ“';
             position: absolute;
             top: -2px;
             left: 3px;
@@ -707,10 +707,10 @@
             <div class="input-row">
                 <input type="text" class="task-input" id="taskInput" placeholder="Enter new mission..." maxlength="200">
                 <select class="category-select" id="categorySelect">
-                    <option value="study">📚 Study</option>
-                    <option value="create">🎨 Create</option>
-                    <option value="rest">🧘 Rest</option>
-                    <option value="work">💼 Work</option>
+                    <option value="study">ðŸ“š Study</option>
+                    <option value="create">ðŸŽ¨ Create</option>
+                    <option value="rest">ðŸ§˜ Rest</option>
+                    <option value="work">ðŸ’¼ Work</option>
                 </select>
                 <button class="add-btn" onclick="addTask()">+ Add Mission</button>
             </div>
@@ -725,12 +725,12 @@
                 <button class="filter-btn" onclick="filterTasks('work', this)">Work</button>
                 <button class="filter-btn" onclick="filterTasks('completed', this)">Completed</button>
             </div>
-            <button class="sound-toggle" onclick="toggleSound()" id="soundToggle">🔊 Sound ON</button>
+            <button class="sound-toggle" onclick="toggleSound()" id="soundToggle">ðŸ”Š Sound ON</button>
         </div>
 
         <div class="tasks-container" id="tasksContainer">
             <div class="empty-state">
-                <div class="icon">🎯</div>
+                <div class="icon">ðŸŽ¯</div>
                 <p>No missions available. Create your first task to start earning XP!</p>
             </div>
         </div>
@@ -1014,7 +1014,7 @@
             if (filteredTasks.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div class="icon">🎯</div>
+                        <div class="icon">ðŸŽ¯</div>
                         <p>${currentFilter === 'all' ? 'No missions available. Create your first task to start earning XP!' : `No ${currentFilter} missions found.`}</p>
                     </div>
                 `;
@@ -1051,12 +1051,12 @@
 
         function getCategoryIcon(category) {
             const icons = {
-                study: '📚',
-                create: '🎨',
-                rest: '🧘',
-                work: '💼'
+                study: 'ðŸ“š',
+                create: 'ðŸŽ¨',
+                rest: 'ðŸ§˜',
+                work: 'ðŸ’¼'
             };
-            return icons[category] || '📝';
+            return icons[category] || 'ðŸ“';
         }
 
         function updateStats() {
@@ -1086,7 +1086,7 @@
             stats.soundEnabled = !stats.soundEnabled;
             const toggle = document.getElementById('soundToggle');
             if (toggle) {
-                toggle.textContent = stats.soundEnabled ? '🔊 Sound ON' : '🔇 Sound OFF';
+                toggle.textContent = stats.soundEnabled ? 'ðŸ”Š Sound ON' : 'ðŸ”‡ Sound OFF';
             }
             saveStats();
             

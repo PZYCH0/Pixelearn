@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -526,7 +526,7 @@
     <div class="scanlines"></div>
     <div class="container">
         <div class="header">
-            <h1>🕐 Classroom Timer</h1>
+            <h1>ðŸ• Classroom Timer</h1>
             <div class="current-activity-display" id="currentActivityDisplay">
                 <div class="current-activity-name" id="currentActivityName">
                     No activity running
@@ -562,7 +562,7 @@
                 </div>
 
                 <div class="activities-schedule">
-                    <div class="schedule-title">📋 Today's Schedule</div>
+                    <div class="schedule-title">ðŸ“‹ Today's Schedule</div>
                     <div id="activitiesList">
                         <div class="no-activities">
                             <h3>No activities scheduled</h3>
@@ -597,11 +597,11 @@
                             <option value="reflection">Reflection</option>
                         </select>
                     </div>
-                    <button class="btn btn-primary" onclick="addActivity()">➕ Add Activity</button>
+                    <button class="btn btn-primary" onclick="addActivity()">âž• Add Activity</button>
                 </div>
 
                 <div class="quick-templates" style="background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
-                    <div style="font-weight: bold; margin-bottom: 10px; color: #333;">🚀 Quick Templates</div>
+                    <div style="font-weight: bold; margin-bottom: 10px; color: #333;">ðŸš€ Quick Templates</div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                         <button class="btn" style="padding: 8px; font-size: 12px; background: #e3f2fd; color: #1976d2;" onclick="addQuickActivity('Check-in', 2, 'check-in')">2min Check-in</button>
                         <button class="btn" style="padding: 8px; font-size: 12px; background: #f3e5f5; color: #7b1fa2;" onclick="addQuickActivity('Brain Break', 3, 'brain-break')">3min Brain Break</button>
@@ -612,16 +612,16 @@
 
                 <div class="control-buttons">
                     <button class="btn btn-primary" id="startStopBtn" onclick="toggleCurrentActivity()">
-                        ▶️ Start First Activity
+                        â–¶ï¸ Start First Activity
                     </button>
                     <button class="btn btn-warning" onclick="nextActivity()">
-                        ⏭️ Next Activity
+                        â­ï¸ Next Activity
                     </button>
                     <button class="btn btn-secondary" onclick="pauseActivity()">
-                        ⏸️ Pause
+                        â¸ï¸ Pause
                     </button>
                     <button class="btn btn-danger" onclick="resetSession()">
-                        🔄 Reset Session
+                        ðŸ”„ Reset Session
                     </button>
                 </div>
 
@@ -792,19 +792,19 @@
                 // Check for long work periods without breaks
                 for (let i = 0; i < workActivities.length; i++) {
                     if (workActivities[i].duration > 25 * 60 * 1000) { // More than 25 minutes
-                        alerts.push("🧠 Consider adding a brain break after long work sessions (25+ min) to boost focus and retention.");
+                        alerts.push("ðŸ§  Consider adding a brain break after long work sessions (25+ min) to boost focus and retention.");
                         break;
                     }
                 }
                 
                 // Check for missing check-ins
                 if (this.activities.length > 3 && checkIns.length === 0) {
-                    alerts.push("💙 Consider adding a 2-minute check-in to build relationships and create emotional safety.");
+                    alerts.push("ðŸ’™ Consider adding a 2-minute check-in to build relationships and create emotional safety.");
                 }
                 
                 // Check work-to-break ratio
                 if (workActivities.length > 2 && brainBreaks.length === 0) {
-                    alerts.push("⚡ Research shows 3-5 minute brain breaks every 20-25 minutes improve task efficiency.");
+                    alerts.push("âš¡ Research shows 3-5 minute brain breaks every 20-25 minutes improve task efficiency.");
                 }
                 
                 this.displayAffectiveAlerts(alerts);
@@ -820,7 +820,7 @@
                 
                 const alertHTML = `
                     <div class="affective-alerts">
-                        <div style="font-weight: bold; margin-bottom: 10px; color: #333;">💡 Affective Strategy Suggestions</div>
+                        <div style="font-weight: bold; margin-bottom: 10px; color: #333;">ðŸ’¡ Affective Strategy Suggestions</div>
                         ${alerts.map(alert => `<div class="alert-suggestion">${alert}</div>`).join('')}
                     </div>
                 `;
@@ -933,7 +933,7 @@
                 this.currentActivityIndex = -1;
                 this.updateDisplay();
                 
-                alert('🎉 Session completed! Great work everyone!');
+                alert('ðŸŽ‰ Session completed! Great work everyone!');
             }
 
             resetSession() {
@@ -1038,7 +1038,7 @@
                     }
 
                     const remaining = Math.max(0, activity.duration - totalElapsed);
-                    progressText.textContent = `${Math.round(progress)}% complete • ${this.formatTime(remaining)} remaining`;
+                    progressText.textContent = `${Math.round(progress)}% complete â€¢ ${this.formatTime(remaining)} remaining`;
                 } else {
                     progressBar.style.width = '0%';
                     progressBar.className = 'progress-bar';
@@ -1072,23 +1072,23 @@
                     
                     // Get activity type emoji
                     const typeEmojis = {
-                        'work': '📚',
-                        'brain-break': '🧠',
-                        'transition': '🔄',
-                        'check-in': '💙',
-                        'reflection': '🤔'
+                        'work': 'ðŸ“š',
+                        'brain-break': 'ðŸ§ ',
+                        'transition': 'ðŸ”„',
+                        'check-in': 'ðŸ’™',
+                        'reflection': 'ðŸ¤”'
                     };
                     
-                    const emoji = typeEmojis[activity.type] || '📚';
+                    const emoji = typeEmojis[activity.type] || 'ðŸ“š';
 
                     return `
                         <div class="activity-card ${statusClass} ${typeClass}">
                             <div class="index">${index + 1}</div>
                             <div class="name">${emoji} ${activity.name}</div>
-                            <div class="duration">${this.formatTime(activity.duration)} • ${this.getActivityTypeLabel(activity.type)}</div>
-                            <button class="btn btn-up" onclick="timer.moveActivityUp(${activity.id})" ${index === 0 ? 'disabled' : ''}>↑</button>
-                            <button class="btn btn-down" onclick="timer.moveActivityDown(${activity.id})" ${index === this.activities.length - 1 ? 'disabled' : ''}>↓</button>
-                            <button class="btn btn-delete" onclick="timer.deleteActivity(${activity.id})">🗑️</button>
+                            <div class="duration">${this.formatTime(activity.duration)} â€¢ ${this.getActivityTypeLabel(activity.type)}</div>
+                            <button class="btn btn-up" onclick="timer.moveActivityUp(${activity.id})" ${index === 0 ? 'disabled' : ''}>â†‘</button>
+                            <button class="btn btn-down" onclick="timer.moveActivityDown(${activity.id})" ${index === this.activities.length - 1 ? 'disabled' : ''}>â†“</button>
+                            <button class="btn btn-delete" onclick="timer.deleteActivity(${activity.id})">ðŸ—‘ï¸</button>
                         </div>
                     `;
                 }).join('');
@@ -1120,8 +1120,8 @@
                     if (currentActivity.type === 'brain-break' && this.isRunning && !this.isPaused) {
                         const brainBreakHTML = `
                             <div class="brain-break-timer active">
-                                <div style="font-size: 1.5em; margin-bottom: 10px;">🧠 Brain Break Time!</div>
-                                <div style="font-size: 1.1em;">Take deep breaths • Stretch • Move around</div>
+                                <div style="font-size: 1.5em; margin-bottom: 10px;">ðŸ§  Brain Break Time!</div>
+                                <div style="font-size: 1.1em;">Take deep breaths â€¢ Stretch â€¢ Move around</div>
                                 <div style="font-size: 0.9em; margin-top: 8px; opacity: 0.9;">Recharging your focus...</div>
                             </div>
                         `;
@@ -1134,19 +1134,19 @@
                 const startStopBtn = document.getElementById('startStopBtn');
                 
                 if (!this.sessionStartTime) {
-                    startStopBtn.textContent = '▶️ Start Session';
+                    startStopBtn.textContent = 'â–¶ï¸ Start Session';
                     startStopBtn.className = 'btn btn-primary';
                     startStopBtn.disabled = false;
                 } else if (this.isPaused) {
-                    startStopBtn.textContent = '▶️ Resume';
+                    startStopBtn.textContent = 'â–¶ï¸ Resume';
                     startStopBtn.className = 'btn btn-primary';
                     startStopBtn.disabled = false;
                 } else if (this.isRunning) {
-                    startStopBtn.textContent = '⏸️ Pause';
+                    startStopBtn.textContent = 'â¸ï¸ Pause';
                     startStopBtn.className = 'btn btn-warning';
                     startStopBtn.disabled = false;
                 } else {
-                    startStopBtn.textContent = '✅ Session Complete';
+                    startStopBtn.textContent = 'âœ… Session Complete';
                     startStopBtn.className = 'btn btn-secondary';
                     startStopBtn.disabled = true;
                 }
