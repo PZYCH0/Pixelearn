@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson Plan Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-docx-js/0.3.1/html-docx.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c, #4facfe);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .header h1 i {
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .form-content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 15px;
+            border-left: 5px solid #9b59b6;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(155, 89, 182, 0.1);
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(155, 89, 182, 0.2);
+            background: rgba(248, 249, 250, 0.9);
+        }
+        
+        .section h2 {
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #9b59b6, #8e44ad);
+            transition: width 0.5s ease;
+        }
+
+        .section:hover h2::after {
+            width: 100px;
+        }
+        
+        .section h2 i {
+            color: #9b59b6;
+        }
+        
+        .field {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+            font-size: 0.95em;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #9b59b6;
+            box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.2), 0 0 10px rgba(155, 89, 182, 0.1);
+            transform: scale(1.01);
+            transition: all 0.3s ease;
+        }
+
+        .tag-container {
+            position: relative;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 8px;
+            min-height: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 5px;
+            cursor: text;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        .tag-container:focus-within {
+            border-color: #9b59b6;
+            box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.1);
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            gap: 5px;
+            box-shadow: 0 2px 8px rgba(155, 89, 182, 0.3);
+            transition: all 0.3s ease;
+            animation: tagGlow 2s ease-in-out infinite alternate;
+        }
+
+        .tag:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(155, 89, 182, 0.5);
+        }
+
+        @keyframes tagGlow {
+            from { box-shadow: 0 2px 8px rgba(155, 89, 182, 0.3); }
+            to { box-shadow: 0 2px 12px rgba(155, 89, 182, 0.5); }
+        }
+
+        .tag .remove {
+            cursor: pointer;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+
+        .tag-container input {
+            border: none;
+            outline: none;
+            flex: 1;
+            min-width: 100px;
+            font-size: 1em;
+        }
+
+        .tag-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .tag-option {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .tag-option:hover {
+            background: #f8f9fa;
+        }
+
+        .tag-option:last-child {
+            border-bottom: none;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        .dynamic-list {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .dynamic-list .number {
+            font-weight: bold;
+            color: #9b59b6;
+            min-width: 25px;
+        }
+        
+        .dynamic-list input {
+            flex: 1;
+        }
+        
+        .dynamic-list button, .checklist-item button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        
+        .dynamic-list button.add, .checklist-item button.add {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .dynamic-list button.add:hover, .checklist-item button.add:hover {
+            background: #229954;
+            transform: translateY(-2px);
+        }
+        
+        .dynamic-list button.remove, .checklist-item button.remove {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .dynamic-list button.remove:hover, .checklist-item button.remove:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .checklist-item input[type="text"] {
+            flex: 1;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        
+        td input, td select {
+            padding: 8px;
+            font-size: 0.9em;
+        }
+        
+        .add-row {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .add-row:hover {
+            background: #8e44ad;
+            transform: translateY(-2px);
+        }
+        
+        .remove-row {
+            padding: 6px 12px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+        
+        .remove-row:hover {
+            background: #c0392b;
+        }
+        
+        .generate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .generate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .generate-btn:hover::before {
+            left: 100%;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
+        }
+
+        .generate-btn:active {
+            animation: pulse 0.3s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.98); }
+            100% { transform: scale(1); }
+        }
+        
+        .preview {
+            margin-top: 30px;
+            padding: 30px;
+            background: rgba(248, 249, 250, 0.9);
+            border-radius: 15px;
+            border: 2px solid rgba(155, 89, 182, 0.2);
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.5s ease-out;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .preview h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            text-align: center;
+        }
+        
+        #previewContent {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        #previewContent h3 {
+            color: #8e44ad;
+            margin-bottom: 5px;
+        }
+        
+        #previewContent strong {
+            color: #2c3e50;
+        }
+        
+        .export-btns {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+        
+        .export-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .export-btn i {
+            font-size: 1.2em;
+        }
+        
+        #exportPdf {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        #exportPdf:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+        }
+
+        #exportDocx {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        #exportDocx:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(155, 89, 182, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .form-content {
+                padding: 20px;
+            }
+            
+            .section {
+                padding: 15px;
+            }
+            
+            .export-btns {
+                flex-direction: column;
+            }
+            
+            .export-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            table {
+                font-size: 0.85em;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-graduation-cap"></i> Lesson Plan Generator</h1>
+            <p>Create professional lesson plans with ease</p>
+        </div>
+
+        <div class="form-content">
+            <form id="lessonForm">
+                <div class="section">
+                    <h2><i class="fas fa-info-circle"></i> Header Information</h2>
+                    <div class="field">
+                        <label>Teacher's Name:</label>
+                        <input type="text" id="teacherName" required>
+                    </div>
+                    <div class="field">
+                        <label>Institution:</label>
+                        <input type="text" id="institution" required>
+                    </div>
+                    <div class="field">
+                        <label>Date:</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <div class="field">
+                        <label>Level:</label>
+                        <select id="level" required>
+                            <option value="">Select Level</option>
+                            <option value="7th">7th grade</option>
+                            <option value="8th">8th grade</option>
+                            <option value="9th">9th grade</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Class:</label>
+                        <div class="tag-container" id="classContainer">
+                            <input type="text" id="classInput" placeholder="Select classes...">
+                            <div class="tag-dropdown" id="classDropdown" style="display: none;">
+                                <!-- Options will be populated by JS -->
+                            </div>
+                        </div>
+                        <input type="hidden" id="selectedClasses" name="selectedClasses">
+                    </div>
+                    <div class="field">
+                        <label>Lesson Plan Model:</label>
+                        <select id="model" required>
+                            <option value="">Select Model</option>
+                            <option value="PPP">PPP (Presentation, Practice, Production)</option>
+                            <option value="TTT">TTT (Test, Teach, Test)</option>
+                            <option value="UDL">UDL (Universal Design for Learning)</option>
+                            <option value="ECRIF">ECRIF (Engage, Conceptualize, Reflect, Investigate, Formulate)</option>
+                            <option value="OE">OE (Observe, Explore)</option>
+                            <option value="Custom">Custom</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2><i class="fas fa-book"></i> Lesson Details</h2>
+                    <div class="field">
+                        <label>Unit:</label>
+                        <input type="text" id="unit" required>
+                    </div>
+                    <div class="field">
+                        <label>Lesson Title:</label>
+                        <input type="text" id="lessonTitle" required>
+                    </div>
+                    <div class="field">
+                        <label>Duration:</label>
+                        <input type="text" id="duration" placeholder="e.g., 45 minutes" required>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2><i class="fas fa-bullseye"></i> Learning Objectives</h2>
+                    <div id="objectivesList">
+                        <div class="dynamic-list">
+                            <span class="number">1.</span>
+                            <input type="text" placeholder="Enter learning objective">
+                            <button type="button" class="add">Add</button>
+                            <button type="button" class="remove" disabled>Remove</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2><i class="fas fa-toolbox"></i> Materials Needed</h2>
+                    <div id="materialsList">
+                        <div class="checklist-item">
+                            <input type="checkbox">
+                            <input type="text" placeholder="Enter material">
+                            <button type="button" class="add">Add</button>
+                            <button type="button" class="remove" disabled>Remove</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2><i class="fas fa-tasks"></i> Lesson Stages</h2>
+                    <div style="overflow-x: auto;">
+                        <table id="stagesTable">
+                            <thead>
+                                <tr>
+                                    <th>Stage</th>
+                                    <th>Time</th>
+                                    <th>Activity</th>
+                                    <th>Purpose</th>
+                                    <th>Means</th>
+                                    <th>Mode</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <select class="stage-select">
+                                            <option value="">Select Stage</option>
+                                            <option value="Warm-up">Warm-up</option>
+                                            <option value="Presentation">Presentation</option>
+                                            <option value="Practice">Practice</option>
+                                            <option value="Production">Production</option>
+                                            <option value="Engage">Engage</option>
+                                            <option value="Explore">Explore</option>
+                                            <option value="Explain">Explain</option>
+                                            <option value="Elaborate">Elaborate</option>
+                                            <option value="Evaluate">Evaluate</option>
+                                            <option value="Reflect">Reflect</option>
+                                            <option value="Observation">Observation</option>
+                                            <option value="Hypothesis">Hypothesis</option>
+                                            <option value="Experiment">Experiment</option>
+                                            <option value="Investigation">Investigation</option>
+                                            <option value="Formulate">Formulate</option>
+                                            <option value="Conceptualize">Conceptualize</option>
+                                            <option value="Teacher-led">Teacher-led</option>
+                                            <option value="Transition">Transition</option>
+                                            <option value="Test">Test</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" placeholder="Time"></td>
+                                    <td><input type="text" placeholder="Activity"></td>
+                                    <td><input type="text" placeholder="Purpose"></td>
+                                    <td>
+                                        <select>
+                                            <option value="">Select</option>
+                                            <option value="Individual work">Individual</option>
+                                            <option value="Pair work">Pair work</option>
+                                            <option value="Group work">Group work</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select>
+                                            <option value="">Select</option>
+                                            <option value="Teacher-Student">T-S</option>
+                                            <option value="Student-Teacher">S-T</option>
+                                            <option value="Student-Student">S-S</option>
+                                        </select>
+                                    </td>
+                                    <td><button type="button" class="remove-row">Remove</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="button" id="addRow" class="add-row"><i class="fas fa-plus"></i> Add Stage</button>
+                </div>
+
+                <div class="section">
+                    <h2><i class="fas fa-clipboard-check"></i> Assessment</h2>
+                    <div class="field">
+                        <textarea id="assessment" placeholder="Describe assessment methods and criteria..."></textarea>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2><i class="fas fa-sticky-note"></i> Reflection & Notes</h2>
+                    <div class="field">
+                        <textarea id="reflection" placeholder="Enter post-lesson reflections or additional notes..."></textarea>
+                    </div>
+                </div>
+
+                <button type="button" id="generateBtn" class="generate-btn">
+                    <i class="fas fa-magic"></i> Generate Lesson Plan
+                </button>
+            </form>
+
+            <div id="preview" class="preview" style="display: none;">
+                <h2><i class="fas fa-eye"></i> Lesson Plan Preview</h2>
+                <div id="previewContent"></div>
+                <div class="export-btns">
+                    <button id="exportPdf" class="export-btn">
+                        <i class="fas fa-file-pdf"></i> Download PDF
+                    </button>
+                    <button id="exportDocx" class="export-btn">
+                        <i class="fas fa-file-word"></i> Download DOCX
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="text-align: center; padding: 20px; margin-top: 20px;">
+        <p style="color: rgba(255,255,255,0.7); font-size: 0.9em; margin-bottom: 10px;">Developed by Zakaria Ghazali</p>
+        <div style="display: flex; justify-content: center; gap: 20px;">
+            <a href="https://www.linkedin.com/in/ghazali1/" target="_blank" style="color: #0077b5; text-decoration: none; transition: all 0.3s ease;" title="LinkedIn">
+                <i class="fab fa-linkedin fa-2x"></i>
+            </a>
+            <a href="mailto:zakariaghazali135@gmail.com" style="color: #ea4335; text-decoration: none; transition: all 0.3s ease;" title="Email">
+                <i class="fas fa-envelope fa-2x"></i>
+            </a>
+        </div>
+        <style>
+            footer a:hover {
+                transform: scale(1.2);
+                filter: brightness(1.2) drop-shadow(0 0 8px currentColor);
+            }
+        </style>
+        </div>
+    </footer>
+
+    <script>
+        // Level to class mapping
+        const classes = {
+            '7th': Array.from({length: 12}, (_, i) => `1-${i+1}`),
+            '8th': Array.from({length: 12}, (_, i) => `2-${i+1}`),
+            '9th': Array.from({length: 12}, (_, i) => `3-${i+1}`)
+        };
+
+        // Populate class options for tag system
+        let selectedClasses = [];
+        document.addEventListener('DOMContentLoaded', function() {
+            const classContainer = document.getElementById('classContainer');
+            const classInput = document.getElementById('classInput');
+            const classDropdown = document.getElementById('classDropdown');
+            const selectedClassesInput = document.getElementById('selectedClasses');
+
+            const allClasses = Object.values(classes).flat();
+
+            function updateDropdown(filter = '') {
+                classDropdown.innerHTML = '';
+                const filtered = allClasses.filter(cls => cls.toLowerCase().includes(filter.toLowerCase()) && !selectedClasses.includes(cls));
+                filtered.forEach(cls => {
+                    const option = document.createElement('div');
+                    option.className = 'tag-option';
+                    option.textContent = cls;
+                    option.addEventListener('click', () => addTag(cls));
+                    classDropdown.appendChild(option);
+                });
+            }
+
+            function addTag(cls) {
+                if (!selectedClasses.includes(cls)) {
+                    selectedClasses.push(cls);
+                    renderTags();
+                    updateDropdown(classInput.value);
+                    updateHiddenInput();
+                }
+                classInput.value = '';
+                classDropdown.style.display = 'none';
+            }
+
+            function removeTag(cls) {
+                selectedClasses = selectedClasses.filter(c => c !== cls);
+                renderTags();
+                updateHiddenInput();
+            }
+
+            function renderTags() {
+                const tags = classContainer.querySelectorAll('.tag');
+                tags.forEach(tag => tag.remove());
+                selectedClasses.forEach(cls => {
+                    const tag = document.createElement('span');
+                    tag.className = 'tag';
+                    tag.innerHTML = `${cls} <span class="remove">&times;</span>`;
+                    tag.querySelector('.remove').addEventListener('click', () => removeTag(cls));
+                    classContainer.insertBefore(tag, classInput);
+                });
+            }
+
+            function updateHiddenInput() {
+                selectedClassesInput.value = JSON.stringify(selectedClasses);
+            }
+
+            classContainer.addEventListener('click', () => {
+                classInput.focus();
+                updateDropdown(classInput.value);
+                classDropdown.style.display = 'block';
+            });
+
+            classInput.addEventListener('input', (e) => {
+                updateDropdown(e.target.value);
+                classDropdown.style.display = 'block';
+            });
+
+            classInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const value = classInput.value.trim();
+                    if (value && allClasses.includes(value) && !selectedClasses.includes(value)) {
+                        addTag(value);
+                    }
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!classContainer.contains(e.target)) {
+                    classDropdown.style.display = 'none';
+                }
+            });
+
+            updateDropdown();
+        });
+
+        // Model to default stages mapping
+        const modelStages = {
+            'PPP': ['Warm-up', 'Presentation', 'Practice', 'Production'],
+            'TTT': ['Test', 'Teacher-led', 'Test'],
+            'UDL': ['Engage', 'Explore', 'Explain', 'Elaborate', 'Evaluate'],
+            'ECRIF': ['Engage', 'Conceptualize', 'Reflect', 'Investigation', 'Formulate'],
+            'OE': ['Observation', 'Experiment'],
+            'Custom': []
+        };
+
+        // Update class options based on level - removed, classes are always populated
+
+        // Pre-fill stages based on model selection
+        document.getElementById('model').addEventListener('change', function() {
+            const model = this.value;
+            const tbody = document.querySelector('#stagesTable tbody');
+            tbody.innerHTML = '';
+
+            if (model && modelStages[model]) {
+                modelStages[model].forEach(stage => {
+                    const newRow = createStageRow(stage);
+                    tbody.appendChild(newRow);
+                });
+            }
+
+            if (tbody.children.length === 0) {
+                const newRow = createStageRow('');
+                tbody.appendChild(newRow);
+            }
+        });
+
+        function createStageRow(stageValue) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>
+                    <select class="stage-select">
+                        <option value="">Select Stage</option>
+                        <option value="Warm-up">Warm-up</option>
+                        <option value="Presentation">Presentation</option>
+                        <option value="Practice">Practice</option>
+                        <option value="Production">Production</option>
+                        <option value="Engage">Engage</option>
+                        <option value="Explore">Explore</option>
+                        <option value="Explain">Explain</option>
+                        <option value="Elaborate">Elaborate</option>
+                        <option value="Evaluate">Evaluate</option>
+                        <option value="Reflect">Reflect</option>
+                        <option value="Observation">Observation</option>
+                        <option value="Hypothesis">Hypothesis</option>
+                        <option value="Experiment">Experiment</option>
+                        <option value="Investigation">Investigation</option>
+                        <option value="Formulate">Formulate</option>
+                        <option value="Conceptualize">Conceptualize</option>
+                        <option value="Teacher-led">Teacher-led</option>
+                        <option value="Transition">Transition</option>
+                        <option value="Test">Test</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </td>
+                <td><input type="text" placeholder="Time"></td>
+                <td><input type="text" placeholder="Activity"></td>
+                <td><input type="text" placeholder="Purpose"></td>
+                <td>
+                    <select>
+                        <option value="">Select</option>
+                        <option value="Individual work">Individual</option>
+                        <option value="Pair work">Pair work</option>
+                        <option value="Group work">Group work</option>
+                    </select>
+                </td>
+                <td>
+                    <select>
+                        <option value="">Select</option>
+                        <option value="Teacher-Student">T-S</option>
+                        <option value="Student-Teacher">S-T</option>
+                        <option value="Student-Student">S-S</option>
+                    </select>
+                </td>
+                <td><button type="button" class="remove-row">Remove</button></td>
+            `;
+            if (stageValue) {
+                row.querySelector('.stage-select').value = stageValue;
+            }
+            return row;
+        }
+
+        // Dynamic objectives list
+        document.getElementById('objectivesList').addEventListener('click', function(e) {
+            if (e.target.classList.contains('add')) {
+                const list = e.target.closest('#objectivesList');
+                const newItem = list.lastElementChild.cloneNode(true);
+                const inputs = newItem.querySelectorAll('input');
+                inputs.forEach(input => input.value = '');
+                newItem.querySelector('.remove').disabled = false;
+                list.appendChild(newItem);
+                updateNumbers(list);
+            } else if (e.target.classList.contains('remove')) {
+                const list = e.target.closest('#objectivesList');
+                if (list.children.length > 1) {
+                    e.target.closest('.dynamic-list').remove();
+                    updateNumbers(list);
+                }
+            }
+        });
+
+        function updateNumbers(list) {
+            const items = list.querySelectorAll('.dynamic-list');
+            items.forEach((item, index) => {
+                item.querySelector('.number').textContent = (index + 1) + '.';
+            });
+        }
+
+        // Dynamic materials checklist
+        document.getElementById('materialsList').addEventListener('click', function(e) {
+            if (e.target.classList.contains('add')) {
+                const list = e.target.closest('#materialsList');
+                const newItem = list.lastElementChild.cloneNode(true);
+                const inputs = newItem.querySelectorAll('input');
+                inputs.forEach(input => input.value = '');
+                newItem.querySelector('input[type="checkbox"]').checked = false;
+                newItem.querySelector('.remove').disabled = false;
+                list.appendChild(newItem);
+            } else if (e.target.classList.contains('remove')) {
+                const list = e.target.closest('#materialsList');
+                if (list.children.length > 1) {
+                    e.target.closest('.checklist-item').remove();
+                }
+            }
+        });
+
+        // Dynamic stages table
+        document.getElementById('addRow').addEventListener('click', function() {
+            const tbody = document.querySelector('#stagesTable tbody');
+            const newRow = createStageRow('');
+            tbody.appendChild(newRow);
+        });
+
+        document.getElementById('stagesTable').addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-row')) {
+                const tbody = document.querySelector('#stagesTable tbody');
+                if (tbody.children.length > 1) {
+                    e.target.closest('tr').remove();
+                }
+            }
+        });
+
+        // Generate preview
+        document.getElementById('generateBtn').addEventListener('click', function() {
+            const form = document.getElementById('lessonForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            const selectedClasses = JSON.parse(document.getElementById('selectedClasses').value || '[]');
+            if (selectedClasses.length === 0) {
+                alert('Please select at least one class.');
+                return;
+            }
+
+            const data = {
+                teacherName: document.getElementById('teacherName').value,
+                institution: document.getElementById('institution').value,
+                date: document.getElementById('date').value,
+                level: document.getElementById('level').options[document.getElementById('level').selectedIndex].text,
+                class: selectedClasses,
+                model: document.getElementById('model').options[document.getElementById('model').selectedIndex].text,
+                unit: document.getElementById('unit').value,
+                lessonTitle: document.getElementById('lessonTitle').value,
+                duration: document.getElementById('duration').value,
+                objectives: Array.from(document.querySelectorAll('#objectivesList input')).map(input => input.value).filter(val => val.trim()),
+                materials: Array.from(document.querySelectorAll('#materialsList .checklist-item')).map(item => ({
+                    checked: item.querySelector('input[type="checkbox"]').checked,
+                    text: item.querySelector('input[type="text"]').value
+                })).filter(item => item.text.trim()),
+                stages: Array.from(document.querySelectorAll('#stagesTable tbody tr')).map(row => ({
+                    stage: row.cells[0].querySelector('select').value,
+                    time: row.cells[1].querySelector('input').value,
+                    activity: row.cells[2].querySelector('input').value,
+                    purpose: row.cells[3].querySelector('input').value,
+                    means: row.cells[4].querySelector('select').value,
+                    mode: row.cells[5].querySelector('select').value
+                })),
+                assessment: document.getElementById('assessment').value,
+                reflection: document.getElementById('reflection').value
+            };
+
+            const previewContent = document.getElementById('previewContent');
+            previewContent.innerHTML = `
+                <div style="text-align: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 3px solid #9b59b6;">
+                    <h3 style="font-size: 1.8em; margin-bottom: 5px;">${data.teacherName}</h3>
+                    <p style="font-size: 1.2em; color: #7f8c8d;">${data.institution}</p>
+                </div>
+                <div style="background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%); padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div><strong>Date:</strong> ${data.date}</div>
+                        <div><strong>Level:</strong> ${data.level}</div>
+                        <div><strong>Classes:</strong> ${data.class.join(', ')}</div>
+                        <div><strong>Model:</strong> ${data.model}</div>
+                        <div><strong>Duration:</strong> ${data.duration}</div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 25px;">
+                    <div style="background: #9b59b6; color: white; padding: 10px 15px; border-radius: 8px 8px 0 0; font-weight: bold;">
+                        <i class="fas fa-book"></i> Unit & Lesson
+                    </div>
+                    <div style="padding: 15px; background: #ecf0f1; border-radius: 0 0 8px 8px;">
+                        <strong>Unit:</strong> ${data.unit}<br>
+                        <strong>Lesson Title:</strong> ${data.lessonTitle}
+                    </div>
+                </div>
+                <div style="margin-bottom: 25px;">
+                    <div style="background: #27ae60; color: white; padding: 10px 15px; border-radius: 8px 8px 0 0; font-weight: bold;">
+                        <i class="fas fa-bullseye"></i> Learning Objectives
+                    </div>
+                    <div style="padding: 15px; background: #ecf0f1; border-radius: 0 0 8px 8px;">
+                        Students will be able to:<br>
+                        <ol style="margin: 0; padding-left: 20px;">
+                            ${data.objectives.map(obj => `<li style="margin-bottom: 8px;">${obj}</li>`).join('')}
+                        </ol>
+                    </div>
+                </div>
+                <div style="margin-bottom: 25px;">
+                    <div style="background: #e67e22; color: white; padding: 10px 15px; border-radius: 8px 8px 0 0; font-weight: bold;">
+                        <i class="fas fa-toolbox"></i> Materials Needed
+                    </div>
+                    <div style="padding: 15px; background: #ecf0f1; border-radius: 0 0 8px 8px;">
+                        <ul style="list-style: none; margin: 0; padding: 0;">
+                            ${data.materials.map(mat => `<li style="margin-bottom: 8px;"><span style="color: ${mat.checked ? '#27ae60' : '#95a5a6'};">${mat.checked ? '✓' : '○'}</span> ${mat.text}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+                <div style="margin-bottom: 25px;">
+                    <div style="background: #9b59b6; color: white; padding: 10px 15px; border-radius: 8px 8px 0 0; font-weight: bold;">
+                        <i class="fas fa-tasks"></i> Lesson Stages
+                    </div>
+                    <div style="padding: 15px; background: #ecf0f1; border-radius: 0 0 8px 8px; overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; background: white;">
+                            <thead>
+                                <tr style="background: #34495e; color: white;">
+                                    <th style="border: 1px solid #7f8c8d; padding: 10px;">Stage</th>
+                                    <th style="border: 1px solid #7f8c8d; padding: 10px;">Time</th>
+                                    <th style="border: 1px solid #7f8c8d; padding: 10px;">Activity</th>
+                                    <th style="border: 1px solid #7f8c8d; padding: 10px;">Purpose</th>
+                                    <th style="border: 1px solid #7f8c8d; padding: 10px;">Means</th>
+                                    <th style="border: 1px solid #7f8c8d; padding: 10px;">Mode</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.stages.map((stage, i) => `
+                                    <tr style="background: ${i % 2 === 0 ? '#fff' : '#f8f9fa'};">
+                                        <td style="border: 1px solid #dee2e6; padding: 10px;"><strong>${stage.stage}</strong></td>
+                                        <td style="border: 1px solid #dee2e6; padding: 10px;">${stage.time}</td>
+                                        <td style="border: 1px solid #dee2e6; padding: 10px;">${stage.activity}</td>
+                                        <td style="border: 1px solid #dee2e6; padding: 10px;">${stage.purpose}</td>
+                                        <td style="border: 1px solid #dee2e6; padding: 10px;">${stage.means}</td>
+                                        <td style="border: 1px solid #dee2e6; padding: 10px;">${stage.mode}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                ${data.assessment.trim() ? `
+                <div style="margin-bottom: 25px;">
+                    <div style="background: #e74c3c; color: white; padding: 10px 15px; border-radius: 8px 8px 0 0; font-weight: bold;">
+                        <i class="fas fa-clipboard-check"></i> Assessment
+                    </div>
+                    <div style="padding: 15px; background: #ecf0f1; border-radius: 0 0 8px 8px;">
+                        ${data.assessment.replace(/\n/g, '<br>')}
+                    </div>
+                </div>
+                ` : ''}
+                ${data.reflection.trim() ? `
+                <div style="margin-bottom: 25px;">
+                    <div style="background: #16a085; color: white; padding: 10px 15px; border-radius: 8px 8px 0 0; font-weight: bold;">
+                        <i class="fas fa-sticky-note"></i> Reflection & Notes
+                    </div>
+                    <div style="padding: 15px; background: #ecf0f1; border-radius: 0 0 8px 8px;">
+                        ${data.reflection.replace(/\n/g, '<br>')}
+                    </div>
+                </div>
+                ` : ''}
+            `;
+
+            document.getElementById('preview').style.display = 'block';
+            document.getElementById('preview').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Export to PDF with professional, compact design
+        document.getElementById('exportPdf').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const selectedClasses = JSON.parse(document.getElementById('selectedClasses').value || '[]');
+            const data = {
+                teacherName: document.getElementById('teacherName').value,
+                institution: document.getElementById('institution').value,
+                date: document.getElementById('date').value,
+                level: document.getElementById('level').options[document.getElementById('level').selectedIndex].text,
+                class: selectedClasses,
+                model: document.getElementById('model').options[document.getElementById('model').selectedIndex].text,
+                unit: document.getElementById('unit').value,
+                lessonTitle: document.getElementById('lessonTitle').value,
+                duration: document.getElementById('duration').value,
+                objectives: Array.from(document.querySelectorAll('#objectivesList input')).map(input => input.value).filter(val => val.trim()),
+                materials: Array.from(document.querySelectorAll('#materialsList .checklist-item')).map(item => ({
+                    checked: item.querySelector('input[type="checkbox"]').checked,
+                    text: item.querySelector('input[type="text"]').value
+                })).filter(item => item.text.trim()),
+                stages: Array.from(document.querySelectorAll('#stagesTable tbody tr')).map(row => ({
+                    stage: row.cells[0].querySelector('select').value,
+                    time: row.cells[1].querySelector('input').value,
+                    activity: row.cells[2].querySelector('input').value,
+                    purpose: row.cells[3].querySelector('input').value,
+                    means: row.cells[4].querySelector('select').value,
+                    mode: row.cells[5].querySelector('select').value
+                })),
+                assessment: document.getElementById('assessment').value,
+                reflection: document.getElementById('reflection').value
+            };
+
+            let yPos = 15;
+
+            // Compact Header
+            doc.setFillColor(155, 89, 182);
+            doc.rect(0, 0, 210, 20, 'F');
+
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text(data.teacherName, 105, 8, { align: 'center' });
+
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.text('School: Jnan Darwa', 105, 14, { align: 'center' });
+
+            doc.setFontSize(8);
+            doc.text('Lesson Plan', 105, 18, { align: 'center' });
+
+            yPos = 30;
+
+            // Compact Info Section
+            doc.setDrawColor(155, 89, 182);
+            doc.setLineWidth(0.5);
+            doc.roundedRect(10, yPos, 190, 18, 2, 2, 'S');
+
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'bold');
+            doc.text('Date:', 15, yPos + 6);
+            doc.text('Level:', 15, yPos + 12);
+            doc.text('Classes:', 15, yPos + 18);
+            doc.text('Model:', 90, yPos + 6);
+            doc.text('Duration:', 90, yPos + 12);
+
+            doc.setFont(undefined, 'normal');
+            doc.text(data.date, 30, yPos + 6);
+            doc.text(data.level, 30, yPos + 12);
+            doc.text(data.class.join(', '), 35, yPos + 18);
+            doc.text(data.model, 105, yPos + 6);
+            doc.text(data.duration, 110, yPos + 12);
+
+            yPos += 30;
+
+            // Unit and Title
+            doc.setFillColor(236, 240, 241);
+            doc.roundedRect(10, yPos, 190, 15, 2, 2, 'F');
+
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(52, 73, 94);
+            doc.text('Unit:', 15, yPos + 6);
+            doc.text('Lesson Title:', 15, yPos + 12);
+
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0, 0, 0);
+            doc.text(data.unit, 30, yPos + 6);
+            doc.text(data.lessonTitle, 40, yPos + 12);
+
+            yPos += 20;
+
+            // Objectives
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(155, 89, 182);
+            doc.text('Learning Objectives', 10, yPos);
+            yPos += 2;
+            doc.setDrawColor(155, 89, 182);
+            doc.setLineWidth(0.8);
+            doc.line(10, yPos, 55, yPos);
+            yPos += 4;
+
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0, 0, 0);
+            doc.text('Students will be able to:', 15, yPos);
+            yPos += 5;
+            data.objectives.forEach((obj, index) => {
+                const lines = doc.splitTextToSize(`${index + 1}. ${obj}`, 185);
+                lines.forEach(line => {
+                    if (yPos > 270) {
+                        doc.addPage();
+                        yPos = 15;
+                    }
+                    doc.text(line, 15, yPos);
+                    yPos += 5;
+                });
+            });
+
+            yPos += 3;
+
+            // Materials
+            if (yPos > 250) {
+                doc.addPage();
+                yPos = 15;
+            }
+
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(155, 89, 182);
+            doc.text('Materials Needed', 10, yPos);
+            yPos += 2;
+            doc.setLineWidth(0.8);
+            doc.line(10, yPos, 50, yPos);
+            yPos += 4;
+
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0, 0, 0);
+            data.materials.forEach(mat => {
+                if (yPos > 270) {
+                    doc.addPage();
+                    yPos = 15;
+                }
+                doc.text(`${mat.checked ? '✓' : '○'} ${mat.text}`, 15, yPos);
+                yPos += 5;
+            });
+
+            yPos += 5;
+
+            // Stages Table
+            if (yPos > 180) {
+                doc.addPage();
+                yPos = 15;
+            }
+
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(155, 89, 182);
+            doc.text('Lesson Stages', 10, yPos);
+            yPos += 2;
+            doc.setLineWidth(0.8);
+            doc.line(10, yPos, 40, yPos);
+            yPos += 4;
+
+            const tableData = data.stages.map(stage => [
+                stage.stage,
+                stage.time,
+                stage.activity,
+                stage.purpose,
+                stage.means,
+                stage.mode
+            ]);
+
+            doc.autoTable({
+                startY: yPos,
+                head: [['Stage', 'Time', 'Activity', 'Purpose', 'Means', 'Mode']],
+                body: tableData,
+                theme: 'grid',
+                headStyles: {
+                    fillColor: [155, 89, 182],
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold',
+                    fontSize: 8,
+                    halign: 'center'
+                },
+                bodyStyles: {
+                    fontSize: 7,
+                    textColor: [0, 0, 0],
+                    halign: 'left'
+                },
+                alternateRowStyles: {
+                    fillColor: [250, 250, 250]
+                },
+                columnStyles: {
+                    0: { cellWidth: 22, halign: 'center' },
+                    1: { cellWidth: 18, halign: 'center' },
+                    2: { cellWidth: 40 },
+                    3: { cellWidth: 35 },
+                    4: { cellWidth: 25, halign: 'center' },
+                    5: { cellWidth: 25, halign: 'center' }
+                },
+                margin: { left: 10, right: 10 },
+                styles: {
+                    lineWidth: 0.3,
+                    lineColor: [200, 200, 200]
+                }
+            });
+
+            yPos = doc.lastAutoTable.finalY + 8;
+
+            // Assessment
+            if (data.assessment.trim()) {
+                if (yPos > 250) {
+                    doc.addPage();
+                    yPos = 15;
+                }
+
+                doc.setFontSize(11);
+                doc.setFont(undefined, 'bold');
+                doc.setTextColor(155, 89, 182);
+                doc.text('Assessment', 10, yPos);
+                yPos += 2;
+                doc.setLineWidth(0.8);
+                doc.line(10, yPos, 35, yPos);
+                yPos += 4;
+
+                doc.setFontSize(9);
+                doc.setFont(undefined, 'normal');
+                doc.setTextColor(0, 0, 0);
+                const assessmentLines = doc.splitTextToSize(data.assessment, 185);
+                assessmentLines.forEach(line => {
+                    if (yPos > 280) {
+                        doc.addPage();
+                        yPos = 15;
+                    }
+                    doc.text(line, 15, yPos);
+                    yPos += 5;
+                });
+
+                yPos += 3;
+            }
+
+            // Reflection
+            if (data.reflection.trim()) {
+                if (yPos > 250) {
+                    doc.addPage();
+                    yPos = 15;
+                }
+
+                doc.setFontSize(11);
+                doc.setFont(undefined, 'bold');
+                doc.setTextColor(155, 89, 182);
+                doc.text('Reflection & Notes', 10, yPos);
+                yPos += 2;
+                doc.setLineWidth(0.8);
+                doc.line(10, yPos, 50, yPos);
+                yPos += 4;
+
+                doc.setFontSize(9);
+                doc.setFont(undefined, 'normal');
+                doc.setTextColor(0, 0, 0);
+                const reflectionLines = doc.splitTextToSize(data.reflection, 185);
+                reflectionLines.forEach(line => {
+                    if (yPos > 280) {
+                        doc.addPage();
+                        yPos = 15;
+                    }
+                    doc.text(line, 15, yPos);
+                    yPos += 5;
+                });
+            }
+
+            // Footer
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(7);
+                doc.setTextColor(150, 150, 150);
+                doc.text(`Page ${i} of ${pageCount}`, 105, 290, { align: 'center' });
+                doc.setDrawColor(200, 200, 200);
+                doc.setLineWidth(0.3);
+                doc.line(10, 285, 200, 285);
+            }
+
+            doc.save('lesson_plan.pdf');
+        });
+
+        // Export to DOCX
+        document.getElementById('exportDocx').addEventListener('click', function() {
+            const previewContent = document.getElementById('previewContent').innerHTML;
+            const converted = htmlDocx.asBlob(previewContent);
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(converted);
+            link.download = 'lesson_plan.docx';
+            link.click();
+        });
+    </script>
+</body>
+</html>
