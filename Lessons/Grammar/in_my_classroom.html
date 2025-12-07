@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Lesson: In My Classroom - Pixelearn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="icon" href="../../assets/15.png"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="../../styles/portfolio.css" rel="stylesheet">
+    <link href="../../styles/top-nav.css" rel="stylesheet">
+    <link href="../../styles/navbar-font-styles.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #ff00ff;
+            --secondary-color: #800080;
+            --accent-color: #00ffff;
+            --text-color: #ffffff;
+            --bg-color: #0b0b0b;
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            background-image:
+                linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)),
+                url('../../assets/cyber-grid.png');
+            background-attachment: fixed;
+        }
+
+        .article-container {
+            max-width: 850px;
+            margin: 3rem auto;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: var(--border-radius);
+            box-shadow: 0 0 20px rgba(249, 83, 198, 0.2);
+            border: 1px solid var(--primary-color);
+            backdrop-filter: blur(10px);
+        }
+
+        h1, h2, h3 {
+            color: var(--accent-color);
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px var(--accent-color);
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: .5rem;
+            margin-top: 2rem;
+            font-size: 1.2rem;
+        }
+
+        .meta {
+            text-align: center;
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+        }
+
+        .activity {
+            background: rgba(0, 255, 255, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 1.5rem;
+            border-radius: 0 4px 4px 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .teacher-note {
+            background: rgba(255, 0, 255, 0.1);
+            border: 1px solid var(--primary-color);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+        }
+
+        p, li { margin-bottom: 1rem; }
+        ul { list-style-type: square; }
+
+        .stage-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .stage-table th, .stage-table td {
+            border: 1px solid var(--primary-color);
+            padding: 0.5rem;
+            text-align: left;
+        }
+
+        .stage-table th {
+            background: rgba(128, 0, 128, 0.2);
+            color: var(--accent-color);
+        }
+
+        .button {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: #fff;
+            padding: .8rem 1.2rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: black;
+                font-family: Arial, sans-serif;
+            }
+            .article-container {
+                background: white;
+                box-shadow: none;
+                border: none;
+                max-width: none;
+                margin: 0;
+                padding: 1rem;
+            }
+            .top-navbar, .mobile-menu {
+                display: none;
+            }
+            h1, h2, h3 {
+                color: black;
+                font-family: Arial, sans-serif;
+            }
+            .activity, .teacher-note {
+                background: #f0f0f0;
+                border: 1px solid #ccc;
+            }
+        }
+
+        @media(max-width:768px){
+            .article-container{padding:1rem;}
+            h1{font-size:1.4rem;}
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="top-nav-container">
+            <div class="nav-logo">
+                <a href="../../index.html" class="logo-link">
+                    <img src="../../assets/15.png" alt="Pixelearn Logo" class="logo-img">
+                    <span class="logo-text">Pixelearn</span>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="../../index.html" class="nav-link">Home</a>
+                <a href="../../index.html#lessons" class="nav-link">Videos</a>
+                <a href="../../index.html#articles" class="nav-link">Articles</a>
+                <a href="../../index.html#lesson-plans" class="nav-link">Lessons</a>
+                <a href="../../index.html#games" class="nav-link">Toolkit</a>
+                <a href="../../index.html#about" class="nav-link">About</a>
+            </div>
+            <div class="nav-mobile-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content">
+            <a href="../../index.html" class="mobile-nav-link">Home</a>
+            <a href="../../index.html#lessons" class="mobile-nav-link">Videos</a>
+            <a href="../../index.html#articles" class="mobile-nav-link">Articles</a>
+            <a href="../../index.html#lesson-plans" class="mobile-nav-link">Lessons</a>
+            <a href="../../index.html#games" class="mobile-nav-link">Toolkit</a>
+            <a href="../../index.html#about" class="mobile-nav-link">About</a>
+        </div>
+    </div>
+
+    <div class="article-container">
+        <h1>Lesson: In My Classroom</h1>
+        <div class="meta">
+            Unit 3: Grammar & Communication<br>
+            Class: 2-1 | Date: 2025-11-19
+        </div>
+
+        <section id="stages">
+            <h2>What We Will Do Today</h2>
+
+            <h3>1. Warm-up (5 minutes)</h3>
+            <div class="activity">
+                <p><strong>Activity:</strong> Look at pictures of Nila's floating school.</p>
+                <p><strong>What to do:</strong> Answer questions about Nila and her school. Then, talk about what is the same in your school.</p>
+            </div>
+
+            <h3>2. Presentation (12 minutes)</h3>
+            <h4>Classroom Objects Vocabulary (6 min)</h4>
+            <div class="activity">
+                <p><strong>Activity:</strong> Look at flashcards or real objects: book, pen, pencil, marker, backpack, eraser, board, desk, notebook, ruler, computer, calculator, pencil sharpener, paper.</p>
+                <p><strong>What to do:</strong> Listen to the teacher say the words. Repeat after the teacher. Point to objects when asked.</p>
+            </div>
+
+            <h4>Demonstratives Grammar (6 min)</h4>
+            <div class="activity">
+                <p><strong>Activity:</strong> Learn sentences like: "This is my pen." (near) "That is my backpack." (far) "These are my books." (near/plural) "Those are my markers." (far/plural)</p>
+                <p><strong>What to do:</strong> Listen and repeat the sentences. Notice the difference between this/that (near/far) and these/those (plural).</p>
+            </div>
+
+            <h3>3. Practice (20 minutes)</h3>
+            <div class="activity">
+                <p><strong>A. Chant (4 min)</strong></p>
+                <p><strong>What to do:</strong> Listen to the chant "Is this your book?" Repeat it. Pick up items and chant with a partner.</p>
+
+                <p><strong>B. Label the Classroom (6 min)</strong></p>
+                <p><strong>What to do:</strong> Look at the worksheet. Label the numbers with classroom objects. Check your answers with a partner or listen to audio.</p>
+
+                <p><strong>C. Pair Practice (10 min)</strong></p>
+                <p><strong>What to do:</strong> Put 2-3 small objects on your desk. Practice with your partner: "Is this your pen?" "Yes, that's my pen." / "No, that's not my pen."</p>
+            </div>
+
+            <h3>4. Production (20 minutes)</h3>
+            <div class="activity">
+                <p><strong>Activity:</strong> Have real conversations using classroom objects.</p>
+                <p><strong>What to do:</strong> Use objects around the classroom. Ask and answer questions like "Is this your pen?" or "Are these your books?"</p>
+            </div>
+        </section>
+
+        <div class="text-center" style="margin-top:2rem;">
+            <button onclick="window.print()" class="button"><i class="fas fa-print"></i> Print Lesson</button>
+        </div>
+    </div>
+
+    <script src="../../scripts/loading-handler.js" defer></script>
+    <script src="../../scripts/script.js" defer></script>
+    <script src="../../scripts/scroll.js" defer></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenuToggle && mobileMenu) {
+          mobileMenuToggle.addEventListener('click', function() {
+            mobileMenu.classList.toggle('active');
+            this.classList.toggle('active');
+          });
+          document.querySelectorAll('.mobile-nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+              mobileMenu.classList.remove('active');
+              mobileMenuToggle.classList.remove('active');
+            });
+          });
+        }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

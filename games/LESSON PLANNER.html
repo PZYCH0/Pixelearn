@@ -621,7 +621,7 @@
                             <option value="TTT">TTT (Test, Teach, Test)</option>
                             <option value="UDL">UDL (Universal Design for Learning)</option>
                             <option value="ECRIF">ECRIF (Engage, Conceptualize, Reflect, Investigate, Formulate)</option>
-                            <option value="OE">OE (Observe, Explore)</option>
+                            <option value="OHE">OHE (Observe, Hypothesize, Experiment)</option>
                             <option value="Custom">Custom</option>
                         </select>
                     </div>
@@ -750,9 +750,17 @@
                     </div>
                 </div>
 
-                <button type="button" id="generateBtn" class="generate-btn">
-                    <i class="fas fa-magic"></i> Generate Lesson Plan
-                </button>
+                <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 20px;">
+                    <button type="button" id="generateBtn" class="generate-btn">
+                        <i class="fas fa-magic"></i> Generate Lesson Plan
+                    </button>
+                    <button type="button" id="saveBtn" class="generate-btn" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
+                        <i class="fas fa-save"></i> Save Locally
+                    </button>
+                    <button type="button" id="viewArchiveBtn" class="generate-btn" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);">
+                        <i class="fas fa-archive"></i> View Archive
+                    </button>
+                </div>
             </form>
 
             <div id="preview" class="preview" style="display: none;">
