@@ -258,8 +258,122 @@ function escapeHtml(text) {
 // Function to process activity text with images
 function processActivityText(text) {
     if (!text) return '';
-    // Replace [IMAGE:url] with actual img tags
-    return text.replace(/\[IMAGE:([^\]]+)\]/g, '<br><img src="$1" style="max-width: 200px; max-height: 150px; border: 1px solid #ddd; border-radius: 4px; margin: 5px 0;" alt="Activity Image"><br>');
+    
+    // Handle both [IMAGE:base64] and ![alt](url) markdown syntax
+    let result = text;
+    
+    // Replace [IMAGE:base64] with img tag
+    result = result.replace(/\[IMAGE:([^\]]+)\]/g, '<br><img src="$1" style="max-width: 350px; height: auto; border: 1px solid #ddd; border-radius: 4px; margin: 5px 0; display: inline-block;" alt="Activity Image"><br>');
+    
+    // Replace ![alt](url) markdown with img tag
+    result = result.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<br><img src="$2" alt="$1" style="max-width: 350px; height: auto; border: 1px solid #ddd; border-radius: 4px; margin: 5px 0; display: inline-block;"><br>');
+    
+    return result;
+}
+
+// Function to display image preview in input field
+function displayImagePreview(activityInput, base64Data) {
+    const previewContainer = document.createElement('div');
+    previewContainer.style.cssText = `
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 8px;
+        background: #e8f5e8;
+        border: 1px solid #27ae60;
+        border-radius: 4px;
+        margin: 2px;
+        font-size: 0.9em;
+        position: relative;
+    `;
+    
+    // Create actual image thumbnail
+    const imgThumbnail = document.createElement('img');
+    imgThumbnail.src = base64Data;
+    imgThumbnail.style.cssText = `
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+    `;
+    
+    const text = document.createElement('span');
+    text.textContent = 'Image';
+    text.style.color = '#27ae60';
+    text.style.fontWeight = '600';
+    text.style.fontSize = '0.8em';
+    
+    const removeBtn = document.createElement('span');
+    removeBtn.innerHTML = '&times;';
+    removeBtn.style.cssText = `
+        cursor: pointer;
+        color: #e74c3c;
+        font-weight: bold;
+        margin-left: 5px;
+        background: rgba(255,255,255,0.8);
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+    `;
+    removeBtn.onclick = () => {
+        previewContainer.remove();
+        const imageTag = `[IMAGE:${base64Data}]`;
+        activityInput.value = activityInput.value.replace(imageTag, '').trim();
+    };
+    
+    previewContainer.appendChild(imgThumbnail);
+    previewContainer.appendChild(text);
+    previewContainer.appendChild(removeBtn);
+    previewContainer.dataset.imageData = base64Data;
+    
+    // Add hover effect to show full image (only on the thumbnail)
+    imgThumbnail.addEventListener('mouseenter', function() {
+        const fullPreview = document.createElement('div');
+        fullPreview.id = 'image-full-preview';
+        fullPreview.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10000;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 80%;
+            max-height: 80%;
+        `;
+        
+        const fullImg = document.createElement('img');
+        fullImg.src = base64Data;
+        fullImg.style.cssText = `
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 4px;
+        `;
+        
+        fullPreview.appendChild(fullImg);
+        document.body.appendChild(fullPreview);
+        
+        // Remove on mouseleave
+        fullPreview.addEventListener('mouseleave', function() {
+            fullPreview.remove();
+        });
+    });
+    
+    imgThumbnail.addEventListener('mouseleave', function() {
+        const fullPreview = document.getElementById('image-full-preview');
+        if (fullPreview) {
+            fullPreview.remove();
+        }
+    });
+    
+    return previewContainer;
 }
 
 // Generate preview - THE MAIN FUNCTION
@@ -301,14 +415,30 @@ document.getElementById('generateBtn').addEventListener('click', function() {
             }))
             .filter(item => item.text.trim()),
         stages: Array.from(document.querySelectorAll('#stagesTable tbody tr'))
-            .map(row => ({
-                stage: row.cells[0].querySelector('select').value,
-                time: escapeHtml(row.cells[1].querySelector('input').value),
-                activity: escapeHtml(row.cells[2].querySelector('input').value),
-                purpose: escapeHtml(row.cells[3].querySelector('input').value),
-                means: row.cells[4].querySelector('select').value,
-                mode: row.cells[5].querySelector('select').value
-            }))
+            .map(row => {
+                const activityInput = row.cells[2].querySelector('input');
+                let activityValue = activityInput.value;
+
+                // Restore full image data from preview containers for the preview
+                const previewContainer = activityInput.parentNode.querySelector('.image-previews');
+                if (previewContainer) {
+                    const previews = previewContainer.querySelectorAll('div[data-image-data]');
+                    previews.forEach(preview => {
+                        const imageData = preview.dataset.imageData;
+                        // Replace the placeholder with the full base64 data before processing
+                        activityValue = activityValue.replace('[IMAGE]', `[IMAGE:${imageData}]`);
+                    });
+                }
+
+                return {
+                    stage: row.cells[0].querySelector('select').value,
+                    time: escapeHtml(row.cells[1].querySelector('input').value),
+                    activity: processActivityText(activityValue), // Now process the restored value
+                    purpose: escapeHtml(row.cells[3].querySelector('input').value),
+                    means: row.cells[4].querySelector('select').value,
+                    mode: row.cells[5].querySelector('select').value
+                };
+            })
             .filter(stage => stage.stage || stage.activity),
         assessment: escapeHtml(document.getElementById('assessment').value),
         reflection: escapeHtml(document.getElementById('reflection').value)
@@ -780,6 +910,23 @@ document.getElementById('exportDocx').addEventListener('click', function() {
                     ol { margin: 0; padding-left: 20px; }
                     ul { margin: 0; padding-left: 20px; }
                     li { margin-bottom: 5px; }
+                    img { 
+                        max-width: 350px; 
+                        height: auto; 
+                        border: 1px solid #ddd; 
+                        border-radius: 4px; 
+                        margin: 5px 0; 
+                        display: inline-block;
+                    }
+                    @media print {
+                        img { 
+                            max-width: 350px !important; 
+                            height: auto !important;
+                            page-break-inside: avoid;
+                        }
+                        table { page-break-inside: auto; }
+                        tr { page-break-inside: avoid; page-break-after: auto; }
+                    }
                 </style>
             </head>
             <body>
@@ -1000,14 +1147,29 @@ function collectFormData() {
 
     // Collect stages
     data.stages = Array.from(document.querySelectorAll('#stagesTable tbody tr'))
-        .map(row => ({
-            stage: row.cells[0].querySelector('select').value,
-            time: row.cells[1].querySelector('input').value,
-            activity: row.cells[2].querySelector('input').value,
-            purpose: row.cells[3].querySelector('input').value,
-            means: row.cells[4].querySelector('select').value,
-            mode: row.cells[5].querySelector('select').value
-        }))
+        .map(row => {
+            const activityInput = row.cells[2].querySelector('input');
+            let activityValue = activityInput.value;
+            
+            // Restore full image data from preview containers
+            const previewContainer = activityInput.parentNode.querySelector('.image-previews');
+            if (previewContainer) {
+                const previews = previewContainer.querySelectorAll('div[data-image-data]');
+                previews.forEach(preview => {
+                    const imageData = preview.dataset.imageData;
+                    activityValue = activityValue.replace('[IMAGE]', `[IMAGE:${imageData}]`);
+                });
+            }
+            
+            return {
+                stage: row.cells[0].querySelector('select').value,
+                time: row.cells[1].querySelector('input').value,
+                activity: activityValue,
+                purpose: row.cells[3].querySelector('input').value,
+                means: row.cells[4].querySelector('select').value,
+                mode: row.cells[5].querySelector('select').value
+            };
+        })
         .filter(stage => stage.stage || stage.activity || stage.time);
 
     return data;
@@ -1141,7 +1303,7 @@ function saveLessonToArchive() {
             .map(row => ({
                 stage: row.cells[0].querySelector('select').value,
                 time: escapeHtml(row.cells[1].querySelector('input').value),
-                activity: escapeHtml(row.cells[2].querySelector('input').value),
+                activity: processActivityText(row.cells[2].querySelector('input').value),
                 purpose: escapeHtml(row.cells[3].querySelector('input').value),
                 means: row.cells[4].querySelector('select').value,
                 mode: row.cells[5].querySelector('select').value
@@ -1559,7 +1721,7 @@ function addSnippetButtons() {
             imageBtn.type = 'button';
             imageBtn.className = 'image-btn';
             imageBtn.innerHTML = '<i class="fas fa-camera"></i>';
-            imageBtn.title = 'Add Image';
+            imageBtn.title = 'Add Image (Click or Ctrl+V)';
             imageBtn.style.cssText = `
                 margin-left: 4px;
                 padding: 4px 8px;
@@ -1576,6 +1738,24 @@ function addSnippetButtons() {
             imageBtn.onclick = function() { uploadImageForActivity(input); };
             input.parentNode.appendChild(imageBtn);
         }
+        
+        // Add paste support if not already present
+        if (!input.hasAttribute('data-paste-enabled')) {
+            input.addEventListener('paste', function(e) {
+                console.log('Paste event detected');
+                
+                // Check if clipboard contains image
+                if (e.clipboardData && e.clipboardData.items) {
+                    const imageProcessed = handleImagePaste(input, e.clipboardData);
+                    
+                    // If image was processed, prevent default text paste
+                    if (imageProcessed) {
+                        e.preventDefault();
+                    }
+                }
+            });
+            input.setAttribute('data-paste-enabled', 'true');
+        }
     });
 }
 
@@ -1587,6 +1767,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('stagesTable').addEventListener('DOMNodeRemoved', addSnippetButtons);
     // Initial add
     setTimeout(addSnippetButtons, 100);
+    
+    // Initialize paste support
+    addPasteSupport();
 });
 
 // Image upload functionality
@@ -1606,10 +1789,15 @@ async function uploadImageForActivity(activityInput) {
 
         console.log('File selected:', file.name, 'Size:', file.size);
 
+        // Check file size (limit to 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            showNotification('File too large. Please select an image under 5MB.', 'error');
+            return;
+        }
+
         // Show loading indicator
         const originalValue = activityInput.value;
-        activityInput.value = 'Uploading image...';
-        activityInput.disabled = true;
+        activityInput.placeholder = 'Uploading image...';
 
         try {
             console.log('Starting FileReader...');
@@ -1623,13 +1811,36 @@ async function uploadImageForActivity(activityInput) {
 
                 try {
                     console.log('Processing image locally...');
-                    // Insert base64 image directly into activity input
+                    // Create visual preview instead of showing base64 text
+                    const preview = displayImagePreview(activityInput, base64Data);
+                    
+                    // Find or create preview container next to input
+                    let previewContainer = activityInput.parentNode.querySelector('.image-previews');
+                    if (!previewContainer) {
+                        previewContainer = document.createElement('div');
+                        previewContainer.className = 'image-previews';
+                        previewContainer.style.cssText = 'margin-top: 5px;';
+                        activityInput.parentNode.appendChild(previewContainer);
+                    }
+                    
+                    previewContainer.appendChild(preview);
+                    
+                    // Store the image data in hidden format for processing
                     const imageTag = `[IMAGE:${base64Data}]`;
                     if (originalValue.trim()) {
                         activityInput.value = originalValue + ' ' + imageTag;
                     } else {
                         activityInput.value = imageTag;
                     }
+                    
+                    // Hide the base64 text from user display
+                    setTimeout(() => {
+                        const cleanValue = activityInput.value.replace(/\[IMAGE:[^\]]+\]/g, '[IMAGE]');
+                        if (cleanValue !== activityInput.value) {
+                            activityInput.value = cleanValue;
+                        }
+                    }, 100);
+                    
                     showNotification('Image added successfully!', 'success');
                 } catch (error) {
                     console.error('Image processing error:', error);
@@ -1650,7 +1861,7 @@ async function uploadImageForActivity(activityInput) {
             activityInput.value = originalValue;
             showNotification('Failed to upload image: ' + error.message, 'error');
         } finally {
-            activityInput.disabled = false;
+            activityInput.placeholder = 'Enter activity';
         }
     };
 
@@ -1658,6 +1869,131 @@ async function uploadImageForActivity(activityInput) {
     document.body.appendChild(input);
     input.click();
     document.body.removeChild(input);
+}
+
+// Handle paste events for images
+function handleImagePaste(activityInput, clipboardData) {
+    console.log('Checking clipboard for images...');
+    console.log('Clipboard items:', clipboardData.items.length);
+    
+    try {
+        const items = clipboardData.items;
+        for (let i = 0; i < items.length; i++) {
+            console.log('Item', i, 'type:', items[i].type);
+            
+            if (items[i].type.indexOf('image') !== -1) {
+                console.log('Found image in clipboard:', items[i].type);
+                
+                const blob = items[i].getAsFile();
+                if (blob) {
+                    console.log('Blob created, size:', blob.size, 'type:', blob.type);
+                    
+                    // Check file size
+                    if (blob.size > 5 * 1024 * 1024) {
+                        showNotification('Pasted image too large. Please use an image under 5MB.', 'error');
+                        return true;
+                    }
+                    
+                    // Show loading indicator
+                    const originalValue = activityInput.value;
+                    activityInput.placeholder = 'Processing pasted image...';
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const base64Data = event.target.result;
+                        console.log('Pasted image processed, length:', base64Data.length);
+                        
+                        try {
+                            // Create visual preview
+                            const preview = displayImagePreview(activityInput, base64Data);
+                            
+                            // Find or create preview container
+                            let previewContainer = activityInput.parentNode.querySelector('.image-previews');
+                            if (!previewContainer) {
+                                previewContainer = document.createElement('div');
+                                previewContainer.className = 'image-previews';
+                                previewContainer.style.cssText = 'margin-top: 5px;';
+                                activityInput.parentNode.appendChild(previewContainer);
+                            }
+                            
+                            previewContainer.appendChild(preview);
+                            
+                            // Store the image data
+                            const imageTag = `[IMAGE:${base64Data}]`;
+                            if (originalValue.trim()) {
+                                activityInput.value = originalValue + ' ' + imageTag;
+                            } else {
+                                activityInput.value = imageTag;
+                            }
+                            
+                            // Hide base64 text from display
+                            setTimeout(() => {
+                                const cleanValue = activityInput.value.replace(/\[IMAGE:[^\]]+\]/g, '[IMAGE]');
+                                if (cleanValue !== activityInput.value) {
+                                    activityInput.value = cleanValue;
+                                }
+                            }, 100);
+                            
+                            showNotification('Image pasted successfully!', 'success');
+                        } catch (error) {
+                            console.error('Error processing pasted image:', error);
+                            showNotification('Failed to process pasted image: ' + error.message, 'error');
+                        } finally {
+                            activityInput.placeholder = 'Enter activity';
+                        }
+                    };
+                    
+                    reader.onerror = function(error) {
+                        console.error('FileReader error for pasted image:', error);
+                        showNotification('Failed to read pasted image: ' + error.message, 'error');
+                        activityInput.placeholder = 'Enter activity';
+                    };
+                    
+                    reader.readAsDataURL(blob);
+                    return true; // Image found and processed
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error in handleImagePaste:', error);
+        showNotification('Failed to process paste: ' + error.message, 'error');
+        return true;
+    }
+    
+    console.log('No image found in clipboard');
+    return false; // No image found
+}
+
+// Add paste event listeners to activity inputs
+function addPasteSupport() {
+    const activityInputs = document.querySelectorAll('#stagesTable tbody td:nth-child(3) input');
+    console.log('Adding paste support to', activityInputs.length, 'activity inputs');
+    
+    activityInputs.forEach((input, index) => {
+        console.log('Adding paste listener to input', index);
+        input.addEventListener('paste', function(e) {
+            console.log('Paste event detected on input', index);
+            console.log('Clipboard data available:', !!e.clipboardData);
+            
+            try {
+                // Check if clipboard contains image
+                if (e.clipboardData && e.clipboardData.items) {
+                    console.log('Clipboard items count:', e.clipboardData.items.length);
+                    const imageProcessed = handleImagePaste(input, e.clipboardData);
+                    
+                    // If image was processed, prevent default text paste
+                    if (imageProcessed) {
+                        e.preventDefault();
+                    }
+                } else {
+                    console.log('No clipboard data available');
+                }
+            } catch (error) {
+                console.error('Error in paste event:', error);
+                showNotification('Paste error: ' + error.message, 'error');
+            }
+        });
+    });
 }
 
 console.log('Archive functionality loaded successfully');

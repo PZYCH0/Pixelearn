@@ -584,11 +584,11 @@
                     <h2><i class="fas fa-info-circle"></i> Header Information</h2>
                     <div class="field">
                         <label>Teacher's Name:</label>
-                        <input type="text" id="teacherName" value="Zakaria Ghazali" required>
+                        <input type="text" id="teacherName" placeholder="Enter your name" required>
                     </div>
                     <div class="field">
                         <label>Institution:</label>
-                        <input type="text" id="institution" value="Jnan Darwa Middle School" required>
+                        <input type="text" id="institution" placeholder="Enter your institution's name" required>
                     </div>
                     <div class="field">
                         <label>Date:</label>
@@ -631,11 +631,11 @@
                     <h2><i class="fas fa-book"></i> Lesson Details</h2>
                     <div class="field">
                         <label>Unit:</label>
-                        <input type="text" id="unit" value="Unit 3: Grammar & Communication" required>
+                        <input type="text" id="unit" placeholder="e.g., Unit 3: Grammar & Communication" required>
                     </div>
                     <div class="field">
                         <label>Lesson Title:</label>
-                        <input type="text" id="lessonTitle" value="Present Perfect Tense" required>
+                        <input type="text" id="lessonTitle" placeholder="e.g., Present Perfect Tense" required>
                     </div>
                     <div class="field">
                         <label>Duration:</label>
@@ -648,7 +648,7 @@
                     <div id="objectivesList">
                         <div class="dynamic-list">
                             <span class="number">1.</span>
-                            <input type="text" value="Students will be able to form and use the present perfect tense correctly" placeholder="Enter learning objective">
+                            <input type="text" value="" placeholder="Enter learning objective">
                             <button type="button" class="add">Add</button>
                             <button type="button" class="remove" disabled>Remove</button>
                         </div>
@@ -659,8 +659,8 @@
                     <h2><i class="fas fa-toolbox"></i> Materials Needed</h2>
                     <div id="materialsList">
                         <div class="checklist-item">
-                            <input type="checkbox" checked>
-                            <input type="text" value="Whiteboard and markers" placeholder="Enter material">
+                            <input type="checkbox">
+                            <input type="text" value="" placeholder="Enter material">
                             <button type="button" class="add">Add</button>
                             <button type="button" class="remove" disabled>Remove</button>
                         </div>
@@ -675,7 +675,7 @@
                                 <tr>
                                     <th>Stage</th>
                                     <th>Time</th>
-                                    <th>Activity</th>
+                                    <th>Activity <small style="opacity: 0.7;">(Ctrl+V to paste image)</small></th>
                                     <th>Purpose</th>
                                     <th>Means</th>
                                     <th>Mode</th>
@@ -687,7 +687,7 @@
                                     <td>
                                         <select class="stage-select">
                                             <option value="">Select Stage</option>
-                                            <option value="Warm-up" selected>Warm-up</option>
+                                            <option value="Warm-up">Warm-up</option>
                                             <option value="Presentation">Presentation</option>
                                             <option value="Practice">Practice</option>
                                             <option value="Production">Production</option>
@@ -709,9 +709,9 @@
                                             <option value="Other">Other</option>
                                         </select>
                                     </td>
-                                    <td><input type="text" value="5 min" placeholder="Time"></td>
-                                    <td><input type="text" value="Greet students and review previous lesson" placeholder="Activity"></td>
-                                    <td><input type="text" value="Activate prior knowledge" placeholder="Purpose"></td>
+                                    <td><input type="text" value="" placeholder="Time"></td>
+                                    <td><input type="text" value="" placeholder="Activity"></td>
+                                    <td><input type="text" value="" placeholder="Purpose"></td>
                                     <td>
                                         <select>
                                             <option value="">Select</option>
@@ -739,14 +739,14 @@
                 <div class="section">
                     <h2><i class="fas fa-clipboard-check"></i> Assessment</h2>
                     <div class="field">
-                        <textarea id="assessment" placeholder="Describe assessment methods and criteria...">Students will complete a worksheet with 10 sentences using present perfect tense. Assessment criteria: accuracy (60%), appropriate use (40%).</textarea>
+                        <textarea id="assessment" placeholder="Describe assessment methods and criteria..."></textarea>
                     </div>
                 </div>
 
                 <div class="section">
                     <h2><i class="fas fa-sticky-note"></i> Reflection & Notes</h2>
                     <div class="field">
-                        <textarea id="reflection" placeholder="Enter post-lesson reflections or additional notes...">This lesson introduces the present perfect tense. Students may need extra practice distinguishing it from simple past.</textarea>
+                        <textarea id="reflection" placeholder="Enter post-lesson reflections or additional notes..."></textarea>
                     </div>
                 </div>
 
