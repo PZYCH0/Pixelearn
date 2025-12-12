@@ -9,88 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-docx-js/0.3.1/html-docx.min.js"></script>
     <style>
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            #stagesTable {
-                border: 0;
-            }
-
-            #stagesTable thead {
-                display: none;
-            }
-
-            #stagesTable tr {
-                display: block;
-                margin-bottom: 20px;
-                border-radius: 10px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                background: #fff;
-                border: 1px solid #e0e0e0;
-            }
-
-            #stagesTable td {
-                display: block;
-                text-align: right;
-                border-bottom: 1px dotted #ccc;
-            }
-
-            #stagesTable td:last-child {
-                border-bottom: 0;
-            }
-
-            #stagesTable td::before {
-                content: attr(data-label);
-                float: left;
-                font-weight: bold;
-                text-transform: uppercase;
-                color: #34495e;
-            }
-
-            .container {
-                padding: 10px;
-            }
-
-            .header h1 {
-                font-size: 2em;
-            }
-
-            .form-content {
-                padding: 20px;
-            }
-
-            .section {
-                padding: 15px;
-            }
-
-            .dynamic-list {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .dynamic-list input {
-                width: 100%;
-            }
-
-            .dynamic-list .button-group, .checklist-item .button-group {
-                display: flex;
-                gap: 10px;
-                width: 100%;
-                margin-top: 10px;
-            }
-
-            .dynamic-list .button-group button, .checklist-item .button-group button {
-                flex: 1;
-            }
-
-            .action-btns {
-                flex-direction: column;
-            }
-
-            .generate-btn {
-                width: 100%;
-            }
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -438,18 +356,6 @@
             border-bottom: 1px solid #e0e0e0;
         }
         
-        #stagesTable {
-            table-layout: fixed;
-        }
-
-        #stagesTable th:nth-child(1) { width: 15%; } /* Stage */
-        #stagesTable th:nth-child(2) { width: 10%; } /* Time */
-        #stagesTable th:nth-child(3) { width: 25%; } /* Activity */
-        #stagesTable th:nth-child(4) { width: 20%; } /* Purpose */
-        #stagesTable th:nth-child(5) { width: 10%; } /* Means */
-        #stagesTable th:nth-child(6) { width: 10%; } /* Mode */
-        #stagesTable th:nth-child(7) { width: 10%; } /* Action */
-        
         th {
             background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
             color: white;
@@ -461,7 +367,7 @@
             padding: 8px;
             font-size: 0.9em;
         }
-
+        
         .add-row {
             margin-top: 10px;
             padding: 10px 20px;
@@ -495,6 +401,7 @@
         }
         
         .generate-btn {
+            width: 100%;
             padding: 18px;
             background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
             color: white;
@@ -632,18 +539,7 @@
             box-shadow: 0 8px 25px rgba(155, 89, 182, 0.4);
         }
         
-        .action-btns {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
         @media (max-width: 768px) {
-            .action-btns {
-                flex-direction: column;
-            }
-
             .header h1 {
                 font-size: 1.8em;
             }
@@ -753,10 +649,8 @@
                         <div class="dynamic-list">
                             <span class="number">1.</span>
                             <input type="text" value="" placeholder="Enter learning objective">
-                            <div class="button-group">
-                                <button type="button" class="add">Add</button>
-                                <button type="button" class="remove" disabled>Remove</button>
-                            </div>
+                            <button type="button" class="add">Add</button>
+                            <button type="button" class="remove" disabled>Remove</button>
                         </div>
                     </div>
                 </div>
@@ -767,10 +661,8 @@
                         <div class="checklist-item">
                             <input type="checkbox">
                             <input type="text" value="" placeholder="Enter material">
-                            <div class="button-group">
-                                <button type="button" class="add">Add</button>
-                                <button type="button" class="remove" disabled>Remove</button>
-                            </div>
+                            <button type="button" class="add">Add</button>
+                            <button type="button" class="remove" disabled>Remove</button>
                         </div>
                     </div>
                 </div>
@@ -792,7 +684,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td data-label="Stage">
+                                    <td>
                                         <select class="stage-select">
                                             <option value="">Select Stage</option>
                                             <option value="Warm-up">Warm-up</option>
@@ -817,10 +709,10 @@
                                             <option value="Other">Other</option>
                                         </select>
                                     </td>
-                                    <td data-label="Time"><input type="text" value="" placeholder="Time"></td>
-                                    <td data-label="Activity"><input type="text" value="" placeholder="Activity"></td>
-                                    <td data-label="Purpose"><input type="text" value="" placeholder="Purpose"></td>
-                                    <td data-label="Means">
+                                    <td><input type="text" value="" placeholder="Time"></td>
+                                    <td><input type="text" value="" placeholder="Activity"></td>
+                                    <td><input type="text" value="" placeholder="Purpose"></td>
+                                    <td>
                                         <select>
                                             <option value="">Select</option>
                                             <option value="Individual work">Individual</option>
@@ -828,7 +720,7 @@
                                             <option value="Group work">Group work</option>
                                         </select>
                                     </td>
-                                    <td data-label="Mode">
+                                    <td>
                                         <select>
                                             <option value="">Select</option>
                                             <option value="Teacher-Student">T-S</option>
@@ -836,7 +728,7 @@
                                             <option value="Student-Student">S-S</option>
                                         </select>
                                     </td>
-                                    <td data-label="Action"><button type="button" class="remove-row">Remove</button></td>
+                                    <td><button type="button" class="remove-row">Remove</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -858,7 +750,7 @@
                     </div>
                 </div>
 
-                <div class="action-btns">
+                <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 20px;">
                     <button type="button" id="generateBtn" class="generate-btn">
                         <i class="fas fa-magic"></i> Generate Lesson Plan
                     </button>
