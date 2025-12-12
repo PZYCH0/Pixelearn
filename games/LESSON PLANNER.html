@@ -89,6 +89,14 @@
             .generate-btn {
                 width: 100%;
             }
+
+            .activity-cell .activity-wrapper {
+                flex-direction: column;
+            }
+
+            .activity-tools {
+                flex-direction: row;
+            }
         }
 
         * {
@@ -189,6 +197,67 @@
         
         .form-content {
             padding: 40px;
+        }
+
+        .activity-cell .activity-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: stretch;
+        }
+
+        .activity-tools {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .activity-tools button,
+        .activity-tools .activity-upload-btn {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background: #f8f9fa;
+            color: #34495e;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            text-align: left;
+        }
+
+        .activity-tools .activity-upload-btn {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: #fff;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .activity-tools button:hover,
+        .activity-tools .activity-upload-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .activity-input {
+            flex: 1;
+            min-height: 70px;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background: #fff;
+            overflow-y: auto;
+        }
+
+        .activity-input:focus {
+            outline: 2px solid #9b59b6;
+            border-color: transparent;
+        }
+
+        .activity-input:empty:before {
+            content: attr(data-placeholder);
+            color: #9aa4ad;
+            pointer-events: none;
         }
         
         .section {
@@ -818,7 +887,18 @@
                                         </select>
                                     </td>
                                     <td data-label="Time"><input type="text" value="" placeholder="Time"></td>
-                                    <td data-label="Activity"><input type="text" value="" placeholder="Activity"></td>
+                                    <td data-label="Activity" class="activity-cell">
+                                        <div class="activity-wrapper">
+                                            <div class="activity-tools">
+                                                <button type="button" class="activity-snippets" title="Insert common activity snippet">Snippets</button>
+                                                <label class="activity-upload-btn" title="Upload or paste an image">
+                                                    <input type="file" accept="image/*" class="activity-upload" hidden>
+                                                    <span><i class="fas fa-upload"></i> Upload</span>
+                                                </label>
+                                            </div>
+                                            <div class="activity-input" contenteditable="true" data-placeholder="Activity details or paste images"></div>
+                                        </div>
+                                    </td>
                                     <td data-label="Purpose"><input type="text" value="" placeholder="Purpose"></td>
                                     <td data-label="Means">
                                         <select>
