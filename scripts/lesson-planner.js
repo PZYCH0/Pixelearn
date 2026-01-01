@@ -14,6 +14,60 @@ document.addEventListener('DOMContentLoaded', function() {
     const selectedClassesInput = document.getElementById('selectedClasses');
     const allClasses = Object.values(classes).flat();
 
+    // Personal Information Storage Functions
+    function savePersonalInfo() {
+        const teacherName = document.getElementById('teacherName').value;
+        const institution = document.getElementById('institution').value;
+        const level = document.getElementById('level').value;
+        
+        if (teacherName || institution) {
+            localStorage.setItem('lessonPlannerPersonalInfo', JSON.stringify({
+                teacherName: teacherName,
+                institution: institution,
+                level: level
+            }));
+        }
+    }
+
+    function loadPersonalInfo() {
+        const savedInfo = localStorage.getItem('lessonPlannerPersonalInfo');
+        if (savedInfo) {
+            const info = JSON.parse(savedInfo);
+            if (info.teacherName) document.getElementById('teacherName').value = info.teacherName;
+            if (info.institution) document.getElementById('institution').value = info.institution;
+            if (info.level) document.getElementById('level').value = info.level;
+        }
+    }
+
+    function clearPersonalInfo() {
+        localStorage.removeItem('lessonPlannerPersonalInfo');
+        document.getElementById('teacherName').value = '';
+        document.getElementById('institution').value = '';
+        document.getElementById('level').value = '';
+    }
+
+    // Load personal info on page load
+    loadPersonalInfo();
+
+    // Save personal info when fields change
+    document.getElementById('teacherName').addEventListener('input', savePersonalInfo);
+    document.getElementById('institution').addEventListener('input', savePersonalInfo);
+    document.getElementById('level').addEventListener('change', savePersonalInfo);
+
+    // Add event listeners for personal info buttons
+    document.getElementById('saveInfoBtn').addEventListener('click', function() {
+        savePersonalInfo();
+        alert('Personal information saved successfully!');
+    });
+
+    document.getElementById('clearInfoBtn').addEventListener('click', function() {
+        if (confirm('Are you sure you want to clear all saved personal information?')) {
+            clearPersonalInfo();
+            alert('Personal information cleared!');
+        }
+    });
+
+    
     function updateDropdown(filter = '') {
         classDropdown.innerHTML = '';
         const filtered = allClasses.filter(cls => cls.toLowerCase().includes(filter.toLowerCase()) && !selectedClasses.includes(cls));
@@ -101,8 +155,19 @@ const modelStages = {
     'TTT': ['Test', 'Teacher-led', 'Test'],
     'UDL': ['Engage', 'Explore', 'Explain', 'Elaborate', 'Evaluate'],
     'ECRIF': ['Engage', 'Conceptualize', 'Reflect', 'Investigation', 'Formulate'],
-    'OHE': ['Observe', 'Hypothesize', 'Experiment'],
+    'OHE': ['Observation', 'Hypothesis', 'Experiment'],
+    'POHE': ['Preparation', 'Observation', 'Hypothesizing', 'Receptive', 'Productive', 'Experimenting', 'Closing'],
     'Custom': []
+};
+
+const pohePurposeMap = {
+    'Preparation': 'Lesson engagement and context-setting (Warm-up, initial input or review)',
+    'Observation': 'Noticing stage (guided exposure to language or model texts/audio)',
+    'Hypothesizing': 'Guided discovery (learners form language rules or meaning from context)',
+    'Receptive': 'Apply understanding through listening/reading tasks',
+    'Productive': 'Test understanding through short output tasks (controlled writing/speaking)',
+    'Experimenting': 'Free communicative use (dialogues, writing, projects, presentations)',
+    'Closing': 'Student reflection, sharing, note-taking'
 };
 
 // Pre-fill stages based on model selection
@@ -131,6 +196,7 @@ function createStageRow(stageValue) {
         <td>
             <select class="stage-select">
                 <option value="">Select Stage</option>
+                <option value="Preparation">Preparation</option>
                 <option value="Warm-up">Warm-up</option>
                 <option value="Presentation">Presentation</option>
                 <option value="Practice">Practice</option>
@@ -143,18 +209,23 @@ function createStageRow(stageValue) {
                 <option value="Reflect">Reflect</option>
                 <option value="Observation">Observation</option>
                 <option value="Hypothesis">Hypothesis</option>
+                <option value="Hypothesizing">Hypothesizing</option>
+                <option value="Receptive">Receptive (Listening/Reading)</option>
+                <option value="Productive">Productive (Controlled Output)</option>
                 <option value="Experiment">Experiment</option>
+                <option value="Experimenting">Experimenting</option>
                 <option value="Investigation">Investigation</option>
                 <option value="Formulate">Formulate</option>
                 <option value="Conceptualize">Conceptualize</option>
                 <option value="Teacher-led">Teacher-led</option>
                 <option value="Transition">Transition</option>
                 <option value="Test">Test</option>
+                <option value="Closing">Closing</option>
                 <option value="Other">Other</option>
             </select>
         </td>
         <td><input type="text" placeholder="Time"></td>
-        <td><input type="text" placeholder="Activity"></td>
+        <td><input type="text" placeholder="Activity"><input type="file" accept="image/*" class="image-upload" style="display: none;"><button type="button" class="upload-btn" style="display: none;"><i class="fas fa-image"></i></button></td>
         <td><input type="text" placeholder="Purpose"></td>
         <td>
             <select>
@@ -177,6 +248,23 @@ function createStageRow(stageValue) {
     if (stageValue) {
         row.querySelector('.stage-select').value = stageValue;
     }
+
+    const maybeFillPohePurpose = (selectedStage) => {
+        const mappedPurpose = pohePurposeMap[selectedStage];
+        if (!mappedPurpose) return;
+
+        const purposeInput = row.cells[3].querySelector('input');
+        if (!purposeInput) return;
+
+        if (!purposeInput.value.trim()) {
+            purposeInput.value = mappedPurpose;
+        }
+    };
+
+    if (stageValue) {
+        maybeFillPohePurpose(stageValue);
+    }
+
     return row;
 }
 
@@ -240,6 +328,24 @@ document.getElementById('stagesTable').addEventListener('click', function(e) {
     }
 });
 
+document.getElementById('stagesTable').addEventListener('change', function(e) {
+    if (!e.target.classList.contains('stage-select')) return;
+
+    const selectedStage = e.target.value;
+    const mappedPurpose = pohePurposeMap[selectedStage];
+    if (!mappedPurpose) return;
+
+    const row = e.target.closest('tr');
+    if (!row) return;
+
+    const purposeInput = row.cells[3]?.querySelector('input');
+    if (!purposeInput) return;
+
+    if (!purposeInput.value.trim()) {
+        purposeInput.value = mappedPurpose;
+    }
+});
+
 // Function to escape HTML
 function escapeHtml(text) {
     if (!text) return '';
@@ -265,6 +371,81 @@ function processActivityText(text) {
     
     // Replace ![alt](url) markdown with img tag
     result = result.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<br><img src="$2" alt="$1" style="max-width: 350px; height: auto; border: 1px solid #ddd; border-radius: 4px; margin: 5px 0; display: inline-block;"><br>');
+    
+    return result;
+}
+
+function generateImagePlaceholderToken() {
+    return `[IMAGE_TOKEN:${Date.now()}_${Math.random().toString(16).slice(2)}]`;
+}
+
+function ensureImagePreviewsContainer(activityInput) {
+    if (!activityInput || !activityInput.parentNode) return null;
+
+    let container = activityInput.parentNode.querySelector('.image-previews');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'image-previews';
+        container.style.cssText = 'display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;';
+        activityInput.parentNode.appendChild(container);
+    }
+    return container;
+}
+
+function insertImageIntoActivity(activityInput, base64Data) {
+    if (!activityInput || !base64Data) return;
+
+    const previewsContainer = ensureImagePreviewsContainer(activityInput);
+    if (!previewsContainer) return;
+    
+    // Add image preview without modifying the input text
+    previewsContainer.appendChild(displayImagePreview(activityInput, base64Data));
+}
+
+function hydrateActivityImages(activityInput) {
+    if (!activityInput) return;
+
+    const raw = activityInput.value || '';
+    const matches = raw.matchAll(/\[IMAGE:([^\]]+)\]/g);
+    let replaced = raw;
+    let didHydrate = false;
+
+    for (const match of matches) {
+        const base64Data = match[1];
+        const fullTag = match[0];
+        const placeholderToken = generateImagePlaceholderToken();
+
+        replaced = replaced.replace(fullTag, placeholderToken);
+        const previewsContainer = ensureImagePreviewsContainer(activityInput);
+        if (previewsContainer) {
+            previewsContainer.appendChild(displayImagePreview(activityInput, base64Data, placeholderToken));
+            didHydrate = true;
+        }
+    }
+
+    if (didHydrate) {
+        activityInput.value = replaced;
+    }
+}
+
+function restoreActivityValueFromPreviews(activityInput) {
+    if (!activityInput || !activityInput.parentNode) return '';
+
+    let result = activityInput.value || '';
+    const previewContainer = activityInput.parentNode.querySelector('.image-previews');
+    
+    if (!previewContainer) return result;
+
+    // Get all image previews in order
+    const previews = Array.from(previewContainer.querySelectorAll('div[data-image-data]'));
+    
+    // If there are images, combine them with the text
+    if (previews.length > 0) {
+        // For now, just append images after the text
+        // You might want to implement more sophisticated ordering if needed
+        const imageTags = previews.map(p => `[IMAGE:${p.dataset.imageData}]`).join(' ');
+        return result + (result ? ' ' : '') + imageTags;
+    }
     
     return result;
 }
@@ -320,8 +501,7 @@ function displayImagePreview(activityInput, base64Data) {
     `;
     removeBtn.onclick = () => {
         previewContainer.remove();
-        const imageTag = `[IMAGE:${base64Data}]`;
-        activityInput.value = activityInput.value.replace(imageTag, '').trim();
+        // No need to modify the input text since we're not using tokens
     };
     
     previewContainer.appendChild(imgThumbnail);
@@ -415,23 +595,12 @@ document.getElementById('generateBtn').addEventListener('click', function() {
         stages: Array.from(document.querySelectorAll('#stagesTable tbody tr'))
             .map(row => {
                 const activityInput = row.cells[2].querySelector('input');
-                let activityValue = activityInput.value;
-
-                // Restore full image data from preview containers for the preview
-                const previewContainer = activityInput.parentNode.querySelector('.image-previews');
-                if (previewContainer) {
-                    const previews = previewContainer.querySelectorAll('div[data-image-data]');
-                    previews.forEach(preview => {
-                        const imageData = preview.dataset.imageData;
-                        // Replace the placeholder with the full base64 data before processing
-                        activityValue = activityValue.replace('[IMAGE]', `[IMAGE:${imageData}]`);
-                    });
-                }
+                let activityValue = restoreActivityValueFromPreviews(activityInput, activityInput.value);
 
                 return {
                     stage: row.cells[0].querySelector('select').value,
                     time: escapeHtml(row.cells[1].querySelector('input').value),
-                    activity: processActivityText(activityValue), // Now process the restored value
+                    activity: processActivityText(activityValue),
                     purpose: escapeHtml(row.cells[3].querySelector('input').value),
                     means: row.cells[4].querySelector('select').value,
                     mode: row.cells[5].querySelector('select').value
@@ -443,52 +612,63 @@ document.getElementById('generateBtn').addEventListener('click', function() {
     };
 
     const contentHtml = `
-        <div style="text-align: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 3px solid #9b59b6;">
-            <h3 style="font-size: 1.8em; margin-bottom: 5px;">${data.teacherName}</h3>
-            <p style="font-size: 1.2em; color: #7f8c8d;">${data.institution}</p>
+        <div style="text-align: center; margin-bottom: 15px; padding-bottom: 12px; border-bottom: 2px solid #9b59b6;">
+            <h3 style="font-size: 1.4em; margin-bottom: 3px;">${data.teacherName}</h3>
+            <p style="font-size: 1em; color: #7f8c8d;">${data.institution}</p>
         </div>
 
-        <div style="background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%); padding: 20px; border-radius: 10px; margin-bottom: 25px;">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                <div><strong>Date:</strong> ${data.date}</div>
-                <div><strong>Level:</strong> ${data.level}</div>
-                <div><strong>Classes:</strong> ${data.class.join(', ')}</div>
-                <div><strong>Model:</strong> ${data.model}</div>
-                <div><strong>Duration:</strong> ${data.duration}</div>
+        <!-- 2x2 Grid Layout for Preview -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 10px; margin-bottom: 15px;">
+            <!-- Grid 1: Basic Information -->
+            <div style="background: rgba(248, 249, 250, 0.9); border-radius: 10px; border-left: 3px solid #9b59b6; padding: 12px; border: 1px solid rgba(155, 89, 182, 0.1);">
+                <div style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); color: white; padding: 8px 10px; margin: -12px -12px 10px -12px; border-radius: 10px 10px 0 0; font-weight: bold; font-size: 0.9em; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <i class="fas fa-info-circle" style="color: white !important; font-size: 0.9em;"></i> Basic Information
+                </div>
+                <div style="display: grid; gap: 4px; font-size: 0.8em;">
+                    <div><strong>Date:</strong> ${data.date}</div>
+                    <div><strong>Level:</strong> ${data.level}</div>
+                    <div><strong>Classes:</strong> ${data.class.join(', ')}</div>
+                    <div><strong>Model:</strong> ${data.model}</div>
+                    <div><strong>Duration:</strong> ${data.duration}</div>
+                </div>
             </div>
-        </div>
-        <div style="margin-bottom: 25px;">
-            <div style="background: #9b59b6; color: white; padding: 10px 15px; border-radius: 8px 8px 0 0; font-weight: bold;">
-                <i class="fas fa-book"></i> Unit & Lesson
+
+            <!-- Grid 2: Unit & Lesson -->
+            <div style="background: rgba(248, 249, 250, 0.9); border-radius: 10px; border-left: 3px solid #9b59b6; padding: 12px; border: 1px solid rgba(155, 89, 182, 0.1);">
+                <div style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; padding: 8px 10px; margin: -12px -12px 10px -12px; border-radius: 10px 10px 0 0; font-weight: bold; font-size: 0.9em; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <i class="fas fa-book" style="color: white !important; font-size: 0.9em;"></i> Unit & Lesson
+                </div>
+                <div style="display: grid; gap: 4px; font-size: 0.8em;">
+                    <div><strong>Unit:</strong> ${data.unit}</div>
+                    <div><strong>Lesson Title:</strong> ${data.lessonTitle}</div>
+                </div>
             </div>
-            <div style="padding: 15px; background: #ecf0f1; border-radius: 0 0 8px 8px;">
-                <strong>Unit:</strong> ${data.unit}<br>
-                <strong>Lesson Title:</strong> ${data.lessonTitle}
+
+            <!-- Grid 3: Learning Objectives -->
+            <div style="background: rgba(248, 249, 250, 0.9); border-radius: 10px; border-left: 3px solid #9b59b6; padding: 12px; border: 1px solid rgba(155, 89, 182, 0.1);">
+                <div style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); color: white; padding: 8px 10px; margin: -12px -12px 10px -12px; border-radius: 10px 10px 0 0; font-weight: bold; font-size: 0.9em; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <i class="fas fa-bullseye" style="color: white !important; font-size: 0.9em;"></i> Learning Objectives
+                </div>
+                <div style="font-size: 0.8em;">
+                    <strong>Students will be able to:</strong>
+                    <ol style="margin: 4px 0 0 0; padding-left: 16px;">
+                        ${data.objectives.map(obj => `<li style="margin-bottom: 4px;">${obj}</li>`).join('')}
+                    </ol>
+                </div>
             </div>
-        </div>
-        <div style="margin-bottom: 25px;">
-            <div style="background: #27ae60; color: white; padding: 10px 15px; border-radius: 8px 8px 0 0; font-weight: bold;">
-                <i class="fas fa-bullseye"></i> Learning Objectives
-            </div>
-            <div style="padding: 15px; background: #ecf0f1; border-radius: 0 0 8px 8px;">
-                Students will be able to:<br>
-                <ol style="margin: 0; padding-left: 20px;">
-                    ${data.objectives.map(obj => `<li style="margin-bottom: 8px;">${obj}</li>`).join('')}
-                </ol>
-            </div>
-        </div>
-        <div style="margin-bottom: 25px;">
-            <div style="background: #e67e22; color: white; padding: 10px 15px; border-radius: 8px 8px 0 0; font-weight: bold;">
-                <i class="fas fa-toolbox"></i> Materials Needed
-            </div>
-            <div style="padding: 15px; background: #ecf0f1; border-radius: 0 0 8px 8px;">
-                <ul style="list-style: none; margin: 0; padding: 0;">
-                    ${data.materials.map(mat => `<li style="margin-bottom: 8px;"><span style="color: ${mat.checked ? '#27ae60' : '#95a5a6'};">${mat.checked ? '&#10004;' : '&#9711;'}</span> ${mat.text}</li>`).join('')}
+
+            <!-- Grid 4: Materials Needed -->
+            <div style="background: rgba(248, 249, 250, 0.9); border-radius: 10px; border-left: 3px solid #9b59b6; padding: 12px; border: 1px solid rgba(155, 89, 182, 0.1);">
+                <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 8px 10px; margin: -12px -12px 10px -12px; border-radius: 10px 10px 0 0; font-weight: bold; font-size: 0.9em; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <i class="fas fa-toolbox" style="color: white !important; font-size: 0.9em;"></i> Materials Needed
+                </div>
+                <ul style="list-style: none; margin: 0; padding: 0; font-size: 0.8em;">
+                    ${data.materials.map(mat => `<li style="margin-bottom: 4px;"><span style="color: ${mat.checked ? '#27ae60' : '#95a5a6'};">${mat.checked ? '&#10004;' : '&#9711;'}</span> ${mat.text}</li>`).join('')}
                 </ul>
             </div>
         </div>
-        <div style="margin-bottom: 25px;">
-            <div style="background: #9b59b6; color: white; padding: 10px 15px; border-radius: 8px 8px 0 0; font-weight: bold;">
+        <div style="margin-bottom: 20px;">
+            <div style="background: #9b59b6; color: white; padding: 8px 12px; border-radius: 6px 6px 0 0; font-weight: bold;">
                 <i class="fas fa-tasks"></i> Lesson Stages
             </div>
             <div style="padding: 15px; background: #ecf0f1; border-radius: 0 0 8px 8px; overflow-x: auto;">
@@ -603,6 +783,15 @@ document.getElementById('generateBtn').addEventListener('click', function() {
     .page { box-shadow: none; border-radius: 0; padding: 20px; }
     .print-btn { display: none; }
   }
+  @media (max-width: 768px) {
+    .page {
+      padding: 20px;
+    }
+    .page > div[style*="grid-template-columns: 1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+      gap: 15px !important;
+    }
+  }
 </style>
 </head>
 <body>
@@ -625,334 +814,7 @@ document.getElementById('generateBtn').addEventListener('click', function() {
 
 console.log('Lesson Planner JS loaded successfully!');
 
-// PDF Export Function
-document.getElementById('exportPdf').addEventListener('click', function() {
-    console.log('Starting PDF export...');
-
-    try {
-        // Collect form data the same way as generate function
-        const selectedClassesValue = document.getElementById('selectedClasses').value;
-        const selectedClasses = selectedClassesValue ? JSON.parse(selectedClassesValue) : [];
-
-        const levelSelect = document.getElementById('level');
-        const modelSelect = document.getElementById('model');
-
-        const data = {
-            teacherName: escapeHtml(document.getElementById('teacherName').value),
-            institution: escapeHtml(document.getElementById('institution').value),
-            date: escapeHtml(document.getElementById('date').value),
-            level: levelSelect.options[levelSelect.selectedIndex].text,
-            class: selectedClasses,
-            model: modelSelect.options[modelSelect.selectedIndex].text,
-            unit: escapeHtml(document.getElementById('unit').value),
-            lessonTitle: escapeHtml(document.getElementById('lessonTitle').value),
-            duration: escapeHtml(document.getElementById('duration').value),
-            objectives: Array.from(document.querySelectorAll('#objectivesList input[type="text"]'))
-                .map(input => escapeHtml(input.value))
-                .filter(val => val.trim()),
-            materials: Array.from(document.querySelectorAll('#materialsList .checklist-item'))
-                .map(item => ({
-                    checked: item.querySelector('input[type="checkbox"]').checked,
-                    text: escapeHtml(item.querySelector('input[type="text"]').value)
-                }))
-                .filter(item => item.text.trim()),
-            stages: Array.from(document.querySelectorAll('#stagesTable tbody tr'))
-                .map(row => ({
-                    stage: row.cells[0].querySelector('select').value,
-                    time: escapeHtml(row.cells[1].querySelector('input').value),
-                    activity: escapeHtml(row.cells[2].querySelector('input').value),
-                    purpose: escapeHtml(row.cells[3].querySelector('input').value),
-                    means: row.cells[4].querySelector('select').value,
-                    mode: row.cells[5].querySelector('select').value
-                }))
-                .filter(stage => stage.stage || stage.activity),
-            assessment: escapeHtml(document.getElementById('assessment').value),
-            reflection: escapeHtml(document.getElementById('reflection').value)
-        };
-
-        // Create PDF
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-
-        // Set up fonts and colors
-        doc.setFont('helvetica', 'normal');
-        let yPosition = 20;
-        const pageWidth = doc.internal.pageSize.width;
-        const pageHeight = doc.internal.pageSize.height;
-        const margin = 20;
-        const contentWidth = pageWidth - 2 * margin;
-
-        // Header
-        doc.setFontSize(18);
-        doc.setFont('helvetica', 'bold');
-        doc.text(data.teacherName, pageWidth / 2, yPosition, { align: 'center' });
-        yPosition += 10;
-        doc.setFontSize(14);
-        doc.setFont('helvetica', 'normal');
-        doc.text(data.institution, pageWidth / 2, yPosition, { align: 'center' });
-        yPosition += 20;
-
-        // Header Info Section
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Header Information', margin, yPosition);
-        yPosition += 10;
-
-        doc.setFont('helvetica', 'normal');
-        const headerInfo = [
-            `Date: ${data.date}`,
-            `Level: ${data.level}`,
-            `Classes: ${data.class.join(', ')}`,
-            `Model: ${data.model}`,
-            `Duration: ${data.duration}`
-        ];
-
-        headerInfo.forEach(line => {
-            if (yPosition > pageHeight - 30) {
-                doc.addPage();
-                yPosition = 20;
-            }
-            doc.text(line, margin, yPosition);
-            yPosition += 7;
-        });
-        yPosition += 10;
-
-        // Unit & Lesson Section
-        if (yPosition > pageHeight - 40) {
-            doc.addPage();
-            yPosition = 20;
-        }
-        doc.setFont('helvetica', 'bold');
-        doc.text('Unit & Lesson', margin, yPosition);
-        yPosition += 10;
-
-        doc.setFont('helvetica', 'normal');
-        doc.text(`Unit: ${data.unit}`, margin, yPosition);
-        yPosition += 7;
-        doc.text(`Lesson Title: ${data.lessonTitle}`, margin, yPosition);
-        yPosition += 15;
-
-        // Learning Objectives Section
-        if (yPosition > pageHeight - 40) {
-            doc.addPage();
-            yPosition = 20;
-        }
-        doc.setFont('helvetica', 'bold');
-        doc.text('Learning Objectives', margin, yPosition);
-        yPosition += 10;
-
-        doc.setFont('helvetica', 'normal');
-        doc.text('Students will be able to:', margin, yPosition);
-        yPosition += 7;
-
-        data.objectives.forEach((obj, index) => {
-            if (yPosition > pageHeight - 20) {
-                doc.addPage();
-                yPosition = 20;
-            }
-            doc.text(`${index + 1}. ${obj}`, margin + 10, yPosition);
-            yPosition += 7;
-        });
-        yPosition += 10;
-
-        // Materials Section
-        if (yPosition > pageHeight - 40) {
-            doc.addPage();
-            yPosition = 20;
-        }
-        doc.setFont('helvetica', 'bold');
-        doc.text('Materials Needed', margin, yPosition);
-        yPosition += 10;
-
-        doc.setFont('helvetica', 'normal');
-        data.materials.forEach(mat => {
-            if (yPosition > pageHeight - 20) {
-                doc.addPage();
-                yPosition = 20;
-            }
-            const checkmark = mat.checked ? '[✓]' : '[ ]';
-            doc.text(`${checkmark} ${mat.text}`, margin, yPosition);
-            yPosition += 7;
-        });
-        yPosition += 10;
-
-        // Lesson Stages Table
-        if (yPosition > pageHeight - 80) {
-            doc.addPage();
-            yPosition = 20;
-        }
-        doc.setFont('helvetica', 'bold');
-        doc.text('Lesson Stages', margin, yPosition);
-        yPosition += 10;
-
-        const tableData = data.stages.map(stage => [
-            stage.stage,
-            stage.time,
-            processActivityText(stage.activity),
-            stage.purpose,
-            stage.means,
-            stage.mode
-        ]);
-
-        doc.autoTable({
-            startY: yPosition,
-            head: [['Stage', 'Time', 'Activity', 'Purpose', 'Means', 'Mode']],
-            body: tableData,
-            margin: { left: margin, right: margin },
-            styles: { fontSize: 8, cellPadding: 3 },
-            headStyles: { fillColor: [155, 89, 182], textColor: 255 },
-            alternateRowStyles: { fillColor: [245, 245, 245] },
-            columnStyles: {
-                0: { cellWidth: 25 },
-                1: { cellWidth: 20 },
-                2: { cellWidth: 40 },
-                3: { cellWidth: 35 },
-                4: { cellWidth: 25 },
-                5: { cellWidth: 25 }
-            }
-        });
-
-        yPosition = doc.lastAutoTable.finalY + 15;
-
-        // Assessment Section
-        if (data.assessment.trim()) {
-            if (yPosition > pageHeight - 40) {
-                doc.addPage();
-                yPosition = 20;
-            }
-            doc.setFont('helvetica', 'bold');
-            doc.text('Assessment', margin, yPosition);
-            yPosition += 10;
-
-            doc.setFont('helvetica', 'normal');
-            const assessmentLines = doc.splitTextToSize(data.assessment, contentWidth);
-            assessmentLines.forEach(line => {
-                if (yPosition > pageHeight - 20) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                doc.text(line, margin, yPosition);
-                yPosition += 7;
-            });
-            yPosition += 10;
-        }
-
-        // Reflection Section
-        if (data.reflection.trim()) {
-            if (yPosition > pageHeight - 40) {
-                doc.addPage();
-                yPosition = 20;
-            }
-            doc.setFont('helvetica', 'bold');
-            doc.text('Reflection & Notes', margin, yPosition);
-            yPosition += 10;
-
-            doc.setFont('helvetica', 'normal');
-            const reflectionLines = doc.splitTextToSize(data.reflection, contentWidth);
-            reflectionLines.forEach(line => {
-                if (yPosition > pageHeight - 20) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                doc.text(line, margin, yPosition);
-                yPosition += 7;
-            });
-        }
-
-        // Add page numbers
-        const totalPages = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= totalPages; i++) {
-            doc.setPage(i);
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Page ${i} of ${totalPages}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
-        }
-
-        // Save the PDF
-        doc.save('lesson_plan.pdf');
-        console.log('PDF export completed successfully');
-
-    } catch (error) {
-        console.error('PDF export failed:', error);
-        alert('Failed to export PDF. Please check console for details.');
-    }
-});
-
-// DOCX Export Function
-document.getElementById('exportDocx').addEventListener('click', function() {
-    console.log('Starting DOCX export...');
-
-    try {
-        // Get the preview content HTML
-        const previewContent = document.getElementById('previewContent');
-        if (!previewContent || !previewContent.innerHTML.trim()) {
-            alert('Please generate the lesson plan preview first.');
-            return;
-        }
-
-        // Create a temporary HTML document for conversion
-        const htmlContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>Lesson Plan</title>
-                <style>
-                    body { font-family: Arial, sans-serif; margin: 20px; }
-                    h3 { color: #8e44ad; margin-bottom: 10px; }
-                    strong { color: #2c3e50; }
-                    table { width: 100%; border-collapse: collapse; margin: 10px 0; }
-                    th, td { border: 1px solid #dee2e6; padding: 8px; text-align: left; }
-                    th { background-color: #34495e; color: white; }
-                    tr:nth-child(even) { background-color: #f8f9fa; }
-                    ol { margin: 0; padding-left: 20px; }
-                    ul { margin: 0; padding-left: 20px; }
-                    li { margin-bottom: 5px; }
-                    img { 
-                        max-width: 350px; 
-                        height: auto; 
-                        border: 1px solid #ddd; 
-                        border-radius: 4px; 
-                        margin: 5px 0; 
-                        display: inline-block;
-                    }
-                    @media print {
-                        img { 
-                            max-width: 350px !important; 
-                            height: auto !important;
-                            page-break-inside: avoid;
-                        }
-                        table { page-break-inside: auto; }
-                        tr { page-break-inside: avoid; page-break-after: auto; }
-                    }
-                </style>
-            </head>
-            <body>
-                ${previewContent.innerHTML}
-            </body>
-            </html>
-        `;
-
-        // Convert HTML to DOCX
-        const converted = htmlDocx.asBlob(htmlContent);
-
-        // Create download link
-        const url = URL.createObjectURL(converted);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'lesson_plan.docx';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-
-        console.log('DOCX export completed successfully');
-
-    } catch (error) {
-        console.error('DOCX export failed:', error);
-        alert('Failed to export DOCX. Please check console for details. Make sure the html-docx-js library is loaded properly.');
-    }
-});
+// Export functions have been removed
 
 console.log('Export functions loaded successfully');
 
@@ -1082,6 +944,7 @@ function populateFormFromData(data) {
             cells[3].querySelector('input').value = stage.purpose || '';
             cells[4].querySelector('select').value = stage.means || '';
             cells[5].querySelector('select').value = stage.mode || '';
+            hydrateActivityImages(cells[2].querySelector('input'));
             stagesTable.appendChild(row);
         });
     }
@@ -1147,17 +1010,7 @@ function collectFormData() {
     data.stages = Array.from(document.querySelectorAll('#stagesTable tbody tr'))
         .map(row => {
             const activityInput = row.cells[2].querySelector('input');
-            let activityValue = activityInput.value;
-            
-            // Restore full image data from preview containers
-            const previewContainer = activityInput.parentNode.querySelector('.image-previews');
-            if (previewContainer) {
-                const previews = previewContainer.querySelectorAll('div[data-image-data]');
-                previews.forEach(preview => {
-                    const imageData = preview.dataset.imageData;
-                    activityValue = activityValue.replace('[IMAGE]', `[IMAGE:${imageData}]`);
-                });
-            }
+            const activityValue = restoreActivityValueFromPreviews(activityInput, activityInput.value);
             
             return {
                 stage: row.cells[0].querySelector('select').value,
@@ -1585,4 +1438,112 @@ if (originalGenerateBtn) {
 }
 
 
+// Mobile Modal System
+const isMobile = window.innerWidth <= 768;
+
+if (isMobile) {
+    const modalShown = sessionStorage.getItem('lessonPlannerModalShown');
+    if (!modalShown) {
+        setTimeout(() => showModal(), 1000); // Show after page load
+    }
+}
+
+function showModal() {
+    document.getElementById('mobileModal').style.display = 'block';
+}
+
+function hideModal() {
+    document.getElementById('mobileModal').style.display = 'none';
+    sessionStorage.setItem('lessonPlannerModalShown', 'true');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const modalClose = document.getElementById('modalClose');
+    const modalSkip = document.getElementById('modalSkip');
+    const modalSubmit = document.getElementById('modalSubmit');
+    const modalBackdrop = document.querySelector('.modal-backdrop');
+
+    if (modalClose) modalClose.addEventListener('click', hideModal);
+    if (modalSkip) modalSkip.addEventListener('click', hideModal);
+    if (modalBackdrop) modalBackdrop.addEventListener('click', hideModal);
+
+    if (modalSubmit) {
+        modalSubmit.addEventListener('click', function() {
+            const form = document.getElementById('modalForm');
+            if (form && form.checkValidity()) {
+                // Populate main form
+                const teacherName = document.getElementById('modalTeacherName').value;
+                const institution = document.getElementById('modalInstitution').value;
+                const level = document.getElementById('modalLevel').value;
+
+                document.getElementById('teacherName').value = teacherName;
+                document.getElementById('institution').value = institution;
+                document.getElementById('level').value = level;
+
+                hideModal();
+                showNotification('Information saved successfully', 'success');
+            } else if (form) {
+                form.reportValidity();
+            }
+        });
+    }
+});
+
 console.log('Lesson Planner loaded successfully!');
+
+// Mobile image upload functionality
+document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('image-upload')) {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const base64 = event.target.result;
+                const activityInput = e.target.previousElementSibling;
+                insertImageIntoActivity(activityInput, base64);
+                showNotification('Image added to activity', 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+});
+
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.upload-btn')) {
+        const btn = e.target.closest('.upload-btn');
+        const fileInput = btn.previousElementSibling;
+        fileInput.click();
+    }
+});
+
+// Image paste functionality (Ctrl+V)
+document.addEventListener('paste', function(e) {
+    const active = document.activeElement;
+    if (!active || active.tagName !== 'INPUT' || active.type !== 'text') return;
+    if (!active.closest('#stagesTable')) return;
+
+    const row = active.closest('tr');
+    if (!row) return;
+    const activityCell = row.cells?.[2];
+    if (!activityCell || !activityCell.contains(active)) return;
+
+    const clipboardItems = e.clipboardData?.items;
+    if (!clipboardItems || clipboardItems.length === 0) return;
+
+    const imageItems = Array.from(clipboardItems).filter(item => item.type && item.type.startsWith('image/'));
+    if (imageItems.length === 0) return;
+
+    e.preventDefault();
+
+    imageItems.forEach(item => {
+        const file = item.getAsFile();
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const base64 = event.target.result;
+            insertImageIntoActivity(active, base64);
+            showNotification('Image pasted into activity', 'success');
+        };
+        reader.readAsDataURL(file);
+    });
+});

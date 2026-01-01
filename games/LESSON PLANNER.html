@@ -269,6 +269,10 @@
         .tag-option:last-child {
             border-bottom: none;
         }
+
+        .image-upload, .upload-btn {
+            display: none;
+        }
         
         textarea {
             min-height: 100px;
@@ -491,82 +495,343 @@
             color: #2c3e50;
         }
         
-        .export-btns {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 25px;
+        /* Mobile Modal Styles */
+        .mobile-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
         }
-        
-        .export-btn {
-            padding: 12px 30px;
+
+        .modal-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #2c3e50;
+        }
+
+        .modal-close {
+            background: none;
             border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: 600;
+            font-size: 24px;
             cursor: pointer;
-            transition: all 0.3s;
+            color: #666;
+            touch-action: manipulation;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-body label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .modal-body input, .modal-body select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            touch-action: manipulation;
+        }
+
+        .modal-btn.primary {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .modal-btn.secondary {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            .header {
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .form-content {
+                padding: 15px;
+            }
+
+            .section {
+                padding: 12px;
+                margin-bottom: 30px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .generate-btn, .export-btn {
+                min-height: 48px;
+                font-size: 1em;
+                padding: 14px 20px;
+                touch-action: manipulation;
+            }
+
+            input, select, textarea, .tag-container {
+                min-height: 44px;
+                font-size: 16px; /* Prevent zoom on iOS */
+            }
+
+            .dynamic-list button, .checklist-item button {
+                min-height: 40px;
+                padding: 10px 12px;
+                touch-action: manipulation;
+            }
+
+            .tag {
+                padding: 6px 10px;
+                font-size: 0.95em;
+            }
+
+            .tag .remove {
+                font-size: 16px;
+                width: 20px;
+                height: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                touch-action: manipulation;
+            }
+
+            .export-btns {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .export-btn {
+                width: 100%;
+                justify-content: center;
+                min-height: 48px;
+                touch-action: manipulation;
+            }
+
+            table {
+                font-size: 0.8em;
+            }
+
+            th, td {
+                padding: 6px;
+                min-width: 80px;
+            }
+
+            .preview {
+                padding: 20px;
+            }
+
+            #previewContent {
+                padding: 20px;
+                font-size: 0.9em;
+            }
+
+            .image-upload, .upload-btn {
+                display: inline-block;
+                margin-left: 5px;
+                vertical-align: middle;
+            }
+
+            .upload-btn {
+                padding: 6px 8px;
+                font-size: 0.8em;
+                border: 1px solid #9b59b6;
+                background: #9b59b6;
+                color: white;
+                border-radius: 4px;
+                cursor: pointer;
+                touch-action: manipulation;
+                min-width: 32px;
+                min-height: 32px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .upload-btn:hover {
+                background: #8e44ad;
+            }
+
+            td input[type="text"] {
+                max-width: calc(100% - 80px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .header {
+                padding: 15px;
+            }
+            .header h1 {
+                font-size: 1.5em;
+            }
+            .form-content {
+                padding: 10px;
+            }
+            .section {
+                padding: 10px;
+                margin-bottom: 20px;
+            }
+            .generate-btn, .export-btn {
+                font-size: 0.9em;
+                padding: 12px 16px;
+                min-height: 44px;
+            }
+            table {
+                font-size: 0.75em;
+            }
+            th, td {
+                padding: 4px;
+                min-width: 70px;
+            }
+            .preview {
+                padding: 15px;
+            }
+            #previewContent {
+                padding: 15px;
+                font-size: 0.85em;
+            }
+        }
+
+        /* 2x2 Grid Layout for Lesson Planner */
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .grid-item {
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 15px;
+            border-left: 5px solid #9b59b6;
+            padding: 20px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(155, 89, 182, 0.1);
+        }
+
+        .grid-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(155, 89, 182, 0.2);
+            background: rgba(248, 249, 250, 0.9);
+        }
+
+        .grid-item h3 {
+            color: #2c3e50;
+            font-size: 1.2em;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        
-        .export-btn i {
+
+        .grid-item h3 i {
+            color: #9b59b6;
+        }
+
+        /* Grid header bars with colors */
+        .grid-header {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            padding: 12px 15px;
+            margin: -20px -20px 15px -20px;
+            border-radius: 15px 15px 0 0;
+            font-weight: bold;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .grid-header i {
+            color: white !important;
             font-size: 1.2em;
         }
-        
-        #exportPdf {
+
+        .grid-item:nth-child(1) .grid-header {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+
+        .grid-item:nth-child(2) .grid-header {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+
+        .grid-item:nth-child(3) .grid-header {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        }
+
+        .grid-item:nth-child(4) .grid-header {
             background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
-            transition: all 0.3s ease;
         }
 
-        #exportPdf:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
-        }
-
-        #exportDocx {
-            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        #exportDocx:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(155, 89, 182, 0.4);
-        }
-        
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8em;
-            }
-            
-            .form-content {
-                padding: 20px;
-            }
-            
-            .section {
-                padding: 15px;
-            }
-            
-            .export-btns {
-                flex-direction: column;
-            }
-            
-            .export-btn {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            table {
-                font-size: 0.85em;
-            }
-            
-            th, td {
-                padding: 8px;
+            .lesson-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
             }
         }
     </style>
@@ -580,8 +845,9 @@
 
         <div class="form-content">
             <form id="lessonForm">
+                <!-- Teacher Information Section -->
                 <div class="section">
-                    <h2><i class="fas fa-info-circle"></i> Header Information</h2>
+                    <h2><i class="fas fa-user-tie"></i> Teacher Information</h2>
                     <div class="field">
                         <label>Teacher's Name:</label>
                         <input type="text" id="teacherName" placeholder="Enter your name" required>
@@ -590,79 +856,107 @@
                         <label>Institution:</label>
                         <input type="text" id="institution" placeholder="Enter your institution's name" required>
                     </div>
-                    <div class="field">
-                        <label>Date:</label>
-                        <input type="date" id="date" required>
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button type="button" id="saveInfoBtn" style="padding: 8px 16px; background: linear-gradient(135deg, #27ae60, #229954); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9em; font-weight: 600;">
+                            <i class="fas fa-save"></i> Save Personal Info
+                        </button>
+                        <button type="button" id="clearInfoBtn" style="padding: 8px 16px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9em; font-weight: 600;">
+                            <i class="fas fa-trash"></i> Clear Personal Info
+                        </button>
                     </div>
-                    <div class="field">
-                        <label>Level:</label>
-                        <select id="level" required>
-                            <option value="">Select Level</option>
-                            <option value="7th" selected>7th grade</option>
-                            <option value="8th">8th grade</option>
-                            <option value="9th">9th grade</option>
-                        </select>
+                </div>
+
+                <!-- 2x2 Grid Layout -->
+                <div class="lesson-grid">
+                    <!-- Grid 1: Date, Level, Class, Model, Duration -->
+                    <div class="grid-item">
+                        <div class="grid-header">
+                            <i class="fas fa-info-circle"></i> Basic Information
+                        </div>
+                        <div class="field">
+                            <label>Date:</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        <div class="field">
+                            <label>Level:</label>
+                            <select id="level" required>
+                                <option value="">Select Level</option>
+                                <option value="7th" selected>7th grade</option>
+                                <option value="8th">8th grade</option>
+                                <option value="9th">9th grade</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Class:</label>
+                            <div class="tag-container" id="classContainer">
+                                <input type="text" id="classInput" placeholder="Select classes...">
+                                <div class="tag-dropdown" id="classDropdown" style="display: none;">
+                                    <!-- Options will be populated by JS -->
+                                </div>
+                            </div>
+                            <input type="hidden" id="selectedClasses" name="selectedClasses">
+                        </div>
+                        <div class="field">
+                            <label>Lesson Plan Model:</label>
+                            <select id="model" required>
+                                <option value="">Select Model</option>
+                                <option value="PPP">PPP (Presentation, Practice, Production)</option>
+                                <option value="TTT">TTT (Test, Teach, Test)</option>
+                                <option value="UDL">UDL (Universal Design for Learning)</option>
+                                <option value="ECRIF">ECRIF (Engage, Conceptualize, Reflect, Investigate, Formulate)</option>
+                                <option value="OHE">OHE (Observe, Hypothesize, Experiment)</option>
+                                <option value="POHE">POHE (Preparation, Observation, Hypothesizing, Experimenting)</option>
+                                <option value="Custom">Custom</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Duration:</label>
+                            <input type="text" id="duration" value="55 minutes" placeholder="e.g., 45 minutes" required>
+                        </div>
                     </div>
-                    <div class="field">
-                        <label>Class:</label>
-                        <div class="tag-container" id="classContainer">
-                            <input type="text" id="classInput" placeholder="Select classes...">
-                            <div class="tag-dropdown" id="classDropdown" style="display: none;">
-                                <!-- Options will be populated by JS -->
+
+                    <!-- Grid 2: Unit & Lesson -->
+                    <div class="grid-item">
+                        <div class="grid-header">
+                            <i class="fas fa-book"></i> Unit & Lesson
+                        </div>
+                        <div class="field">
+                            <label>Unit:</label>
+                            <input type="text" id="unit" placeholder="e.g., Unit 3: Grammar & Communication" required>
+                        </div>
+                        <div class="field">
+                            <label>Lesson Title:</label>
+                            <input type="text" id="lessonTitle" placeholder="e.g., Present Perfect Tense" required>
+                        </div>
+                    </div>
+
+                    <!-- Grid 3: Learning Objectives -->
+                    <div class="grid-item">
+                        <div class="grid-header">
+                            <i class="fas fa-bullseye"></i> Learning Objectives
+                        </div>
+                        <div id="objectivesList">
+                            <div class="dynamic-list">
+                                <span class="number">1.</span>
+                                <input type="text" value="" placeholder="Enter learning objective">
+                                <button type="button" class="add">Add</button>
+                                <button type="button" class="remove" disabled>Remove</button>
                             </div>
                         </div>
-                        <input type="hidden" id="selectedClasses" name="selectedClasses">
                     </div>
-                    <div class="field">
-                        <label>Lesson Plan Model:</label>
-                        <select id="model" required>
-                            <option value="">Select Model</option>
-                            <option value="PPP">PPP (Presentation, Practice, Production)</option>
-                            <option value="TTT">TTT (Test, Teach, Test)</option>
-                            <option value="UDL">UDL (Universal Design for Learning)</option>
-                            <option value="ECRIF">ECRIF (Engage, Conceptualize, Reflect, Investigate, Formulate)</option>
-                            <option value="OHE">OHE (Observe, Hypothesize, Experiment)</option>
-                            <option value="Custom">Custom</option>
-                        </select>
-                    </div>
-                </div>
 
-                <div class="section">
-                    <h2><i class="fas fa-book"></i> Lesson Details</h2>
-                    <div class="field">
-                        <label>Unit:</label>
-                        <input type="text" id="unit" placeholder="e.g., Unit 3: Grammar & Communication" required>
-                    </div>
-                    <div class="field">
-                        <label>Lesson Title:</label>
-                        <input type="text" id="lessonTitle" placeholder="e.g., Present Perfect Tense" required>
-                    </div>
-                    <div class="field">
-                        <label>Duration:</label>
-                        <input type="text" id="duration" value="55 minutes" placeholder="e.g., 45 minutes" required>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h2><i class="fas fa-bullseye"></i> Learning Objectives</h2>
-                    <div id="objectivesList">
-                        <div class="dynamic-list">
-                            <span class="number">1.</span>
-                            <input type="text" value="" placeholder="Enter learning objective">
-                            <button type="button" class="add">Add</button>
-                            <button type="button" class="remove" disabled>Remove</button>
+                    <!-- Grid 4: Materials Needed -->
+                    <div class="grid-item">
+                        <div class="grid-header">
+                            <i class="fas fa-toolbox"></i> Materials Needed
                         </div>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h2><i class="fas fa-toolbox"></i> Materials Needed</h2>
-                    <div id="materialsList">
-                        <div class="checklist-item">
-                            <input type="checkbox">
-                            <input type="text" value="" placeholder="Enter material">
-                            <button type="button" class="add">Add</button>
-                            <button type="button" class="remove" disabled>Remove</button>
+                        <div id="materialsList">
+                            <div class="checklist-item">
+                                <input type="checkbox">
+                                <input type="text" value="" placeholder="Enter material">
+                                <button type="button" class="add">Add</button>
+                                <button type="button" class="remove" disabled>Remove</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -687,6 +981,7 @@
                                     <td>
                                         <select class="stage-select">
                                             <option value="">Select Stage</option>
+                                            <option value="Preparation">Preparation</option>
                                             <option value="Warm-up">Warm-up</option>
                                             <option value="Presentation">Presentation</option>
                                             <option value="Practice">Practice</option>
@@ -699,18 +994,23 @@
                                             <option value="Reflect">Reflect</option>
                                             <option value="Observation">Observation</option>
                                             <option value="Hypothesis">Hypothesis</option>
+                                            <option value="Hypothesizing">Hypothesizing</option>
+                                            <option value="Receptive">Receptive (Listening/Reading)</option>
+                                            <option value="Productive">Productive (Controlled Output)</option>
                                             <option value="Experiment">Experiment</option>
+                                            <option value="Experimenting">Experimenting</option>
                                             <option value="Investigation">Investigation</option>
                                             <option value="Formulate">Formulate</option>
                                             <option value="Conceptualize">Conceptualize</option>
                                             <option value="Teacher-led">Teacher-led</option>
                                             <option value="Transition">Transition</option>
                                             <option value="Test">Test</option>
+                                            <option value="Closing">Closing</option>
                                             <option value="Other">Other</option>
                                         </select>
                                     </td>
                                     <td><input type="text" value="" placeholder="Time"></td>
-                                    <td><input type="text" value="" placeholder="Activity"></td>
+                                    <td><input type="text" value="" placeholder="Activity"><input type="file" accept="image/*" class="image-upload" style="display: none;"><button type="button" class="upload-btn" style="display: none;"><i class="fas fa-image"></i></button></td>
                                     <td><input type="text" value="" placeholder="Purpose"></td>
                                     <td>
                                         <select>
@@ -750,7 +1050,7 @@
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 20px;">
+                <div class="action-buttons" style="display: flex; gap: 15px; justify-content: center; margin-bottom: 20px;">
                     <button type="button" id="generateBtn" class="generate-btn">
                         <i class="fas fa-magic"></i> Generate Lesson Plan
                     </button>
@@ -766,14 +1066,6 @@
             <div id="preview" class="preview" style="display: none;">
                 <h2><i class="fas fa-eye"></i> Lesson Plan Preview</h2>
                 <div id="previewContent"></div>
-                <div class="export-btns">
-                    <button id="exportPdf" class="export-btn">
-                        <i class="fas fa-file-pdf"></i> Download PDF
-                    </button>
-                    <button id="exportDocx" class="export-btn">
-                        <i class="fas fa-file-word"></i> Download DOCX
-                    </button>
-                </div>
             </div>
         </div>
     </div>
@@ -795,6 +1087,37 @@
             filter: brightness(1.2) drop-shadow(0 0 8px currentColor);
         }
     </style>
+
+    <!-- Mobile Modal -->
+    <div id="mobileModal" class="mobile-modal" style="display: none;">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Welcome to Lesson Planner</h3>
+                <button id="modalClose" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Please provide your information to get started:</p>
+                <form id="modalForm">
+                    <label>Teacher's Name:</label>
+                    <input type="text" id="modalTeacherName" required>
+                    <label>Institution:</label>
+                    <input type="text" id="modalInstitution" required>
+                    <label>Level:</label>
+                    <select id="modalLevel" required>
+                        <option value="">Select Level</option>
+                        <option value="7th">7th grade</option>
+                        <option value="8th">8th grade</option>
+                        <option value="9th">9th grade</option>
+                    </select>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="modalSkip" class="modal-btn secondary">Skip</button>
+                <button id="modalSubmit" class="modal-btn primary">Continue</button>
+            </div>
+        </div>
+    </div>
 
     <script src="../scripts/lesson-planner.js"></script>
 </body>
