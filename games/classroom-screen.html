@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom Screen</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b1021;
+            --panel: rgba(255,255,255,0.05);
+            --card: rgba(255,255,255,0.08);
+            --line: rgba(255,255,255,0.12);
+            --text: #e5e7eb;
+            --muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-2: #a855f7;
+            --danger: #ef4444;
+            --success: #22c55e;
+        }
+        body.light { --bg: #f5f3ff; --panel: rgba(255,255,255,0.9); --card:#fff; --line: rgba(15,23,42,0.08); --text:#0f172a; --muted:#475569; --accent:#2563eb; --accent-2:#f472b6; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter','Space Grotesk',system-ui,sans-serif;
+            background: radial-gradient(140% 140% at 10% 10%, rgba(56,189,248,0.25), transparent),
+                        radial-gradient(120% 120% at 90% 0%, rgba(168,85,247,0.2), transparent),
+                        var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 18px;
+        }
+        .shell { max-width: 1300px; margin: 0 auto; }
+        .hero { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; backdrop-filter: blur(10px); }
+        .hero h1 { font-family: 'Space Grotesk', 'Inter', sans-serif; font-weight: 700; letter-spacing: -0.02em; display: flex; gap: 10px; align-items: center; font-size: clamp(24px,3vw,32px); }
+        .hero p { color: var(--muted); margin-top: 6px; max-width: 720px; }
+        .hero-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .btn { border: 1px solid var(--line); background: var(--card); color: var(--text); padding: 9px 12px; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s ease; }
+        .btn:hover { border-color: var(--accent); background: linear-gradient(120deg, var(--accent), var(--accent-2)); color: #0b1021; box-shadow: 0 12px 40px rgba(0,0,0,0.25); }
+        .pill { padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--muted); font-weight: 600; display: inline-flex; gap: 6px; align-items: center; }
+        .grid { margin-top: 18px; display: grid; grid-template-columns: repeat(auto-fit,minmax(270px,1fr)); gap: 14px; }
+        .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; box-shadow: 0 12px 36px rgba(0,0,0,0.18); backdrop-filter: blur(6px); }
+        .card h2 { font-size: 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .panel { background: rgba(255,255,255,0.04); border: 1px dashed var(--line); border-radius: 12px; padding: 10px; }
+        .numbers { font-family: 'Space Grotesk','JetBrains Mono',monospace; font-size: 30px; letter-spacing: 0.04em; }
+        .controls { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+        .controls .btn { flex: 1; }
+        .tiny { font-size: 13px; color: var(--muted); }
+        input, textarea { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--line); color: var(--text); padding: 10px 12px; border-radius: 12px; font-family: inherit; font-size: 14px; }
+        textarea { resize: vertical; }
+        .chip-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+        .progress { width: 100%; height: 10px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; margin-top: 6px; }
+        .progress .bar { height: 100%; width: 100%; background: linear-gradient(120deg, var(--accent), var(--accent-2)); transition: width 0.2s; }
+        .traffic { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+        .traffic button { height: 42px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,0.06); color: var(--text); font-weight: 700; letter-spacing: 0.04em; cursor: pointer; transition: 0.2s; }
+        .traffic .r { background: linear-gradient(120deg,#ef4444,#fb7185); color: #0b1021; }
+        .traffic .y { background: linear-gradient(120deg,#facc15,#fb923c); color: #0b1021; }
+        .traffic .g { background: linear-gradient(120deg,#22c55e,#10b981); color: #0b1021; }
+        .history { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+        .history span { padding: 6px 10px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid var(--line); font-weight: 600; }
+        .board { background: rgba(255,255,255,0.06); border: 1px dashed var(--line); border-radius: 12px; min-height: 110px; padding: 10px; margin-top: 8px; line-height: 1.45; }
+        .noise { width: 100%; height: 12px; border-radius: 12px; background: rgba(255,255,255,0.08); overflow: hidden; margin-top: 6px; }
+        .noise div { height: 100%; width: 6%; background: linear-gradient(120deg, var(--success), var(--accent)); transition: width 0.12s; }
+        .qr { display: flex; gap: 10px; align-items: center; }
+        .qr img { width: 110px; height: 110px; border-radius: 12px; border: 1px solid var(--line); background: white; }
+        @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } .hero-actions { justify-content: flex-start; } }
+        @media (max-width: 600px) { body { padding: 12px; } .controls .btn { flex: 1 1 100%; } }
+    </style>
+</head>
+<body class="dark">
+    <div class="shell">
+        <div class="hero">
+            <div>
+                <div class="pill"><i class="fa-solid fa-sparkles"></i> New classroom tool</div>
+                <h1><i class="fa-solid fa-chalkboard"></i> Classroom Screen</h1>
+                <p>One screen for timers, norms, randomizers, QR, and quick notes inspired by classroomscreen.com.</p>
+                <div class="pill" id="currentDate"></div>
+            </div>
+            <div class="hero-actions">
+                <button class="btn" id="toggleTheme"><i class="fa-solid fa-circle-half-stroke"></i> Theme</button>
+                <button class="btn" id="fullscreenBtn"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> Fullscreen</button>
+                <button class="btn" id="backgroundShuffle"><i class="fa-solid fa-image"></i> Shuffle bg</button>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2><i class="fa-regular fa-clock"></i> Clock & Norms</h2>
+                <div class="panel">
+                    <div class="numbers" id="clock">--:--</div>
+                    <div class="tiny" id="clockDate">------</div>
+                </div>
+                <div class="chip-row">
+                    <button class="btn" data-mode="Silent work — no talking."><i class="fa-solid fa-moon"></i> Silent</button>
+                    <button class="btn" data-mode="Whisper voices only."><i class="fa-solid fa-face-smile"></i> Whisper</button>
+                    <button class="btn" data-mode="Group talk permitted."><i class="fa-solid fa-people-group"></i> Group</button>
+                </div>
+                <div class="tiny" id="modeLabel">Pick a classroom norm.</div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-hourglass-half"></i> Countdown</h2>
+                <div class="panel">
+                    <div class="numbers" id="timerDisplay">00:03:00</div>
+                    <div class="progress"><div class="bar" id="timerBar"></div></div>
+                </div>
+                <label class="tiny" style="margin-top:6px;">Minutes</label>
+                <input type="number" id="timerMinutes" value="3" min="0" step="1">
+                <div class="chip-row">
+                    <button class="btn" data-preset="60">1m</button>
+                    <button class="btn" data-preset="180">3m</button>
+                    <button class="btn" data-preset="300">5m</button>
+                    <button class="btn" data-preset="600">10m</button>
+                </div>
+                <div class="controls">
+                    <button class="btn" id="timerStart"><i class="fa-solid fa-play"></i> Start</button>
+                    <button class="btn" id="timerPause"><i class="fa-solid fa-pause"></i> Pause</button>
+                    <button class="btn" id="timerReset"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                </div>
+                <div class="tiny" id="timerStatus">Ready.</div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-stopwatch"></i> Stopwatch</h2>
+                <div class="panel"><div class="numbers" id="stopwatchDisplay">00:00.0</div></div>
+                <div class="controls">
+                    <button class="btn" id="stopwatchStart"><i class="fa-solid fa-play"></i> Start/Pause</button>
+                    <button class="btn" id="stopwatchLap"><i class="fa-solid fa-flag"></i> Lap</button>
+                    <button class="btn" id="stopwatchReset"><i class="fa-solid fa-eraser"></i> Clear</button>
+                </div>
+                <div class="tiny">Laps</div>
+                <div class="history" id="lapList"></div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-traffic-light"></i> Traffic Light</h2>
+                <div class="traffic">
+                    <button id="lightRed">RED</button>
+                    <button id="lightYellow">YELLOW</button>
+                    <button id="lightGreen">GREEN</button>
+                </div>
+                <div class="tiny" id="trafficLabel">Tap to set the room tone.</div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-person-rays"></i> Random Name</h2>
+                <textarea id="namesInput" rows="5" placeholder="One name per line..."></textarea>
+                <div class="controls">
+                    <button class="btn" id="pickName"><i class="fa-solid fa-dice"></i> Pick</button>
+                    <button class="btn" id="resetNames"><i class="fa-solid fa-broom"></i> Clear</button>
+                </div>
+                <label class="tiny" style="display:flex;align-items:center;gap:6px;margin-top:6px;">
+                    <input type="checkbox" id="removePicked" checked style="width:16px;height:16px;"> Remove picked name
+                </label>
+                <div class="numbers" style="font-size:22px;" id="pickedName">---</div>
+                <div class="history" id="nameHistory"></div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-dice"></i> Dice Roller</h2>
+                <div class="panel" style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+                    <div class="numbers" id="diceFaces">🎲 🎲</div>
+                    <div class="pill" id="diceTotal">--</div>
+                </div>
+                <div class="controls"><button class="btn" id="rollDice"><i class="fa-solid fa-shuffle"></i> Roll</button></div>
+                <div class="tiny">Rolls: <span id="diceHistory"></span></div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-chalkboard-user"></i> Quick Board</h2>
+                <textarea id="boardInput" rows="4" placeholder="Type directions, vocab, reminders..."></textarea>
+                <div class="controls">
+                    <button class="btn" id="boardHighlight"><i class="fa-solid fa-highlighter"></i> Highlight</button>
+                    <button class="btn" id="boardClear"><i class="fa-solid fa-eraser"></i> Clear</button>
+                </div>
+                <div class="board" id="boardPreview">Add a note to show students.</div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-wave-square"></i> Sound Check</h2>
+                <div class="pill"><i class="fa-solid fa-microphone"></i> Mic optional</div>
+                <div class="noise"><div id="noiseFill"></div></div>
+                <div class="tiny" id="noiseLabel">Click start to visualize room noise.</div>
+                <div class="controls">
+                    <button class="btn" id="startNoise"><i class="fa-solid fa-microphone-lines"></i> Start</button>
+                    <button class="btn" id="stopNoise"><i class="fa-solid fa-microphone-slash"></i> Stop</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fa-solid fa-qrcode"></i> QR & Links</h2>
+                <input id="qrText" placeholder="Paste link or text">
+                <div class="controls">
+                    <button class="btn" id="makeQr"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate</button>
+                    <button class="btn" id="copyQrLink"><i class="fa-solid fa-copy"></i> Copy link</button>
+                </div>
+                <div class="qr">
+                    <img id="qrImage" alt="QR code" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=Classroom%20Screen">
+                    <div class="tiny" style="max-width:140px;">Scan-ready QR for quick sharing. First load pulls the image.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const clockEl = document.getElementById('clock');
+        const clockDateEl = document.getElementById('clockDate');
+        const currentDate = document.getElementById('currentDate');
+        function tickClock() {
+            const now = new Date(), pad = (n) => String(n).padStart(2, '0');
+            clockEl.textContent = pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+            const dateString = now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+            clockDateEl.textContent = dateString; currentDate.textContent = dateString;
+        }
+        tickClock(); setInterval(tickClock, 1000);
+
+        document.getElementById('toggleTheme').addEventListener('click', () => document.body.classList.toggle('light'));
+        document.getElementById('fullscreenBtn').addEventListener('click', () => {
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+            else document.exitFullscreen();
+        });
+        const backgrounds = [
+            'radial-gradient(circle at 10% 20%, #38bdf8 0%, transparent 35%), radial-gradient(circle at 80% 0%, #a855f7 0%, transparent 40%), #0b1021',
+            'linear-gradient(120deg, #0ea5e9, #6366f1, #a855f7)',
+            'linear-gradient(140deg, #0f172a, #0b1021 55%, #0f172a)',
+            'radial-gradient(circle at 15% 30%, #22c55e 0%, transparent 32%), radial-gradient(circle at 80% 20%, #f59e0b 0%, transparent 32%), #0b1021'
+        ];
+        document.getElementById('backgroundShuffle').addEventListener('click', () => {
+            document.body.style.background = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+        });
+
+        const modeLabel = document.getElementById('modeLabel');
+        document.querySelectorAll('[data-mode]').forEach(btn => btn.addEventListener('click', () => modeLabel.textContent = btn.dataset.mode));
+
+        let timerSeconds = 180, timerRemaining = timerSeconds, timerInterval;
+        const timerDisplay = document.getElementById('timerDisplay'), timerBar = document.getElementById('timerBar'), timerStatus = document.getElementById('timerStatus'), timerMinutes = document.getElementById('timerMinutes');
+        const fmt = (m, s) => `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        function renderTimer() {
+            const m = Math.floor(timerRemaining / 60), s = timerRemaining % 60;
+            timerDisplay.textContent = `${fmt(m, s)}${timerRemaining >= 3600 ? '' : ''}`;
+            timerBar.style.width = `${Math.max(0, Math.min(100, (timerRemaining / timerSeconds) * 100))}%`;
+        }
+        renderTimer();
+        function setSeconds(sec) { timerSeconds = Math.max(0, sec); timerRemaining = timerSeconds; renderTimer(); }
+        document.querySelectorAll('[data-preset]').forEach(btn => btn.addEventListener('click', () => { setSeconds(parseInt(btn.dataset.preset, 10)); timerMinutes.value = Math.round(timerSeconds / 60); timerStatus.textContent = 'Preset loaded.'; }));
+        timerMinutes.addEventListener('input', () => { const mins = parseInt(timerMinutes.value, 10); setSeconds(isNaN(mins) ? 0 : mins * 60); timerStatus.textContent = 'Duration updated.'; });
+        const stopTimer = () => { if (timerInterval) clearInterval(timerInterval); timerInterval = null; };
+        document.getElementById('timerStart').addEventListener('click', () => {
+            if (timerInterval) return;
+            if (timerRemaining <= 0) timerRemaining = timerSeconds;
+            timerInterval = setInterval(() => {
+                timerRemaining -= 1; if (timerRemaining <= 0) { timerRemaining = 0; stopTimer(); timerStatus.textContent = 'Time!'; }
+                renderTimer();
+            }, 1000);
+            timerStatus.textContent = 'Running...';
+        });
+        document.getElementById('timerPause').addEventListener('click', () => { stopTimer(); timerStatus.textContent = 'Paused.'; });
+        document.getElementById('timerReset').addEventListener('click', () => { stopTimer(); timerRemaining = timerSeconds; renderTimer(); timerStatus.textContent = 'Reset.'; });
+
+        let stopwatchTime = 0, stopwatchInterval;
+        const stopwatchDisplay = document.getElementById('stopwatchDisplay'), lapList = document.getElementById('lapList');
+        function renderStopwatch() {
+            const m = Math.floor(stopwatchTime / 60000), s = Math.floor((stopwatchTime % 60000) / 1000), t = Math.floor((stopwatchTime % 1000) / 100);
+            stopwatchDisplay.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${t}`;
+        }
+        renderStopwatch();
+        document.getElementById('stopwatchStart').addEventListener('click', () => {
+            if (stopwatchInterval) { clearInterval(stopwatchInterval); stopwatchInterval = null; return; }
+            let last = performance.now();
+            stopwatchInterval = setInterval(() => { const now = performance.now(); stopwatchTime += now - last; last = now; renderStopwatch(); }, 100);
+        });
+        document.getElementById('stopwatchReset').addEventListener('click', () => { stopwatchTime = 0; renderStopwatch(); lapList.innerHTML = ''; if (stopwatchInterval) { clearInterval(stopwatchInterval); stopwatchInterval = null; }});
+        document.getElementById('stopwatchLap').addEventListener('click', () => { const span = document.createElement('span'); span.textContent = stopwatchDisplay.textContent; lapList.prepend(span); });
+
+        const trafficLabel = document.getElementById('trafficLabel');
+        const lights = { red: document.getElementById('lightRed'), yellow: document.getElementById('lightYellow'), green: document.getElementById('lightGreen') };
+        function setTraffic(color) {
+            lights.red.className = lights.yellow.className = lights.green.className = '';
+            if (color === 'red') lights.red.classList.add('r');
+            if (color === 'yellow') lights.yellow.classList.add('y');
+            if (color === 'green') lights.green.classList.add('g');
+            trafficLabel.textContent = color ? `Light set to ${color.toUpperCase()}.` : 'Tap to set the room tone.';
+        }
+        lights.red.addEventListener('click', () => setTraffic('red'));
+        lights.yellow.addEventListener('click', () => setTraffic('yellow'));
+        lights.green.addEventListener('click', () => setTraffic('green'));
+
+        const namesInput = document.getElementById('namesInput'), pickedName = document.getElementById('pickedName'), nameHistory = document.getElementById('nameHistory'), removePicked = document.getElementById('removePicked');
+        document.getElementById('pickName').addEventListener('click', () => {
+            const names = namesInput.value.split('\\n').map(n => n.trim()).filter(Boolean);
+            if (!names.length) { pickedName.textContent = 'Add names first.'; return; }
+            const pick = names[Math.floor(Math.random() * names.length)];
+            pickedName.textContent = pick;
+            const chip = document.createElement('span'); chip.textContent = pick; nameHistory.prepend(chip);
+            if (removePicked.checked) namesInput.value = names.filter(n => n !== pick).join('\\n');
+        });
+        document.getElementById('resetNames').addEventListener('click', () => { namesInput.value = ''; pickedName.textContent = '---'; nameHistory.innerHTML = ''; });
+
+        const diceIcons = ['⚀','⚁','⚂','⚃','⚄','⚅'], diceFaces = document.getElementById('diceFaces'), diceTotal = document.getElementById('diceTotal'), diceHistory = document.getElementById('diceHistory');
+        document.getElementById('rollDice').addEventListener('click', () => {
+            const d1 = Math.floor(Math.random() * 6), d2 = Math.floor(Math.random() * 6), total = d1 + d2 + 2;
+            diceFaces.textContent = `${diceIcons[d1]} ${diceIcons[d2]}`; diceTotal.textContent = total;
+            diceHistory.textContent = `${diceHistory.textContent ? diceHistory.textContent + ', ' : ''}${total}`;
+        });
+
+        const boardInput = document.getElementById('boardInput'), boardPreview = document.getElementById('boardPreview');
+        boardInput.addEventListener('input', () => boardPreview.textContent = boardInput.value || 'Add a note to show students.');
+        document.getElementById('boardClear').addEventListener('click', () => { boardInput.value = ''; boardPreview.textContent = 'Add a note to show students.'; });
+        document.getElementById('boardHighlight').addEventListener('click', () => { boardPreview.style.background = 'linear-gradient(120deg, rgba(56, 189, 248, 0.25), rgba(168, 85, 247, 0.3))'; setTimeout(() => boardPreview.style.background = 'rgba(255,255,255,0.06)', 1400); });
+
+        let audioContext, analyser, micSource, noiseInterval;
+        const noiseFill = document.getElementById('noiseFill'), noiseLabel = document.getElementById('noiseLabel');
+        async function startNoise() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                micSource = audioContext.createMediaStreamSource(stream);
+                analyser = audioContext.createAnalyser(); analyser.fftSize = 512; micSource.connect(analyser);
+                const data = new Uint8Array(analyser.frequencyBinCount);
+                noiseLabel.textContent = 'Listening...';
+                if (noiseInterval) clearInterval(noiseInterval);
+                noiseInterval = setInterval(() => {
+                    analyser.getByteTimeDomainData(data);
+                    let sum = 0; for (let i = 0; i < data.length; i++) { const dev = data[i] - 128; sum += dev * dev; }
+                    const rms = Math.sqrt(sum / data.length), level = Math.min(100, Math.max(0, Math.round(rms * 2)));
+                    noiseFill.style.width = `${level}%`; noiseLabel.textContent = level < 20 ? 'Calm' : level < 50 ? 'Moderate' : 'Loud';
+                }, 120);
+            } catch (_) { noiseLabel.textContent = 'Mic blocked or unavailable.'; }
+        }
+        function stopNoise() {
+            if (noiseInterval) clearInterval(noiseInterval); noiseInterval = null;
+            noiseFill.style.width = '6%'; noiseLabel.textContent = 'Click start to visualize room noise.';
+            if (micSource && micSource.mediaStream) micSource.mediaStream.getTracks().forEach(t => t.stop());
+            if (audioContext) audioContext.close();
+        }
+        document.getElementById('startNoise').addEventListener('click', startNoise);
+        document.getElementById('stopNoise').addEventListener('click', stopNoise);
+
+        const qrImage = document.getElementById('qrImage'), qrText = document.getElementById('qrText');
+        qrText.value = 'https://classroomscreen.com';
+        function updateQr() { const value = qrText.value.trim() || 'Classroom Screen'; qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(value)}`; }
+        document.getElementById('makeQr').addEventListener('click', updateQr);
+        document.getElementById('copyQrLink').addEventListener('click', async () => {
+            const value = qrText.value.trim(); if (!value) return;
+            try { await navigator.clipboard.writeText(value); noiseLabel.textContent = 'Link copied to clipboard.'; setTimeout(() => noiseLabel.textContent = 'Click start to visualize room noise.', 1300); } catch (_) {}
+        });
+
+        namesInput.value = ['Aiden','Mia','Noah','Luna','Mateo','Aria'].join('\\n');
+    </script>
+</body>
+</html>

@@ -834,13 +834,46 @@
                 gap: 15px;
             }
         }
+
+        .new-worksheet-btn {
+            padding: 12px 24px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .new-worksheet-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .new-worksheet-btn:active {
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-graduation-cap"></i> Lesson Plan Generator</h1>
-            <p>Create professional lesson plans with ease</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1><i class="fas fa-graduation-cap"></i> Lesson Plan Generator</h1>
+                    <p>Create professional lesson plans with ease</p>
+                </div>
+                <button id="newWorksheetBtn" class="new-worksheet-btn">
+                    <i class="fas fa-file-alt"></i> New Worksheet
+                </button>
+            </div>
         </div>
 
         <div class="form-content">
@@ -1120,5 +1153,136 @@
     </div>
 
     <script src="../scripts/lesson-planner.js"></script>
+    <script>
+        // New Worksheet Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const newWorksheetBtn = document.getElementById('newWorksheetBtn');
+            if (newWorksheetBtn) {
+                newWorksheetBtn.addEventListener('click', function() {
+                    if (confirm('Are you sure you want to start a new worksheet? All unsaved changes will be lost.')) {
+                        // Reset the form
+                        document.getElementById('lessonForm').reset();
+                        
+                        // Clear the preview
+                        const preview = document.getElementById('preview');
+                        if (preview) {
+                            preview.style.display = 'none';
+                        }
+                        
+                        // Reset the stages table to one empty row
+                        const tbody = document.querySelector('#stagesTable tbody');
+                        if (tbody) {
+                            tbody.innerHTML = '';
+                            const newRow = createStageRow('');
+                            tbody.appendChild(newRow);
+                        }
+                        
+                        // Reset materials list
+                        const materialsList = document.getElementById('materialsList');
+                        if (materialsList) {
+                            materialsList.innerHTML = `
+                                <div class="checklist-item">
+                                    <input type="text" placeholder="Enter material">
+                                    <button type="button" class="remove" disabled><i class="fas fa-times"></i></button>
+                                    <button type="button" class="add"><i class="fas fa-plus"></i></button>
+                                </div>
+                            `;
+                        }
+                        
+                        // Reset objectives list
+                        const objectivesList = document.getElementById('objectivesList');
+                        if (objectivesList) {
+                            objectivesList.innerHTML = `
+                                <div class="dynamic-list">
+                                    <span class="number">1.</span>
+                                    <input type="text" placeholder="Enter objective">
+                                    <button type="button" class="remove" disabled><i class="fas fa-times"></i></button>
+                                    <button type="button" class="add"><i class="fas fa-plus"></i></button>
+                                </div>
+                            `;
+                        }
+                        
+                        // Set today's date
+                        const today = new Date().toISOString().split('T')[0];
+                        const dateInput = document.getElementById('date');
+                        if (dateInput) dateInput.value = today;
+                        
+                        // Show success message
+                        showAlert('New worksheet created successfully!', 'success');
+                    }
+                });
+            }
+            
+            // Helper function to create a new stage row (reused from existing code)
+            function createStageRow(stageValue) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <select class="stage-select">
+                            <option value="">Select Stage</option>
+                            <option value="Preparation">Preparation</option>
+                            <option value="Warm-up">Warm-up</option>
+                            <option value="Presentation">Presentation</option>
+                            <option value="Practice">Practice</option>
+                            <option value="Production">Production</option>
+                            <option value="Engage">Engage</option>
+                            <option value="Explore">Explore</option>
+                            <option value="Explain">Explain</option>
+                            <option value="Elaborate">Elaborate</option>
+                            <option value="Evaluate">Evaluate</option>
+                            <option value="Reflect">Reflect</option>
+                            <option value="Observation">Observation</option>
+                            <option value="Hypothesis">Hypothesis</option>
+                            <option value="Hypothesizing">Hypothesizing</option>
+                            <option value="Receptive">Receptive (Listening/Reading)</option>
+                            <option value="Productive">Productive (Controlled Output)</option>
+                            <option value="Experiment">Experiment</option>
+                            <option value="Experimenting">Experimenting</option>
+                            <option value="Investigation">Investigation</option>
+                            <option value="Formulate">Formulate</option>
+                            <option value="Conceptualize">Conceptualize</option>
+                            <option value="Teacher-led">Teacher-led</option>
+                            <option value="Transition">Transition</option>
+                            <option value="Test">Test</option>
+                            <option value="Closing">Closing</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </td>
+                    <td><input type="text" placeholder="Time"></td>
+                    <td><input type="text" placeholder="Activity"><input type="file" accept="image/*" class="image-upload" style="display: none;"><button type="button" class="upload-btn" style="display: none;"><i class="fas fa-image"></i></button></td>
+                    <td><input type="text" placeholder="Purpose"></td>
+                    <td>
+                        <select>
+                            <option value="">Select</option>
+                            <option value="Individual work">Individual</option>
+                            <option value="Pair work">Pair work</option>
+                            <option value="Group work">Group work</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select>
+                            <option value="">Select</option>
+                            <option value="Teacher-Student">T-S</option>
+                            <option value="Student-Teacher">S-T</option>
+                            <option value="Student-Student">S-S</option>
+                        </select>
+                    </td>
+                    <td><button type="button" class="remove-row">Remove</button></td>
+                `;
+                
+                if (stageValue) {
+                    row.querySelector('.stage-select').value = stageValue;
+                }
+                
+                return row;
+            }
+            
+            // Helper function to show alert messages
+            function showAlert(message, type = 'info') {
+                // You can implement a more sophisticated alert system if needed
+                alert(message);
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comparatives & Superlatives - Pixelearn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="icon" href="../assets/15.png"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../styles/portfolio.css" rel="stylesheet">
+  <link href="../styles/top-nav.css" rel="stylesheet">
+  <link href="../styles/navbar-font-styles.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4a00e0;
+      --secondary: #8e2de2;
+      --accent: #f953c6;
+      --dark: #1a1a2e;
+      --light: #ffffff;
+      --glass: rgba(255, 255, 255, 0);
+      --glass-dark: rgba(0, 0, 0, 0.3);
+      --text-color: var(--light);
+      --border-radius: 15px;
+      --pixel-size: 2px;
+      --font-size-sm: 0.8rem;
+      --font-size-md: 1rem;
+      --font-size-lg: 1.2rem;
+      --font-size-xl: 1.5rem;
+    }
+    *{box-sizing:border-box}
+    body {
+      margin: 0;
+      padding-top: 90px;
+      font-family: 'Courier New', monospace;
+      background: var(--dark);
+      color: var(--light);
+      line-height: 1.6;
+      background-image: 
+        linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)),
+        url('../assets/cyber-grid.png');
+      background-attachment: fixed;
+    }
+    header{
+      padding:22px 16px 6px;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    h1{
+      margin:0 0 8px;
+      font-size: 22px;
+      letter-spacing:.2px;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .wrap{
+      max-width:980px;
+      margin: 0 auto;
+      padding: 16px;
+      display:grid;
+      gap:14px;
+    }
+    .card{
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid var(--accent);
+      border-radius: var(--border-radius);
+      box-shadow: 0 0 20px rgba(249, 83, 198, 0.2);
+      padding: 20px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(10px);
+    }
+    .top-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:10px;
+    }
+    label{
+      font-size:12px;
+      color:var(--muted);
+      display:block;
+      margin-bottom:6px;
+    }
+    input[type="text"], select{
+      width:100%;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      outline:none;
+      font-size:14px;
+      background:#fff;
+    }
+    input[type="text"]:focus, select:focus{
+      border-color: rgba(43,89,255,.5);
+      box-shadow: 0 0 0 4px rgba(43,89,255,.12);
+    }
+    .rulebox{
+      padding:12px;
+      border-radius:12px;
+      background: #f2f4ff;
+      border:1px solid #dfe4ff;
+      color:#1d2b7a;
+      font-size:14px;
+    }
+    .rulebox ul{margin:8px 0 0 18px}
+    .rulebox li{margin:6px 0}
+    h2{
+      margin:0 0 10px;
+      font-size:16px;
+    }
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius:12px;
+    }
+    th, td{
+      padding:10px;
+      border-bottom:1px solid var(--line);
+      border-right:1px solid var(--line);
+      vertical-align:middle;
+      font-size:14px;
+    }
+    th{
+      background:#fbfbfe;
+      text-align:left;
+      color:var(--muted);
+      font-weight:600;
+    }
+    tr:last-child td{border-bottom:none}
+    td:last-child, th:last-child{border-right:none}
+    .q{
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      margin:10px 0;
+    }
+    .q p{margin:0 0 8px}
+    .choices{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .choice{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .choice input{margin:0}
+    .fillline{
+      display:inline-block;
+      min-width: 160px;
+      vertical-align:middle;
+    }
+    .inline-input{
+      width: 190px;
+      max-width: 100%;
+      display:inline-block;
+    }
+    .feedback{
+      margin-top:8px;
+      font-size:13px;
+      display:none;
+    }
+    .q.correct{
+      border-color: rgba(121, 255, 121, 0.3);
+      background: rgba(121, 255, 121, 0.1);
+      box-shadow: 0 0 15px rgba(121, 255, 121, 0.2);
+    }
+    .q.incorrect{
+      border-color: rgba(255, 83, 83, 0.3);
+      background: rgba(255, 83, 83, 0.1);
+      box-shadow: 0 0 15px rgba(255, 83, 83, 0.2);
+    }
+    .q.correct .feedback{
+      display:block;
+      color: #79ff79;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 0.7rem;
+    }
+    .q.incorrect .feedback{
+      display:block;
+      color: #ff5353;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 0.7rem;
+    }
+    .key{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px dashed var(--line);
+      color:var(--muted);
+      font-size:13px;
+      display:none;
+    }
+    .btns{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    button{
+      border: 2px solid var(--accent);
+      background: transparent;
+      color: var(--accent);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: 'Press Start 2P', cursive;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    button::before{
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background-color: var(--accent);
+      transition: all 0.3s ease;
+      z-index: -1;
+    }
+    button:hover{
+      color: var(--dark);
+    }
+    button:hover::before{
+      width: 100%;
+    }
+    button.secondary{
+      background:#eef0ff;
+      color:#1d2b7a;
+      border:1px solid #dfe4ff;
+    }
+    .score{
+      font-weight:700;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .two-col{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    textarea{
+      width:100%;
+      min-height:80px;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      font-size:14px;
+      resize:vertical;
+      outline:none;
+    }
+    textarea:focus{
+      border-color: rgba(43,89,255,.5);
+      box-shadow: 0 0 0 4px rgba(43,89,255,.12);
+    }
+    @media (max-width: 760px){
+      .top-grid{grid-template-columns:1fr}
+      .two-col{grid-template-columns:1fr}
+    }
+    @media print{
+      body{background:#fff}
+      .card{box-shadow:none}
+      .btns, .score{display:none}
+      .key{display:block !important}
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Navigation Bar -->
+  <nav class="top-navbar">
+    <div class="top-nav-container">
+      <div class="nav-logo">
+        <a href="../index.html" class="logo-link">
+          <img src="../assets/15.png" alt="Pixelearn Logo" class="logo-img">
+          <span>Pixelearn</span>
+        </a>
+      </div>
+      <div class="nav-links">
+        <a href="../index.html">Home</a>
+        <a href="../games.html">Games</a>
+        <a href="../articles.html" class="active">Lessons</a>
+        <a href="../portfolio.html">Portfolio</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="article-container">
+    <header>
+      <h1>Comparative & Superlative Adjectives</h1>
+      <p class="sub">Interactive Worksheet</p>
+    </header>
+
+    <main class="wrap">
+      <!-- Student info -->
+      <section class="card">
+        <div class="top-grid">
+          <div>
+            <label for="studentName">Name</label>
+            <input id="studentName" type="text" placeholder="Student name" />
+          </div>
+          <div>
+            <label for="studentClass">Class</label>
+            <input id="studentClass" type="text" placeholder="Class" />
+          </div>
+          <div>
+            <label for="date">Date</label>
+            <input id="date" type="text" placeholder="Date" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Rules -->
+      <section class="card">
+        <h2>Rules</h2>
+        <div class="rulebox">
+          <div><strong>Comparative</strong> = compare <strong>two</strong> things. <em>tall → taller</em></div>
+          <div><strong>Superlative</strong> = compare <strong>three or more</strong>. <em>tall → tallest</em></div>
+          <ul>
+            <li>Short adjectives: add <strong>-er</strong> / <strong>-est</strong></li>
+            <li>Ends in <strong>-y</strong>: change <strong>y → i</strong> (<em>happy → happier → happiest</em>)</li>
+            <li>Long adjectives: use <strong>more</strong> / <strong>most</strong> (<em>more interesting</em>)</li>
+            <li>Irregular: <em>good → better → best</em>, <em>bad → worse → worst</em></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Exercise 1: Table -->
+      <section class="card">
+        <h2>Exercise 1: Complete the table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:34%">Adjective</th>
+              <th style="width:33%">Comparative</th>
+              <th style="width:33%">Superlative</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>tall</td>
+              <td><input class="ans" data-id="t1" type="text" placeholder="e.g., taller"></td>
+              <td><input class="ans" data-id="t2" type="text" placeholder="e.g., tallest"></td>
+            </tr>
+            <tr>
+              <td>small</td>
+              <td><input class="ans" data-id="t3" type="text"></td>
+              <td><input class="ans" data-id="t4" type="text"></td>
+            </tr>
+            <tr>
+              <td>big</td>
+              <td><input class="ans" data-id="t5" type="text"></td>
+              <td><input class="ans" data-id="t6" type="text"></td>
+            </tr>
+            <tr>
+              <td>happy</td>
+              <td><input class="ans" data-id="t7" type="text"></td>
+              <td><input class="ans" data-id="t8" type="text"></td>
+            </tr>
+            <tr>
+              <td>good</td>
+              <td><input class="ans" data-id="t9" type="text"></td>
+              <td><input class="ans" data-id="t10" type="text"></td>
+            </tr>
+            <tr>
+              <td>interesting</td>
+              <td><input class="ans" data-id="t11" type="text"></td>
+              <td><input class="ans" data-id="t12" type="text"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="key" id="key-ex1">
+          <strong>Answer key (Exercise 1):</strong>
+          tall → taller / tallest; small → smaller / smallest; big → bigger / biggest; happy → happier / happiest;
+          good → better / best; interesting → more interesting / most interesting.
+        </div>
+      </section>
+
+      <!-- Exercise 2: Multiple choice -->
+      <section class="card">
+        <h2>Exercise 2: Choose the correct answer</h2>
+
+        <div class="q" data-q="mc1">
+          <p>1) My house is <strong>(bigger / biggest)</strong> than yours.</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="mc1" value="bigger"> bigger</label>
+            <label class="choice"><input type="radio" name="mc1" value="biggest"> biggest</label>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="q" data-q="mc2">
+          <p>2) This exercise is the <strong>(easier / easiest)</strong> in the book.</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="mc2" value="easier"> easier</label>
+            <label class="choice"><input type="radio" name="mc2" value="easiest"> easiest</label>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="q" data-q="mc3">
+          <p>3) A car is <strong>(faster / fastest)</strong> than a bicycle.</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="mc3" value="faster"> faster</label>
+            <label class="choice"><input type="radio" name="mc3" value="fastest"> fastest</label>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="q" data-q="mc4">
+          <p>4) English is <strong>(more interesting / most interesting)</strong> than history for me.</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="mc4" value="more interesting"> more interesting</label>
+            <label class="choice"><input type="radio" name="mc4" value="most interesting"> most interesting</label>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="q" data-q="mc5">
+          <p>5) Today is the <strong>(hotter / hottest)</strong> day of the week.</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="mc5" value="hotter"> hotter</label>
+            <label class="choice"><input type="radio" name="mc5" value="hottest"> hottest</label>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="key" id="key-ex2">
+          <strong>Answer key (Exercise 2):</strong> 1 bigger, 2 easiest, 3 faster, 4 more interesting, 5 hottest.
+        </div>
+      </section>
+
+      <!-- Exercise 3: Fill in -->
+      <section class="card">
+        <h2>Exercise 3: Complete the sentences</h2>
+
+        <div class="q" data-q="f1">
+          <p>1) My brother is <span class="fillline"><input class="ans inline-input" data-id="f1" type="text" placeholder="..."></span> (tall) than me.</p>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="q" data-q="f2">
+          <p>2) This is the <span class="fillline"><input class="ans inline-input" data-id="f2" type="text"></span> (good) movie I have ever seen.</p>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="q" data-q="f3">
+          <p>3) A lion is <span class="fillline"><input class="ans inline-input" data-id="f3" type="text"></span> (dangerous) than a dog.</p>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="q" data-q="f4">
+          <p>4) This is the <span class="fillline"><input class="ans inline-input" data-id="f4" type="text"></span> (bad) test of the year.</p>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="q" data-q="f5">
+          <p>5) Summer is <span class="fillline"><input class="ans inline-input" data-id="f5" type="text"></span> (hot) than spring.</p>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="key" id="key-ex3">
+          <strong>Answer key (Exercise 3):</strong> 1 taller, 2 best, 3 more dangerous, 4 worst, 5 hotter.
+        </div>
+      </section>
+
+      <!-- Exercise 4: Rewrite -->
+      <section class="card">
+        <h2>Exercise 4: Rewrite the sentences</h2>
+
+        <div class="q" data-q="r1">
+          <p>1) My bag is heavy. Your bag is light. <strong>(lighter)</strong></p>
+          <input class="ans" data-id="r1" type="text" placeholder="Write your new sentence here...">
+          <div class="feedback"></div>
+        </div>
+
+        <div class="q" data-q="r2">
+          <p>2) Math is difficult. English is easy. <strong>(easier)</strong></p>
+          <input class="ans" data-id="r2" type="text" placeholder="Write your new sentence here...">
+          <div class="feedback"></div>
+        </div>
+
+        <div class="q" data-q="r3">
+          <p>3) This book is interesting. That book is very interesting. <strong>(most)</strong></p>
+          <input class="ans" data-id="r3" type="text" placeholder="Write your new sentence here...">
+          <div class="feedback"></div>
+        </div>
+
+        <div class="key" id="key-ex4">
+          <strong>Sample answers (Exercise 4):</strong><br>
+          1) Your bag is lighter than my bag. / Your bag is lighter than mine.<br>
+          2) English is easier than math.<br>
+          3) That book is the most interesting (book).
+        </div>
+      </section>
+
+      <!-- Exercise 5: Writing -->
+      <section class="card">
+        <h2>Exercise 5: Write your own sentences</h2>
+        <div class="two-col">
+          <div>
+            <label for="ownComp">1) Comparative sentence</label>
+            <textarea id="ownComp" placeholder="Write a comparative sentence..."></textarea>
+          </div>
+          <div>
+            <label for="ownSup">2) Superlative sentence</label>
+            <textarea id="ownSup" placeholder="Write a superlative sentence..."></textarea>
+          </div>
+        </div>
+        <p class="sub" style="margin-top:10px">
+          These two are open answers (no automatic marking).
+        </p>
+      </section>
+
+      <!-- Actions -->
+      <section class="card">
+        <div class="actions">
+          <div class="btns">
+            <button id="checkBtn" type="button">Check answers</button>
+            <button id="showKeysBtn" class="secondary" type="button">Show answer keys</button>
+            <button id="resetBtn" class="ghost" type="button">Reset</button>
+            <button id="printBtn" class="ghost" type="button">Print</button>
+          </div>
+          <div class="score" id="scoreText">Score: —</div>
+        </div>
+        <p class="sub" style="margin-top:10px">
+          Teacher tip: Use “Print” to export a paper version; keys will appear on print.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Normalization: lowercase, trim, collapse spaces
+    function norm(s){
+      return (s ?? "")
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, " ");
+    }
+
+    // Acceptable answers map (each id can have multiple correct forms)
+    const answers = {
+      // Exercise 1
+      t1: ["taller"],
+      t2: ["tallest"],
+      t3: ["smaller"],
+      t4: ["smallest"],
+      t5: ["bigger"],
+      t6: ["biggest"],
+      t7: ["happier"],
+      t8: ["happiest"],
+      t9: ["better"],
+      t10:["best"],
+      t11:["more interesting"],
+      t12:["most interesting"],
+
+      // Exercise 3
+      f1: ["taller"],
+      f2: ["best"],
+      f3: ["more dangerous"],
+      f4: ["worst"],
+      f5: ["hotter"],
+
+      // Exercise 4 (rewrite) - allow multiple reasonable answers
+      r1: [
+        "your bag is lighter than my bag.",
+        "your bag is lighter than mine.",
+        "your bag is lighter than my one."
+      ],
+      r2: [
+        "english is easier than math.",
+        "english is easier than maths."
+      ],
+      r3: [
+        "that book is the most interesting.",
+        "that book is the most interesting book.",
+        "that book is most interesting."
+      ]
+    };
+
+    const mcAnswers = {
+      mc1: "bigger",
+      mc2: "easiest",
+      mc3: "faster",
+      mc4: "more interesting",
+      mc5: "hottest"
+    };
+
+    function setState(qEl, ok, message){
+      qEl.classList.remove("correct","incorrect");
+      qEl.classList.add(ok ? "correct" : "incorrect");
+      const fb = qEl.querySelector(".feedback");
+      if(fb){
+        fb.textContent = message;
+      }
+    }
+
+    function clearState(qEl){
+      qEl.classList.remove("correct","incorrect");
+      const fb = qEl.querySelector(".feedback");
+      if(fb) fb.textContent = "";
+    }
+
+    function checkAll(){
+      let total = 0;
+      let correct = 0;
+
+      // Check text inputs with data-id and in answers map
+      document.querySelectorAll('input.ans[data-id]').forEach(inp=>{
+        const id = inp.dataset.id;
+        if(!(id in answers)) return;
+
+        total++;
+        const user = norm(inp.value);
+        const okList = answers[id].map(norm);
+
+        // For rewrite answers, accept punctuation-free versions too
+        const userNoPunct = user.replace(/[.?!]/g, "");
+        const ok = okList.some(a => a === user || a.replace(/[.?!]/g,"") === userNoPunct);
+
+        const qEl = inp.closest(".q");
+        if(qEl){
+          if(ok){
+            correct++;
+            setState(qEl, true, "Correct.");
+          }else{
+            setState(qEl, false, "Try again.");
+          }
+        }
+      });
+
+      // Check multiple choice
+      Object.keys(mcAnswers).forEach(qName=>{
+        total++;
+        const qEl = document.querySelector(`.q[data-q="${qName}"]`);
+        const checked = document.querySelector(`input[name="${qName}"]:checked`);
+        if(!qEl){
+          return;
+        }
+        if(!checked){
+          setState(qEl, false, "Choose an answer.");
+          return;
+        }
+        const ok = norm(checked.value) === norm(mcAnswers[qName]);
+        if(ok){
+          correct++;
+          setState(qEl, true, "Correct.");
+        }else{
+          setState(qEl, false, "Incorrect.");
+        }
+      });
+
+      document.getElementById("scoreText").textContent = `Score: ${correct} / ${total}`;
+    }
+
+    function resetAll(){
+      // Inputs
+      document.querySelectorAll('input.ans').forEach(inp=> inp.value = "");
+      document.querySelectorAll('input[type="radio"]').forEach(r=> r.checked = false);
+      document.querySelectorAll('textarea').forEach(t=> t.value = "");
+
+      // Clear feedback
+      document.querySelectorAll(".q").forEach(clearState);
+
+      // Hide keys
+      document.querySelectorAll(".key").forEach(k=> k.style.display = "none");
+
+      document.getElementById("scoreText").textContent = "Score: —";
+    }
+
+    function toggleKeys(){
+      const keys = document.querySelectorAll(".key");
+      const isHidden = Array.from(keys).every(k => k.style.display === "none" || k.style.display === "");
+      keys.forEach(k => k.style.display = isHidden ? "block" : "none");
+    }
+
+    // Button hooks
+    document.getElementById("checkBtn").addEventListener("click", checkAll);
+    document.getElementById("resetBtn").addEventListener("click", resetAll);
+    document.getElementById("showKeysBtn").addEventListener("click", toggleKeys);
+    document.getElementById("printBtn").addEventListener("click", ()=> window.print());
+  </script>
+</body>
+</html>
