@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lesson Plan Archive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles/top-nav.css">
     <style>
         * {
             margin: 0;
@@ -99,6 +101,19 @@
         .header p {
             font-size: 1.1em;
             opacity: 0.9;
+        }
+
+        .header-actions {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .header-actions .btn {
+            padding: 10px 18px;
+            font-size: 0.95em;
         }
 
         .nav-tabs {
@@ -315,14 +330,59 @@
             .btn {
                 justify-content: center;
             }
+
+            .header-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="top-nav-container">
+            <div class="nav-logo">
+                <a href="../index.html" class="logo-link">
+                    <img src="../assets/15.png" alt="Pixelearn Logo" class="logo-img">
+                    <span class="logo-text">Pixelearn</span>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="../index.html#lessons" class="nav-link">Videos</a>
+                <a href="../index.html#articles" class="nav-link">Articles</a>
+                <a href="../index.html#lesson-plans" class="nav-link">Lessons</a>
+                <a href="../index.html#games" class="nav-link">Toolkit</a>
+                <a href="../index.html#about" class="nav-link">About</a>
+            </div>
+            <div class="nav-mobile-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content">
+            <a href="../index.html" class="mobile-nav-link">Home</a>
+            <a href="../index.html#lessons" class="mobile-nav-link">Videos</a>
+            <a href="../index.html#articles" class="mobile-nav-link">Articles</a>
+            <a href="../index.html#lesson-plans" class="mobile-nav-link">Lessons</a>
+            <a href="../index.html#games" class="mobile-nav-link">Toolkit</a>
+            <a href="../index.html#about" class="mobile-nav-link">About</a>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
             <h1><i class="fas fa-archive"></i> Lesson Plan Archive</h1>
             <p>View and manage your saved lesson plans</p>
+            <div class="header-actions">
+                <a class="btn btn-primary" href="LESSON PLANNER.html">
+                    <i class="fas fa-plus"></i> Create a Lesson Plan
+                </a>
+            </div>
         </div>
 
         <div class="nav-tabs">
@@ -348,6 +408,50 @@
         </div>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const navbar = document.querySelector('.top-navbar');
+            let lastScroll = 0;
+
+            if (mobileMenuToggle && mobileMenu) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('active');
+                    this.classList.toggle('active');
+                });
+
+                document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenu.classList.remove('active');
+                        mobileMenuToggle.classList.remove('active');
+                    });
+                });
+            }
+
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.pageYOffset;
+
+                if (mobileMenu && mobileMenu.classList.contains('active')) {
+                    mobileMenu.classList.remove('active');
+                    mobileMenuToggle.classList.remove('active');
+                }
+
+                if (currentScroll <= 0) {
+                    navbar.classList.remove('hide-nav');
+                    navbar.classList.add('show-nav');
+                } else if (currentScroll > lastScroll && !navbar.classList.contains('hide-nav')) {
+                    navbar.classList.add('hide-nav');
+                    navbar.classList.remove('show-nav');
+                } else if (currentScroll < lastScroll && navbar.classList.contains('hide-nav')) {
+                    navbar.classList.remove('hide-nav');
+                    navbar.classList.add('show-nav');
+                }
+
+                lastScroll = currentScroll;
+            });
+        });
+    </script>
     <script src="../scripts/archive-viewer.js"></script>
 </body>
 </html>

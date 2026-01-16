@@ -7,12 +7,75 @@ const classes = {
 
 // Populate class options for tag system
 let selectedClasses = [];
+let classContainer = null;
+let classInput = null;
+let classDropdown = null;
+let selectedClassesInput = null;
+const allClasses = Object.values(classes).flat();
+
+function setClassTagElements() {
+    classContainer = document.getElementById('classContainer');
+    classInput = document.getElementById('classInput');
+    classDropdown = document.getElementById('classDropdown');
+    selectedClassesInput = document.getElementById('selectedClasses');
+}
+
+function updateDropdown(filter = '') {
+    if (!classDropdown) return;
+    classDropdown.innerHTML = '';
+    const filtered = allClasses.filter(cls => cls.toLowerCase().includes(filter.toLowerCase()) && !selectedClasses.includes(cls));
+    filtered.forEach(cls => {
+        const option = document.createElement('div');
+        option.className = 'tag-option';
+        option.textContent = cls;
+        option.addEventListener('click', () => addTag(cls));
+        classDropdown.appendChild(option);
+    });
+}
+
+function addTag(cls) {
+    if (!selectedClasses.includes(cls)) {
+        selectedClasses.push(cls);
+        renderTags();
+        updateDropdown(classInput ? classInput.value : '');
+        updateHiddenInput();
+        document.dispatchEvent(new CustomEvent('classSelectionChanged'));
+    }
+    if (classInput) {
+        classInput.value = '';
+    }
+    if (classDropdown) {
+        classDropdown.style.display = 'none';
+    }
+}
+
+function removeTag(cls) {
+    selectedClasses = selectedClasses.filter(c => c !== cls);
+    renderTags();
+    updateHiddenInput();
+    document.dispatchEvent(new CustomEvent('classSelectionChanged'));
+}
+
+function renderTags() {
+    if (!classContainer || !classInput) return;
+    const tags = classContainer.querySelectorAll('.tag');
+    tags.forEach(tag => tag.remove());
+    selectedClasses.forEach(cls => {
+        const tag = document.createElement('span');
+        tag.className = 'tag';
+        tag.innerHTML = `${cls} <span class="remove">&times;</span>`;
+        tag.querySelector('.remove').addEventListener('click', () => removeTag(cls));
+        classContainer.insertBefore(tag, classInput);
+    });
+}
+
+function updateHiddenInput() {
+    if (!selectedClassesInput) return;
+    selectedClassesInput.value = JSON.stringify(selectedClasses);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    const classContainer = document.getElementById('classContainer');
-    const classInput = document.getElementById('classInput');
-    const classDropdown = document.getElementById('classDropdown');
-    const selectedClassesInput = document.getElementById('selectedClasses');
-    const allClasses = Object.values(classes).flat();
+    setClassTagElements();
 
     // Personal Information Storage Functions
     function savePersonalInfo() {
@@ -68,81 +131,36 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     
-    function updateDropdown(filter = '') {
-        classDropdown.innerHTML = '';
-        const filtered = allClasses.filter(cls => cls.toLowerCase().includes(filter.toLowerCase()) && !selectedClasses.includes(cls));
-        filtered.forEach(cls => {
-            const option = document.createElement('div');
-            option.className = 'tag-option';
-            option.textContent = cls;
-            option.addEventListener('click', () => addTag(cls));
-            classDropdown.appendChild(option);
-        });
-    }
-
-    function addTag(cls) {
-        if (!selectedClasses.includes(cls)) {
-            selectedClasses.push(cls);
-            renderTags();
+    if (classContainer && classInput && classDropdown && selectedClassesInput) {
+        classContainer.addEventListener('click', () => {
+            classInput.focus();
             updateDropdown(classInput.value);
-            updateHiddenInput();
-            document.dispatchEvent(new CustomEvent('classSelectionChanged'));
-        }
-        classInput.value = '';
-        classDropdown.style.display = 'none';
-    }
-
-    function removeTag(cls) {
-        selectedClasses = selectedClasses.filter(c => c !== cls);
-        renderTags();
-        updateHiddenInput();
-        document.dispatchEvent(new CustomEvent('classSelectionChanged'));
-    }
-
-    function renderTags() {
-        const tags = classContainer.querySelectorAll('.tag');
-        tags.forEach(tag => tag.remove());
-        selectedClasses.forEach(cls => {
-            const tag = document.createElement('span');
-            tag.className = 'tag';
-            tag.innerHTML = `${cls} <span class="remove">&times;</span>`;
-            tag.querySelector('.remove').addEventListener('click', () => removeTag(cls));
-            classContainer.insertBefore(tag, classInput);
+            classDropdown.style.display = 'block';
         });
-    }
 
-    function updateHiddenInput() {
-        selectedClassesInput.value = JSON.stringify(selectedClasses);
-    }
+        classInput.addEventListener('input', (e) => {
+            updateDropdown(e.target.value);
+            classDropdown.style.display = 'block';
+        });
 
-    classContainer.addEventListener('click', () => {
-        classInput.focus();
-        updateDropdown(classInput.value);
-        classDropdown.style.display = 'block';
-    });
-
-    classInput.addEventListener('input', (e) => {
-        updateDropdown(e.target.value);
-        classDropdown.style.display = 'block';
-    });
-
-    classInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const value = classInput.value.trim();
-            if (value && allClasses.includes(value) && !selectedClasses.includes(value)) {
-                addTag(value);
+        classInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const value = classInput.value.trim();
+                if (value && allClasses.includes(value) && !selectedClasses.includes(value)) {
+                    addTag(value);
+                }
             }
-        }
-    });
+        });
 
-    document.addEventListener('click', (e) => {
-        if (!classContainer.contains(e.target)) {
-            classDropdown.style.display = 'none';
-        }
-    });
+        document.addEventListener('click', (e) => {
+            if (!classContainer.contains(e.target)) {
+                classDropdown.style.display = 'none';
+            }
+        });
 
-    updateDropdown();
+        updateDropdown();
+    }
 
     // Set today's date
     const today = new Date().toISOString().split('T')[0];
@@ -160,113 +178,160 @@ const modelStages = {
     'Custom': []
 };
 
-const pohePurposeMap = {
-    'Preparation': 'Lesson engagement and context-setting (Warm-up, initial input or review)',
-    'Observation': 'Noticing stage (guided exposure to language or model texts/audio)',
-    'Hypothesizing': 'Guided discovery (learners form language rules or meaning from context)',
-    'Receptive': 'Apply understanding through listening/reading tasks',
-    'Productive': 'Test understanding through short output tasks (controlled writing/speaking)',
-    'Experimenting': 'Free communicative use (dialogues, writing, projects, presentations)',
-    'Closing': 'Student reflection, sharing, note-taking'
-};
+let stageData = [];
+let stageIndex = 0;
+let stageInputs = {};
+
+function parseMinutesFromDuration(value) {
+    if (!value) return null;
+    const match = String(value).match(/(\d+)/);
+    if (!match) return null;
+    const minutes = parseInt(match[1], 10);
+    return Number.isFinite(minutes) ? minutes : null;
+}
+
+function parseMinutesFromStageTime(value) {
+    if (!value) return null;
+    const match = String(value).match(/(\d+)/);
+    if (!match) return null;
+    const minutes = parseInt(match[1], 10);
+    return Number.isFinite(minutes) ? minutes : null;
+}
+
+function getTotalStageMinutes() {
+    return stageData.reduce((sum, stage) => {
+        const minutes = parseMinutesFromStageTime(stage.time);
+        return sum + (minutes || 0);
+    }, 0);
+}
+
+function isStageDurationWithinLimit() {
+    const durationInput = document.getElementById('duration');
+    const totalMinutes = parseMinutesFromDuration(durationInput ? durationInput.value : '');
+    if (!Number.isFinite(totalMinutes)) return true;
+    const stageTotal = getTotalStageMinutes();
+    return stageTotal <= totalMinutes;
+}
+
+function assertStageDurationWithinLimit() {
+    const durationInput = document.getElementById('duration');
+    const totalMinutes = parseMinutesFromDuration(durationInput ? durationInput.value : '');
+    if (!Number.isFinite(totalMinutes)) return true;
+
+    const stageTotal = getTotalStageMinutes();
+    if (stageTotal <= totalMinutes) return true;
+
+    alert(`Stage time totals ${stageTotal} min, which exceeds the lesson duration of ${totalMinutes} min.`);
+    return false;
+}
+
+function applyDurationToStages(totalMinutes) {
+    if (!Number.isFinite(totalMinutes) || totalMinutes <= 0 || stageData.length === 0) return;
+
+    const count = stageData.length;
+    const base = Math.floor(totalMinutes / count);
+    const remainder = totalMinutes % count;
+
+    stageData = stageData.map((stage, index) => ({
+        ...stage,
+        time: `${base + (index < remainder ? 1 : 0)} min`
+    }));
+}
+
+function setStageInputs() {
+    stageInputs = {
+        name: document.getElementById('stageName'),
+        time: document.getElementById('stageTime'),
+        activity: document.getElementById('stageActivity'),
+        purpose: document.getElementById('stagePurpose'),
+        means: document.getElementById('stageMeans'),
+        mode: document.getElementById('stageMode'),
+        progress: document.getElementById('stageProgress'),
+        title: document.getElementById('stageTitle'),
+        list: document.getElementById('stageList')
+    };
+}
+
+function buildStageDataForModel(model) {
+    const stages = modelStages[model] || [];
+    stageData = stages.length
+        ? stages.map(name => ({ stage: name, time: '', activity: '', purpose: '', means: '', mode: '' }))
+        : [{ stage: '', time: '', activity: '', purpose: '', means: '', mode: '' }];
+
+    const durationInput = document.getElementById('duration');
+    const totalMinutes = parseMinutesFromDuration(durationInput ? durationInput.value : '');
+    applyDurationToStages(totalMinutes);
+
+    stageIndex = 0;
+    renderStageList();
+    loadStageToInputs();
+}
+
+function syncStageInputsToData() {
+    if (!stageData.length || !stageInputs.activity) return;
+    const current = stageData[stageIndex];
+    current.stage = stageInputs.name.value.trim();
+    current.time = stageInputs.time.value.trim();
+    current.activity = restoreActivityValueFromPreviews(stageInputs.activity);
+    current.purpose = stageInputs.purpose ? stageInputs.purpose.value.trim() : '';
+    current.means = stageInputs.means.value;
+    current.mode = stageInputs.mode.value;
+}
+
+function clearStagePreviews() {
+    if (!stageInputs.activity || !stageInputs.activity.parentNode) return;
+    const preview = stageInputs.activity.parentNode.querySelector('.image-previews');
+    if (preview) preview.remove();
+}
+
+function loadStageToInputs() {
+    if (!stageData.length || !stageInputs.activity) return;
+    const current = stageData[stageIndex];
+    stageInputs.name.value = current.stage || '';
+    stageInputs.time.value = current.time || '';
+    stageInputs.activity.value = current.activity || '';
+    if (stageInputs.purpose) {
+        stageInputs.purpose.value = current.purpose || '';
+    }
+    clearStagePreviews();
+    hydrateActivityImages(stageInputs.activity);
+    stageInputs.means.value = current.means || '';
+    stageInputs.mode.value = current.mode || '';
+    updateStageProgress();
+    renderStageList();
+}
+
+function updateStageProgress() {
+    if (!stageInputs.progress || !stageInputs.title) return;
+    stageInputs.progress.textContent = `Stage ${stageIndex + 1} of ${stageData.length}`;
+    const title = stageInputs.name.value.trim() || stageData[stageIndex].stage || `Stage ${stageIndex + 1}`;
+    stageInputs.title.textContent = title;
+}
+
+function renderStageList() {
+    if (!stageInputs.list) return;
+    stageInputs.list.innerHTML = '';
+    stageData.forEach((stage, index) => {
+        const label = stage.stage || `Stage ${index + 1}`;
+        const pill = document.createElement('button');
+        pill.type = 'button';
+        pill.className = `stage-pill${index === stageIndex ? ' active' : ''}`;
+        pill.textContent = label;
+        pill.addEventListener('click', () => {
+            if (index === stageIndex) return;
+            syncStageInputsToData();
+            stageIndex = index;
+            loadStageToInputs();
+        });
+        stageInputs.list.appendChild(pill);
+    });
+}
 
 // Pre-fill stages based on model selection
 document.getElementById('model').addEventListener('change', function() {
-    const model = this.value;
-    const tbody = document.querySelector('#stagesTable tbody');
-    tbody.innerHTML = '';
-
-    if (model && modelStages[model]) {
-        modelStages[model].forEach(stage => {
-            const newRow = createStageRow(stage);
-            tbody.appendChild(newRow);
-        });
-    }
-
-    if (tbody.children.length === 0) {
-        const newRow = createStageRow('');
-        tbody.appendChild(newRow);
-    }
-
+    buildStageDataForModel(this.value);
+    autoSaveDraft();
 });
-
-function createStageRow(stageValue) {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-        <td>
-            <select class="stage-select">
-                <option value="">Select Stage</option>
-                <option value="Preparation">Preparation</option>
-                <option value="Warm-up">Warm-up</option>
-                <option value="Presentation">Presentation</option>
-                <option value="Practice">Practice</option>
-                <option value="Production">Production</option>
-                <option value="Engage">Engage</option>
-                <option value="Explore">Explore</option>
-                <option value="Explain">Explain</option>
-                <option value="Elaborate">Elaborate</option>
-                <option value="Evaluate">Evaluate</option>
-                <option value="Reflect">Reflect</option>
-                <option value="Observation">Observation</option>
-                <option value="Hypothesis">Hypothesis</option>
-                <option value="Hypothesizing">Hypothesizing</option>
-                <option value="Receptive">Receptive (Listening/Reading)</option>
-                <option value="Productive">Productive (Controlled Output)</option>
-                <option value="Experiment">Experiment</option>
-                <option value="Experimenting">Experimenting</option>
-                <option value="Investigation">Investigation</option>
-                <option value="Formulate">Formulate</option>
-                <option value="Conceptualize">Conceptualize</option>
-                <option value="Teacher-led">Teacher-led</option>
-                <option value="Transition">Transition</option>
-                <option value="Test">Test</option>
-                <option value="Closing">Closing</option>
-                <option value="Other">Other</option>
-            </select>
-        </td>
-        <td><input type="text" placeholder="Time"></td>
-        <td><input type="text" placeholder="Activity"><input type="file" accept="image/*" class="image-upload" style="display: none;"><button type="button" class="upload-btn" style="display: none;"><i class="fas fa-image"></i></button></td>
-        <td><input type="text" placeholder="Purpose"></td>
-        <td>
-            <select>
-                <option value="">Select</option>
-                <option value="Individual work">Individual</option>
-                <option value="Pair work">Pair work</option>
-                <option value="Group work">Group work</option>
-            </select>
-        </td>
-        <td>
-            <select>
-                <option value="">Select</option>
-                <option value="Teacher-Student">T-S</option>
-                <option value="Student-Teacher">S-T</option>
-                <option value="Student-Student">S-S</option>
-            </select>
-        </td>
-        <td><button type="button" class="remove-row">Remove</button></td>
-    `;
-    if (stageValue) {
-        row.querySelector('.stage-select').value = stageValue;
-    }
-
-    const maybeFillPohePurpose = (selectedStage) => {
-        const mappedPurpose = pohePurposeMap[selectedStage];
-        if (!mappedPurpose) return;
-
-        const purposeInput = row.cells[3].querySelector('input');
-        if (!purposeInput) return;
-
-        if (!purposeInput.value.trim()) {
-            purposeInput.value = mappedPurpose;
-        }
-    };
-
-    if (stageValue) {
-        maybeFillPohePurpose(stageValue);
-    }
-
-    return row;
-}
 
 // Dynamic objectives list
 document.getElementById('objectivesList').addEventListener('click', function(e) {
@@ -293,58 +358,6 @@ function updateNumbers(list) {
         item.querySelector('.number').textContent = (index + 1) + '.';
     });
 }
-
-// Dynamic materials checklist
-document.getElementById('materialsList').addEventListener('click', function(e) {
-    if (e.target.classList.contains('add')) {
-        const list = e.target.closest('#materialsList');
-        const newItem = list.lastElementChild.cloneNode(true);
-        const inputs = newItem.querySelectorAll('input');
-        inputs.forEach(input => input.value = '');
-        newItem.querySelector('input[type="checkbox"]').checked = false;
-        newItem.querySelector('.remove').disabled = false;
-        list.appendChild(newItem);
-    } else if (e.target.classList.contains('remove')) {
-        const list = e.target.closest('#materialsList');
-        if (list.children.length > 1) {
-            e.target.closest('.checklist-item').remove();
-        }
-    }
-});
-
-// Dynamic stages table
-document.getElementById('addRow').addEventListener('click', function() {
-    const tbody = document.querySelector('#stagesTable tbody');
-    const newRow = createStageRow('');
-    tbody.appendChild(newRow);
-});
-
-document.getElementById('stagesTable').addEventListener('click', function(e) {
-    if (e.target.classList.contains('remove-row')) {
-        const tbody = document.querySelector('#stagesTable tbody');
-        if (tbody.children.length > 1) {
-            e.target.closest('tr').remove();
-        }
-    }
-});
-
-document.getElementById('stagesTable').addEventListener('change', function(e) {
-    if (!e.target.classList.contains('stage-select')) return;
-
-    const selectedStage = e.target.value;
-    const mappedPurpose = pohePurposeMap[selectedStage];
-    if (!mappedPurpose) return;
-
-    const row = e.target.closest('tr');
-    if (!row) return;
-
-    const purposeInput = row.cells[3]?.querySelector('input');
-    if (!purposeInput) return;
-
-    if (!purposeInput.value.trim()) {
-        purposeInput.value = mappedPurpose;
-    }
-});
 
 // Function to escape HTML
 function escapeHtml(text) {
@@ -562,6 +575,11 @@ document.getElementById('generateBtn').addEventListener('click', function() {
         return;
     }
     
+    syncStageInputsToData();
+    if (!assertStageDurationWithinLimit()) {
+        return;
+    }
+
     const selectedClassesValue = document.getElementById('selectedClasses').value;
     const selectedClasses = selectedClassesValue ? JSON.parse(selectedClassesValue) : [];
     
@@ -586,26 +604,21 @@ document.getElementById('generateBtn').addEventListener('click', function() {
         objectives: Array.from(document.querySelectorAll('#objectivesList input[type="text"]'))
             .map(input => escapeHtml(input.value))
             .filter(val => val.trim()),
-        materials: Array.from(document.querySelectorAll('#materialsList .checklist-item'))
+        materials: getMaterialsFromChecklist()
             .map(item => ({
-                checked: item.querySelector('input[type="checkbox"]').checked,
-                text: escapeHtml(item.querySelector('input[type="text"]').value)
+                checked: item.checked,
+                text: escapeHtml(item.text)
             }))
             .filter(item => item.text.trim()),
-        stages: Array.from(document.querySelectorAll('#stagesTable tbody tr'))
-            .map(row => {
-                const activityInput = row.cells[2].querySelector('input');
-                let activityValue = restoreActivityValueFromPreviews(activityInput, activityInput.value);
-
-                return {
-                    stage: row.cells[0].querySelector('select').value,
-                    time: escapeHtml(row.cells[1].querySelector('input').value),
-                    activity: processActivityText(activityValue),
-                    purpose: escapeHtml(row.cells[3].querySelector('input').value),
-                    means: row.cells[4].querySelector('select').value,
-                    mode: row.cells[5].querySelector('select').value
-                };
-            })
+        stages: stageData
+            .map(stage => ({
+                stage: escapeHtml(stage.stage),
+                time: escapeHtml(stage.time),
+                activity: processActivityText(stage.activity),
+                purpose: escapeHtml(stage.purpose),
+                means: stage.means,
+                mode: stage.mode
+            }))
             .filter(stage => stage.stage || stage.activity),
         assessment: escapeHtml(document.getElementById('assessment').value),
         reflection: escapeHtml(document.getElementById('reflection').value)
@@ -916,37 +929,71 @@ function populateFormFromData(data) {
     if (data.objectives) {
         const objectivesList = document.getElementById('objectivesList');
         objectivesList.innerHTML = '';
-        data.objectives.forEach((obj, index) => {
-            const item = createDynamicListItem(obj, index === 0);
-            objectivesList.appendChild(item);
-        });
+        if (data.objectives.length === 0) {
+            objectivesList.appendChild(createDynamicListItem('', true));
+        } else {
+            data.objectives.forEach((obj, index) => {
+                const item = createDynamicListItem(obj, index === 0);
+                objectivesList.appendChild(item);
+            });
+        }
         updateNumbers(objectivesList);
     }
 
     if (data.materials) {
         const materialsList = document.getElementById('materialsList');
-        materialsList.innerHTML = '';
-        data.materials.forEach((mat, index) => {
-            const item = createChecklistItem(mat, index === 0);
-            materialsList.appendChild(item);
-        });
+        const otherCheck = document.getElementById('materialOtherCheck');
+        const otherText = document.getElementById('materialOtherText');
+        if (materialsList) {
+            const labels = Array.from(materialsList.querySelectorAll('.checklist-item'));
+            const savedMaterials = data.materials.map(item => (item.text || '').trim());
+            const savedLookup = new Set(savedMaterials.map(text => text.toLowerCase()));
+
+            labels.forEach(item => {
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                const textInput = item.querySelector('input[type="text"]');
+                const labelText = textInput ? textInput.value : (item.querySelector('span')?.textContent || '');
+                const normalized = (labelText || '').trim().toLowerCase();
+                if (checkbox) {
+                    checkbox.checked = normalized ? savedLookup.has(normalized) : false;
+                }
+            });
+
+            if (otherCheck && otherText) {
+                const knownLabels = labels
+                    .map(item => (item.querySelector('span')?.textContent || '').trim())
+                    .filter(Boolean)
+                    .map(text => text.toLowerCase());
+                const unknown = data.materials.find(item => {
+                    const text = (item.text || '').trim().toLowerCase();
+                    return text && !knownLabels.includes(text);
+                });
+                if (unknown) {
+                    otherCheck.checked = true;
+                    otherText.value = unknown.text;
+                }
+            }
+        }
     }
 
     if (data.stages) {
-        const stagesTable = document.querySelector('#stagesTable tbody');
-        stagesTable.innerHTML = '';
-        data.stages.forEach(stage => {
-            const row = createStageRow('');
-            const cells = row.cells;
-            cells[0].querySelector('select').value = stage.stage || '';
-            cells[1].querySelector('input').value = stage.time || '';
-            cells[2].querySelector('input').value = stage.activity || '';
-            cells[3].querySelector('input').value = stage.purpose || '';
-            cells[4].querySelector('select').value = stage.means || '';
-            cells[5].querySelector('select').value = stage.mode || '';
-            hydrateActivityImages(cells[2].querySelector('input'));
-            stagesTable.appendChild(row);
-        });
+        if (!stageInputs.activity) {
+            setStageInputs();
+        }
+        stageData = data.stages.map(stage => ({
+            stage: stage.stage || '',
+            time: stage.time || '',
+            activity: stage.activity || '',
+            purpose: stage.purpose || '',
+            means: stage.means || '',
+            mode: stage.mode || ''
+        }));
+        stageIndex = Number.isInteger(data.stageIndex) ? data.stageIndex : 0;
+        if (stageIndex < 0 || stageIndex >= stageData.length) {
+            stageIndex = 0;
+        }
+        renderStageList();
+        loadStageToInputs();
     }
 }
 
@@ -999,31 +1046,36 @@ function collectFormData() {
         .filter(val => val.trim());
 
     // Collect materials
-    data.materials = Array.from(document.querySelectorAll('#materialsList .checklist-item'))
-        .map(item => ({
-            checked: item.querySelector('input[type="checkbox"]').checked,
-            text: item.querySelector('input[type="text"]').value
-        }))
-        .filter(item => item.text.trim());
+    data.materials = getMaterialsFromChecklist();
 
     // Collect stages
-    data.stages = Array.from(document.querySelectorAll('#stagesTable tbody tr'))
-        .map(row => {
-            const activityInput = row.cells[2].querySelector('input');
-            const activityValue = restoreActivityValueFromPreviews(activityInput, activityInput.value);
-            
-            return {
-                stage: row.cells[0].querySelector('select').value,
-                time: row.cells[1].querySelector('input').value,
-                activity: activityValue,
-                purpose: row.cells[3].querySelector('input').value,
-                means: row.cells[4].querySelector('select').value,
-                mode: row.cells[5].querySelector('select').value
-            };
-        })
-        .filter(stage => stage.stage || stage.activity || stage.time);
+    syncStageInputsToData();
+    data.stages = stageData.map(stage => ({
+        stage: stage.stage,
+        time: stage.time,
+        activity: stage.activity,
+        purpose: stage.purpose || '',
+        means: stage.means,
+        mode: stage.mode
+    }));
+
+    data.stageIndex = stageIndex;
 
     return data;
+}
+
+function getMaterialsFromChecklist() {
+    return Array.from(document.querySelectorAll('#materialsList .checklist-item'))
+        .map(item => {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            const textInput = item.querySelector('input[type="text"]');
+            const labelText = textInput ? textInput.value : (item.querySelector('span')?.textContent || '');
+            return {
+                checked: checkbox ? checkbox.checked : false,
+                text: (labelText || '').trim()
+            };
+        })
+        .filter(item => item.text.trim());
 }
 
 // Get lessons database from localStorage
@@ -1120,6 +1172,11 @@ function saveLessonToArchive() {
         return;
     }
 
+    syncStageInputsToData();
+    if (!assertStageDurationWithinLimit()) {
+        return;
+    }
+
     const selectedClassesValue = document.getElementById('selectedClasses').value;
     const selectedClasses = selectedClassesValue ? JSON.parse(selectedClassesValue) : [];
 
@@ -1144,20 +1201,20 @@ function saveLessonToArchive() {
         objectives: Array.from(document.querySelectorAll('#objectivesList input[type="text"]'))
             .map(input => escapeHtml(input.value))
             .filter(val => val.trim()),
-        materials: Array.from(document.querySelectorAll('#materialsList .checklist-item'))
+        materials: getMaterialsFromChecklist()
             .map(item => ({
-                checked: item.querySelector('input[type="checkbox"]').checked,
-                text: escapeHtml(item.querySelector('input[type="text"]').value)
+                checked: item.checked,
+                text: escapeHtml(item.text)
             }))
             .filter(item => item.text.trim()),
-        stages: Array.from(document.querySelectorAll('#stagesTable tbody tr'))
-            .map(row => ({
-                stage: row.cells[0].querySelector('select').value,
-                time: escapeHtml(row.cells[1].querySelector('input').value),
-                activity: processActivityText(row.cells[2].querySelector('input').value),
-                purpose: escapeHtml(row.cells[3].querySelector('input').value),
-                means: row.cells[4].querySelector('select').value,
-                mode: row.cells[5].querySelector('select').value
+        stages: stageData
+            .map(stage => ({
+                stage: escapeHtml(stage.stage),
+                time: escapeHtml(stage.time),
+                activity: stage.activity,
+                purpose: escapeHtml(stage.purpose),
+                means: stage.means,
+                mode: stage.mode
             }))
             .filter(stage => stage.stage || stage.activity),
         assessment: escapeHtml(document.getElementById('assessment').value),
@@ -1221,7 +1278,6 @@ function saveLessonToArchive() {
                             <th style="border: 1px solid #7f8c8d; padding: 10px;">Stage</th>
                             <th style="border: 1px solid #7f8c8d; padding: 10px;">Time</th>
                             <th style="border: 1px solid #7f8c8d; padding: 10px;">Activity</th>
-                            <th style="border: 1px solid #7f8c8d; padding: 10px;">Purpose</th>
                             <th style="border: 1px solid #7f8c8d; padding: 10px;">Means</th>
                             <th style="border: 1px solid #7f8c8d; padding: 10px;">Mode</th>
                         </tr>
@@ -1232,7 +1288,6 @@ function saveLessonToArchive() {
                                 <td style="border: 1px solid #dee2e6; padding: 10px;"><strong>${stage.stage}</strong></td>
                                 <td style="border: 1px solid #dee2e6; padding: 10px;">${stage.time}</td>
                                 <td style="border: 1px solid #dee2e6; padding: 10px;">${processActivityText(stage.activity)}</td>
-                                <td style="border: 1px solid #dee2e6; padding: 10px;">${stage.purpose}</td>
                                 <td style="border: 1px solid #dee2e6; padding: 10px;">${stage.means}</td>
                                 <td style="border: 1px solid #dee2e6; padding: 10px;">${stage.mode}</td>
                             </tr>
@@ -1416,7 +1471,6 @@ function setupAutoSave() {
     const observer = new MutationObserver(autoSaveDraft);
     observer.observe(document.getElementById('objectivesList'), { childList: true, subtree: true });
     observer.observe(document.getElementById('materialsList'), { childList: true, subtree: true });
-    observer.observe(document.querySelector('#stagesTable tbody'), { childList: true, subtree: true });
 
     // Auto-save on class selection changes
     document.addEventListener('classSelectionChanged', autoSaveDraft);
@@ -1487,6 +1541,171 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    const otherCheck = document.getElementById('materialOtherCheck');
+    const otherText = document.getElementById('materialOtherText');
+    if (otherCheck && otherText) {
+        otherCheck.addEventListener('change', () => {
+            if (!otherCheck.checked) {
+                otherText.value = '';
+                autoSaveDraft();
+            }
+        });
+        otherText.addEventListener('input', autoSaveDraft);
+    }
+});
+
+// Wizard navigation for guided flow
+document.addEventListener('DOMContentLoaded', function() {
+    setStageInputs();
+
+    const wizardSteps = Array.from(document.querySelectorAll('.wizard-step'));
+    const prevBtn = document.getElementById('wizardPrev');
+    const nextBtn = document.getElementById('wizardNext');
+    const teacherNameInput = document.getElementById('teacherName');
+    const teacherGreeting = document.getElementById('teacherGreeting');
+    const modelSelect = document.getElementById('model');
+
+    if (!wizardSteps.length || !prevBtn || !nextBtn) return;
+
+    let wizardIndex = 0;
+
+    const updateGreeting = () => {
+        const name = teacherNameInput ? teacherNameInput.value.trim() : '';
+        if (teacherGreeting) {
+            teacherGreeting.textContent = name || 'friend';
+        }
+    };
+
+    if (teacherNameInput) {
+        teacherNameInput.addEventListener('input', updateGreeting);
+        updateGreeting();
+    }
+
+    const stageFieldListeners = () => {
+        if (!stageInputs.activity) return;
+        const fields = [stageInputs.name, stageInputs.time, stageInputs.activity, stageInputs.purpose, stageInputs.means, stageInputs.mode];
+        fields.forEach(field => {
+            if (!field) return;
+            field.addEventListener('input', () => {
+                syncStageInputsToData();
+                updateStageProgress();
+                renderStageList();
+                autoSaveDraft();
+            });
+            field.addEventListener('change', () => {
+                syncStageInputsToData();
+                updateStageProgress();
+                renderStageList();
+                autoSaveDraft();
+            });
+        });
+    };
+
+    stageFieldListeners();
+
+    const durationInput = document.getElementById('duration');
+    if (durationInput) {
+        durationInput.addEventListener('input', () => {
+            const totalMinutes = parseMinutesFromDuration(durationInput.value);
+            syncStageInputsToData();
+            applyDurationToStages(totalMinutes);
+            loadStageToInputs();
+            autoSaveDraft();
+        });
+    }
+
+    const validateStep = (index) => {
+        const step = wizardSteps[index];
+        if (!step) return true;
+        const required = step.querySelectorAll('[required]');
+        for (const field of required) {
+            if (!field.checkValidity()) {
+                field.reportValidity();
+                return false;
+            }
+        }
+        return true;
+    };
+
+    const updateNavLabels = () => {
+        prevBtn.disabled = wizardIndex === 0 && stageIndex === 0;
+        if (wizardSteps[wizardIndex]?.dataset.step === 'stages') {
+            nextBtn.textContent = stageIndex < stageData.length - 1 ? 'Next Stage' : 'Next';
+            prevBtn.textContent = stageIndex > 0 ? 'Previous Stage' : 'Back';
+        } else {
+            nextBtn.textContent = wizardIndex === wizardSteps.length - 1 ? 'Finish' : 'Next';
+            prevBtn.textContent = 'Back';
+        }
+    };
+
+    const showStep = (index) => {
+        wizardIndex = Math.max(0, Math.min(index, wizardSteps.length - 1));
+        wizardSteps.forEach((step, i) => {
+            step.classList.toggle('active', i === wizardIndex);
+        });
+
+        if (wizardSteps[wizardIndex]?.dataset.step === 'stages') {
+            if (!modelSelect.value) {
+                wizardIndex = Math.max(0, wizardIndex - 1);
+                wizardSteps.forEach((step, i) => {
+                    step.classList.toggle('active', i === wizardIndex);
+                });
+                modelSelect.reportValidity();
+            } else if (!stageData.length) {
+                buildStageDataForModel(modelSelect.value);
+            } else {
+                loadStageToInputs();
+            }
+        }
+
+        updateNavLabels();
+        wizardSteps[wizardIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    const goNext = () => {
+        if (!validateStep(wizardIndex)) return;
+
+        const currentStep = wizardSteps[wizardIndex]?.dataset.step;
+        if (currentStep === 'framework' && modelSelect && !modelSelect.value) {
+            modelSelect.reportValidity();
+            return;
+        }
+
+        if (currentStep === 'stages') {
+            syncStageInputsToData();
+            if (!assertStageDurationWithinLimit()) {
+                return;
+            }
+            if (stageIndex < stageData.length - 1) {
+                stageIndex += 1;
+                loadStageToInputs();
+                updateNavLabels();
+                return;
+            }
+        }
+
+        showStep(wizardIndex + 1);
+    };
+
+    const goPrev = () => {
+        const currentStep = wizardSteps[wizardIndex]?.dataset.step;
+        if (currentStep === 'stages') {
+            syncStageInputsToData();
+            if (stageIndex > 0) {
+                stageIndex -= 1;
+                loadStageToInputs();
+                updateNavLabels();
+                return;
+            }
+        }
+        showStep(wizardIndex - 1);
+    };
+
+    prevBtn.addEventListener('click', goPrev);
+    nextBtn.addEventListener('click', goNext);
+
+    showStep(0);
 });
 
 console.log('Lesson Planner loaded successfully!');
@@ -1499,7 +1718,7 @@ document.addEventListener('change', function(e) {
             const reader = new FileReader();
             reader.onload = function(event) {
                 const base64 = event.target.result;
-                const activityInput = e.target.previousElementSibling;
+                const activityInput = e.target.closest('.field')?.querySelector('textarea');
                 insertImageIntoActivity(activityInput, base64);
                 showNotification('Image added to activity', 'success');
             };
@@ -1519,13 +1738,9 @@ document.addEventListener('click', function(e) {
 // Image paste functionality (Ctrl+V)
 document.addEventListener('paste', function(e) {
     const active = document.activeElement;
-    if (!active || active.tagName !== 'INPUT' || active.type !== 'text') return;
-    if (!active.closest('#stagesTable')) return;
-
-    const row = active.closest('tr');
-    if (!row) return;
-    const activityCell = row.cells?.[2];
-    if (!activityCell || !activityCell.contains(active)) return;
+    const isTextInput = active && ((active.tagName === 'INPUT' && active.type === 'text') || active.tagName === 'TEXTAREA');
+    if (!isTextInput) return;
+    if (active.id !== 'stageActivity') return;
 
     const clipboardItems = e.clipboardData?.items;
     if (!clipboardItems || clipboardItems.length === 0) return;
