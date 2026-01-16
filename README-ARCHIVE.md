@@ -17,7 +17,7 @@ This document describes the archive system for the Lesson Planner web applicatio
 ```
 c:\Users\Pc\Desktop\Pixelearn\
 ├── games\
-│   ├── LESSON PLANNER.html    # Main lesson planner
+│   ├── lesson-planner.html    # Main lesson planner
 │   └── lesson-archive.html    # Archive viewer page
 └── scripts\
     ├── lesson-planner.js      # Main script with localStorage features
@@ -28,7 +28,7 @@ c:\Users\Pc\Desktop\Pixelearn\
 
 ### 1. Access the Applications
 
-- **Lesson Planner**: Open `games/LESSON PLANNER.html` in your browser
+- **Lesson Planner**: Open `games/lesson-planner.html` in your browser
 - **Archive Viewer**: Open `games/lesson-archive.html` in your browser
 
 No server setup required! The application works entirely in the browser using localStorage.
@@ -93,7 +93,7 @@ Examples:
 
 ### Creating and Saving Lessons
 
-1. Fill out the lesson plan form in `LESSON PLANNER.html`
+1. Fill out the lesson plan form in `lesson-planner.html`
 2. Click "Generate Lesson Plan" - preview opens in new tab
 3. Lesson automatically saves to local storage
 4. Success notification appears: "✓ Lesson saved locally!"

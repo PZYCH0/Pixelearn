@@ -1,0 +1,105 @@
+/* Home page shared styles */
+:root {
+  --primary-color: #ff00ff;
+  --secondary-color: #800080;
+  --accent-color: #f953c6;
+  --text-color: #ffffff;
+  --bg-color: #1a1a1a;
+  --border-radius: 8px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+}
+
+/* Card section scrollbar styling */
+.games-grid::-webkit-scrollbar,
+.articles-grid::-webkit-scrollbar,
+.horizontal-scroll-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.games-grid::-webkit-scrollbar-track,
+.articles-grid::-webkit-scrollbar-track,
+.horizontal-scroll-grid::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  margin: 0 10px;
+}
+
+.games-grid::-webkit-scrollbar-thumb,
+.articles-grid::-webkit-scrollbar-thumb,
+.horizontal-scroll-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 105, 180, 0.6);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.2s ease;
+}
+
+.games-grid::-webkit-scrollbar-thumb:hover,
+.articles-grid::-webkit-scrollbar-thumb:hover,
+.horizontal-scroll-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 105, 180, 0.8);
+}
+
+/* Firefox scrollbar for card sections */
+.games-grid,
+.articles-grid,
+.horizontal-scroll-grid {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 105, 180, 0.6) rgba(0, 0, 0, 0.1);
+}
+
+/* Prevent text selection and dragging */
+body {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+}
+
+/* Allow text selection in input and textarea */
+input, textarea, [contenteditable] {
+  -webkit-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* Prevent dragging on card elements */
+.game-card, .article-card {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  -user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Ensure links inside cards remain clickable */
+.card-link {
+  pointer-events: auto;
+}
+
+/* Top-center text logo */
+.top-logo {
+  display: block;
+  margin: 20px auto 0;
+  font-family: 'Press Start 2P', cursive;
+  color: var(--accent);
+  font-size: 1.6rem;
+  text-decoration: none;
+  text-shadow: 0 0 10px rgba(249, 83, 198, 0.6);
+  text-align: center;
+}
+
+.title-text {
+  color: white !important;
+  opacity: 1 !important;
+}

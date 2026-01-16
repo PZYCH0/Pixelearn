@@ -379,7 +379,7 @@
             <h1><i class="fas fa-archive"></i> Lesson Plan Archive</h1>
             <p>View and manage your saved lesson plans</p>
             <div class="header-actions">
-                <a class="btn btn-primary" href="LESSON PLANNER.html">
+                <a class="btn btn-primary" href="lesson-planner.html">
                     <i class="fas fa-plus"></i> Create a Lesson Plan
                 </a>
             </div>
@@ -408,50 +408,7 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-            const mobileMenu = document.getElementById('mobileMenu');
-            const navbar = document.querySelector('.top-navbar');
-            let lastScroll = 0;
-
-            if (mobileMenuToggle && mobileMenu) {
-                mobileMenuToggle.addEventListener('click', function() {
-                    mobileMenu.classList.toggle('active');
-                    this.classList.toggle('active');
-                });
-
-                document.querySelectorAll('.mobile-nav-link').forEach(link => {
-                    link.addEventListener('click', () => {
-                        mobileMenu.classList.remove('active');
-                        mobileMenuToggle.classList.remove('active');
-                    });
-                });
-            }
-
-            window.addEventListener('scroll', () => {
-                const currentScroll = window.pageYOffset;
-
-                if (mobileMenu && mobileMenu.classList.contains('active')) {
-                    mobileMenu.classList.remove('active');
-                    mobileMenuToggle.classList.remove('active');
-                }
-
-                if (currentScroll <= 0) {
-                    navbar.classList.remove('hide-nav');
-                    navbar.classList.add('show-nav');
-                } else if (currentScroll > lastScroll && !navbar.classList.contains('hide-nav')) {
-                    navbar.classList.add('hide-nav');
-                    navbar.classList.remove('show-nav');
-                } else if (currentScroll < lastScroll && navbar.classList.contains('hide-nav')) {
-                    navbar.classList.remove('hide-nav');
-                    navbar.classList.add('show-nav');
-                }
-
-                lastScroll = currentScroll;
-            });
-        });
-    </script>
+    <script src="../scripts/top-nav.js" defer></script>
     <script src="../scripts/archive-viewer.js"></script>
 </body>
 </html>
